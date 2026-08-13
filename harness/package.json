@@ -1,0 +1,27 @@
+{
+  "name": "mcp-probe",
+  "version": "0.1.4",
+  "private": true,
+  "type": "module",
+  "description": "Reproducible measurement harness for MCP server quality and token cost.",
+  "scripts": {
+    "snapshot": "node src/snapshot.js",
+    "cohort": "node src/cohort.js",
+    "run": "node src/run.js",
+    "reproduce": "node src/reproduce.js",
+    "report": "node src/report.js",
+    "rescore": "node src/rescore.js",
+    "test": "node test/era-probe.test.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "2.0.0",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "gpt-tokenizer": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/server": "2.0.0"
+  }
+}

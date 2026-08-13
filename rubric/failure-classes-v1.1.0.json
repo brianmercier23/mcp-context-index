@@ -1,0 +1,118 @@
+{
+  "version": "1.1.0",
+  "created": "2026-08-13",
+  "purpose": "A server that will not start is the most common single outcome in this cohort, and 'connect_failed' on its own is useless to a buyer. These patterns classify WHY, against the stderr captured at launch and the error returned by the server/discover probe. Classification is diagnostic only: it does not feed any score, which is why it lives outside the scoring rubric and outside the config hash.",
+  "attribution_legend": {
+    "server": "A property of the server. It genuinely will not run in this condition.",
+    "harness": "Caused by a deliberate choice of this harness. Must not be reported as a defect of the server.",
+    "environment": "Caused by the host or the network at run time. Not attributable to either side."
+  },
+  "classes": [
+    {
+      "id": "refuses_placeholder_credentials",
+      "attribution": "server",
+      "label": "Refuses to start without valid credentials",
+      "patterns": [
+        "does not look like a .{0,20}token",
+        "is malformed \\(expected",
+        "invalid private key",
+        "expected hex or",
+        "must be an absolute path",
+        "API key.{0,30}(invalid|malformed|required)",
+        "missing .{0,25}(token|api key|credential)"
+      ],
+      "buyer_note": "Cannot be inspected, evaluated, or audited by anyone who does not already hold live credentials for it, including a prospective buyer."
+    },
+    {
+      "id": "requires_deployment_config",
+      "attribution": "server",
+      "label": "Requires instance-specific deployment details before it will list tools",
+      "patterns": [
+        "host or apiBasePath must be provided",
+        "Missing required environment variables",
+        "must be provided",
+        "[A-Z_]+ (is )?not set",
+        "Set these in your MCP configuration"
+      ],
+      "buyer_note": "Needs a host, account, or base path filled in before it will even enumerate its tools. Nobody can evaluate it cold, and the registry entry does not carry the values it demands."
+    },
+    {
+      "id": "requires_unset_config_enum",
+      "attribution": "server",
+      "label": "Requires an environment variable the registry entry does not document a default for",
+      "patterns": [
+        "unknown [A-Z_]+:",
+        "Invalid [A-Z_]+\\.",
+        "Unknown [A-Z_]+=",
+        "expected gist\\|selfhost",
+        "must be included in custom levels",
+        "Expected \"",
+        "Valid values:"
+      ],
+      "buyer_note": "The registry entry is incomplete: it declares the variable but not the value the server will accept. A first-run failure for anyone following the listing."
+    },
+    {
+      "id": "missing_native_binary",
+      "attribution": "harness",
+      "label": "Ships a binary fetched by a postinstall script, which this harness suppresses",
+      "patterns": [
+        "postinstall",
+        "Could not locate the bindings file",
+        "\\.exe ENOENT",
+        "binary is missing",
+        "Reinstall the package"
+      ],
+      "buyer_note": "Not a defect the buyer would hit with a normal install. It is a supply-chain note: the package downloads an executable at install time, so its contents are not fixed by the version number alone."
+    },
+    {
+      "id": "network_dependency_at_startup",
+      "attribution": "environment",
+      "label": "Reaches the network before it will serve tools",
+      "patterns": [
+        "Auto-provision failed",
+        "HTTP 4\\d\\d",
+        "HTTP 5\\d\\d",
+        "ECONNREFUSED",
+        "ETIMEDOUT",
+        "getaddrinfo",
+        "fetch failed",
+        "rate limit"
+      ],
+      "buyer_note": "Startup depends on a third-party service being reachable and willing. Tool availability is not a property of the installed package."
+    },
+    {
+      "id": "scans_working_directory",
+      "attribution": "server",
+      "label": "Blocks startup on indexing its working directory",
+      "patterns": [
+        "Fetching file tree",
+        "Analyzing\\.\\.\\.",
+        "Found \\d+ files",
+        "Indexing"
+      ],
+      "buyer_note": "Runs analysis before it will answer tools/list, so time-to-first-tool depends on the size of whatever directory it is launched in. In an empty directory it still failed to complete the handshake inside 45 seconds."
+    },
+    {
+      "id": "silent_exit",
+      "attribution": "server",
+      "label": "Closed the connection with no diagnostic output at all",
+      "patterns": [],
+      "match_when": "stderr is empty and the transport closed",
+      "buyer_note": "The worst failure mode to debug: nothing on stderr, nothing on the protocol. An operator has no thread to pull."
+    },
+    {
+      "id": "no_handshake_response",
+      "attribution": "server",
+      "label": "Answers neither handshake",
+      "patterns": [],
+      "match_when": "The server/discover probe returned no modern verdict AND the initialize handshake was answered with a JSON-RPC method-not-found error (-32601). The initialize answer is the evidence: it proves the process was alive and speaking JSON-RPC while implementing neither handshake method. The pin-mode discover probe cannot supply that distinction on its own, since it reports a 2025 server and a JSON-RPC refusal with the same error. Any other failure of initialize is left to the stderr patterns.",
+      "buyer_note": "Unreachable by any conforming client of either era. The 2026-07-28 specification makes server/discover mandatory for servers, so a process that answers it with a protocol error and also fails initialize is not merely old: it is unusable by a current client and by a legacy one alike."
+    }
+  ],
+  "changelog": [
+    "1.1.0 (2026-08-13): added no_handshake_response, for a server that answers neither the 2026-07-28 server/discover exchange nor the 2025 initialize handshake. Introduced with the dual-era probe in harness 0.1.4: before it, a server that had migrated to the stateless core would have been recorded as a server-side connect failure, which is the one misattribution the split exists to prevent.",
+    "1.0.2 (2026-08-11): added requires_deployment_config after three servers in the verification pair failed on missing host/email/base-path rather than on credentials as such.",
+    "1.0.1 (2026-08-11): scans_working_directory re-attributed from harness to server. Harness 0.1.1 launches every server inside its own empty sandbox directory, so a server that still blocks startup on indexing is doing analysis eagerly that should be lazy — that is its own behaviour, not an artifact of where it was started.",
+    "1.0.0 (2026-08-11): initial classes, derived from the first full sweep."
+  ]
+}

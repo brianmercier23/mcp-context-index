@@ -1,0 +1,19 @@
+verification run 2026-08-12_2150
+verdict: GO
+log: C:\Claude-Projects\Research\AI-Market\mcp-probe\logs\verify-pair_2026-08-12_2150.log
+
+run-2026-08-13-0150-7936eadf  vs  run-2026-08-13-0208-7936eadf
+config 7936eadff648  rubric mcp-server-quality@1.1.1  metric tool_definition_tokens
+{
+  "servers_compared": 50,
+  "measured_in_both": 37,
+  "stable": 37,
+  "tolerable": 0,
+  "unstable": 0,
+  "status_changed": 1,
+  "not_measured_in_either": 12,
+  "grade_changed": 0
+}
+stable-or-tolerable share 100.00%  (gate 95%)
+VERDICT: GO
+  flip: io.github.bm1016bm-svg/evidrift  install_failed -> probed

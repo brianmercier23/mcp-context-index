@@ -1,0 +1,236 @@
+{
+  "rubric_id": "mcp-server-quality",
+  "version": "1.0.0",
+  "created": "2026-08-10",
+  "status": "spike",
+  "scope": "Black-box probe of a locally installed MCP server over stdio, with no live credentials.",
+  "measurement_contract": {
+    "tokenizer": { "library": "gpt-tokenizer", "encoding": "o200k_base", "model_alias": "gpt-4o" },
+    "tokenizer_note": "A fixed local BPE is used so counts are deterministic and offline. Absolute counts differ from any given vendor tokenizer by a small factor; every comparison in this rubric is between servers measured with the SAME encoder, so the factor cancels. Do not quote these as Anthropic-billed tokens without applying a calibration factor.",
+    "determinism_requirements": [
+      "Package version is pinned in the cohort file; installs never resolve a floating range at run time.",
+      "Install runs with --ignore-scripts and an isolated prefix.",
+      "The server process is spawned with a scrubbed environment plus canary placeholder credentials only.",
+      "Tool definitions are serialised with sorted keys before counting."
+    ],
+    "primary_metric": "tool_definition_tokens",
+    "primary_metric_definition": "Token count of the JSON array of tool definitions ({name, description, inputSchema}) returned by tools/list across all pages, key-sorted. This is the fixed context tax every conversation pays for having the server connected, and is the quantity behind the published 440x spread (GitHub official 20,444 vs sqlite 46).",
+    "reproducibility_gate": {
+      "metric": "tool_definition_tokens",
+      "stable_if_delta_pct_lte": 0.0,
+      "tolerable_if_delta_pct_lte": 0.5,
+      "cohort_pass_if_stable_or_tolerable_share_gte": 0.95,
+      "verdict_note": "Computed only between runs sharing an identical config_hash. A cohort below the threshold means the instrument is not ready to scale; fix the instrument, not the sample size."
+    }
+  },
+  "dimensions": [
+    {
+      "id": "token_cost",
+      "label": "Token cost",
+      "weight": 0.30,
+      "rationale": "The line item a buyer can see on an invoice. Fixed context tax first, per-call cost second.",
+      "signals": [
+        { "id": "tool_definition_tokens", "direction": "lower",
+          "bands": [ { "max": 500, "score": 5 }, { "max": 1500, "score": 4 }, { "max": 4000, "score": 3 }, { "max": 10000, "score": 2 }, { "max": null, "score": 1 } ] },
+        { "id": "tokens_per_tool_median", "direction": "lower",
+          "bands": [ { "max": 80, "score": 5 }, { "max": 200, "score": 4 }, { "max": 500, "score": 3 }, { "max": 1200, "score": 2 }, { "max": null, "score": 1 } ] },
+        { "id": "context_injection_tokens_total", "direction": "lower",
+          "note": "tool definitions + server instructions + prompts/list + resources/list",
+          "bands": [ { "max": 700, "score": 5 }, { "max": 2000, "score": 4 }, { "max": 5000, "score": 3 }, { "max": 12000, "score": 2 }, { "max": null, "score": 1 } ] },
+        { "id": "tool_count", "direction": "lower",
+          "note": "Scored gently. Many tools is not automatically bad; many EXPENSIVE tools is.",
+          "bands": [ { "max": 8, "score": 5 }, { "max": 20, "score": 4 }, { "max": 40, "score": 3 }, { "max": 80, "score": 2 }, { "max": null, "score": 1 } ] }
+      ]
+    },
+    {
+      "id": "schema_clarity",
+      "label": "Schema clarity",
+      "weight": 0.20,
+      "rationale": "A model calls a tool correctly on the first attempt or it pays for the retry. Clarity is measured as a rate, not a vibe.",
+      "signals": [
+        { "id": "pct_tools_with_description", "direction": "higher",
+          "bands": [ { "min": 1.0, "score": 5 }, { "min": 0.9, "score": 4 }, { "min": 0.7, "score": 3 }, { "min": 0.4, "score": 2 }, { "min": 0, "score": 1 } ] },
+        { "id": "pct_params_with_description", "direction": "higher",
+          "bands": [ { "min": 0.95, "score": 5 }, { "min": 0.8, "score": 4 }, { "min": 0.5, "score": 3 }, { "min": 0.2, "score": 2 }, { "min": 0, "score": 1 } ] },
+        { "id": "pct_tools_with_valid_object_schema", "direction": "higher",
+          "note": "inputSchema is type:object with a properties map, or is explicitly empty.",
+          "bands": [ { "min": 1.0, "score": 5 }, { "min": 0.9, "score": 4 }, { "min": 0.7, "score": 3 }, { "min": 0.4, "score": 2 }, { "min": 0, "score": 1 } ] },
+        { "id": "pct_tools_with_untyped_params", "direction": "lower",
+          "note": "Params with no type, or a bare object/array with no shape. Forces the model to guess.",
+          "bands": [ { "max": 0.0, "score": 5 }, { "max": 0.1, "score": 4 }, { "max": 0.25, "score": 3 }, { "max": 0.5, "score": 2 }, { "max": null, "score": 1 } ] },
+        { "id": "mean_description_chars", "direction": "range", "target_range": [40, 600],
+          "note": "Scored as distance from the range. Too short is unusable, too long is the token bill.",
+          "bands": [ { "max": 0.0, "score": 5 }, { "max": 0.5, "score": 4 }, { "max": 1.5, "score": 3 }, { "max": 3.0, "score": 2 }, { "max": null, "score": 1 } ],
+          "band_input": "relative distance outside target_range"
+        }
+      ]
+    },
+    {
+      "id": "error_legibility",
+      "label": "Error legibility",
+      "weight": 0.15,
+      "rationale": "Bad arguments happen. What comes back decides whether the model self-corrects in one turn or burns five.",
+      "probe": "Call each of up to 3 sampled tools with (a) a missing required argument and (b) a wrong-typed argument.",
+      "signals": [
+        { "id": "pct_errors_structured", "direction": "higher",
+          "note": "Returned as a JSON-RPC error with a code, or as isError content, rather than a crash or a hang.",
+          "bands": [ { "min": 1.0, "score": 5 }, { "min": 0.8, "score": 4 }, { "min": 0.5, "score": 3 }, { "min": 0.2, "score": 2 }, { "min": 0, "score": 1 } ] },
+        { "id": "pct_errors_naming_param", "direction": "higher",
+          "note": "The message contains the offending parameter name.",
+          "bands": [ { "min": 0.9, "score": 5 }, { "min": 0.6, "score": 4 }, { "min": 0.35, "score": 3 }, { "min": 0.1, "score": 2 }, { "min": 0, "score": 1 } ] },
+        { "id": "pct_errors_raw_stacktrace", "direction": "lower",
+          "bands": [ { "max": 0.0, "score": 5 }, { "max": 0.15, "score": 4 }, { "max": 0.35, "score": 3 }, { "max": 0.6, "score": 2 }, { "max": null, "score": 1 } ] },
+        { "id": "mean_error_tokens", "direction": "lower",
+          "note": "An error is context too. A 4,000-token stack trace is a cost event.",
+          "bands": [ { "max": 60, "score": 5 }, { "max": 150, "score": 4 }, { "max": 400, "score": 3 }, { "max": 1000, "score": 2 }, { "max": null, "score": 1 } ] }
+      ]
+    },
+    {
+      "id": "collision_risk",
+      "label": "Tool-name collision risk",
+      "weight": 0.10,
+      "rationale": "Names are the namespace. Generic names collide with every other installed server and the model picks wrong, silently.",
+      "signals": [
+        { "id": "pct_tools_generic_name", "direction": "lower",
+          "note": "Name matches the generic_name_corpus below.",
+          "bands": [ { "max": 0.0, "score": 5 }, { "max": 0.1, "score": 4 }, { "max": 0.25, "score": 3 }, { "max": 0.5, "score": 2 }, { "max": null, "score": 1 } ] },
+        { "id": "pct_tools_namespaced", "direction": "higher",
+          "note": "Name carries a server-specific prefix (prefix_verb_noun).",
+          "bands": [ { "min": 0.9, "score": 5 }, { "min": 0.6, "score": 4 }, { "min": 0.3, "score": 3 }, { "min": 0.1, "score": 2 }, { "min": 0, "score": 1 } ] },
+        { "id": "cohort_collision_count", "direction": "lower",
+          "note": "Computed at scoring time across the whole cohort, not per server in isolation.",
+          "bands": [ { "max": 0, "score": 5 }, { "max": 2, "score": 4 }, { "max": 5, "score": 3 }, { "max": 12, "score": 2 }, { "max": null, "score": 1 } ] }
+      ]
+    },
+    {
+      "id": "injection_surface",
+      "label": "Prompt-injection surface",
+      "weight": 0.15,
+      "rationale": "Tool descriptions are injected into the model's context verbatim and are attacker-controlled if the server is third-party. Text that instructs the model is a finding, not a feature.",
+      "signals": [
+        { "id": "imperative_directive_hits", "direction": "lower",
+          "note": "Descriptions containing directives aimed at the model.",
+          "bands": [ { "max": 0, "score": 5 }, { "max": 1, "score": 4 }, { "max": 3, "score": 3 }, { "max": 8, "score": 2 }, { "max": null, "score": 1 } ] },
+        { "id": "invisible_char_hits", "direction": "lower",
+          "note": "Zero-width, bidi-override, or Unicode tag characters in any description. Never legitimate.",
+          "bands": [ { "max": 0, "score": 5 }, { "max": 1, "score": 2 }, { "max": null, "score": 1 } ] },
+        { "id": "embedded_url_hits", "direction": "lower",
+          "bands": [ { "max": 0, "score": 5 }, { "max": 2, "score": 4 }, { "max": 6, "score": 3 }, { "max": 15, "score": 2 }, { "max": null, "score": 1 } ] },
+        { "id": "instructions_directive_hits", "direction": "lower",
+          "note": "Same scan applied to the server instructions field from initialize.",
+          "bands": [ { "max": 0, "score": 5 }, { "max": 1, "score": 4 }, { "max": 3, "score": 3 }, { "max": null, "score": 1 } ] }
+      ]
+    },
+    {
+      "id": "auth_hygiene",
+      "label": "Auth hygiene",
+      "weight": 0.10,
+      "rationale": "How the server asks for credentials, and whether it keeps them to itself.",
+      "signals": [
+        { "id": "secrets_via_argv", "direction": "lower",
+          "note": "Declared credential inputs passed as command-line args are visible in the process table to every process on the machine.",
+          "bands": [ { "max": 0, "score": 5 }, { "max": 1, "score": 3 }, { "max": null, "score": 1 } ] },
+        { "id": "canary_leaked", "direction": "boolean_false_good",
+          "note": "A unique canary string is planted in every credential env var. If it reappears in any response, error, or stderr line, the server echoes secrets. Hard fail.",
+          "bands": [ { "value": false, "score": 5 }, { "value": true, "score": 1 } ] },
+        { "id": "starts_without_credentials", "direction": "boolean_true_good",
+          "note": "Server completes initialize and tools/list with placeholder credentials. A server that cannot be inspected without live secrets cannot be audited by anyone, including its buyer.",
+          "bands": [ { "value": true, "score": 5 }, { "value": false, "score": 2 } ] },
+        { "id": "declared_secret_count", "direction": "lower",
+          "bands": [ { "max": 1, "score": 5 }, { "max": 2, "score": 4 }, { "max": 4, "score": 3 }, { "max": null, "score": 2 } ] }
+      ]
+    }
+  ],
+  "fault_taxonomy": {
+    "source": {
+      "paper": "Real Faults in Model Context Protocol (MCP) Software: a Comprehensive Taxonomy",
+      "authors": "Taraghi, Morovati, Khomh",
+      "arxiv": "2603.05637",
+      "version_read": "v2, revised 3 Aug 2026",
+      "structure": "5 high-level categories, 29 named fault types in the validated survey table, 419 manually assigned labels",
+      "correction_note": "An earlier internal brief described this paper as defining 19 tool-discovery/registration fault classes. It does not. Tool Discovery & Registration is ONE of the 29 fault types, inside the Server/Tool Configuration category. The list below is transcribed from Table 4 of the paper."
+    },
+    "category_share_of_labels": {
+      "Server/Tool Configuration": 0.3174,
+      "Server/Host Configuration": 0.2864,
+      "Server Setting": 0.2745,
+      "Documentation": 0.0692,
+      "General Programming": 0.0525
+    },
+    "observability_legend": {
+      "probe": "Detectable by this black-box harness as built.",
+      "partial": "Partially detectable; the probe sees a symptom, not the cause.",
+      "host-side": "A fault of the host/client, not the server. Out of scope for a server probe.",
+      "needs-credentials": "Requires live authenticated calls, which this harness deliberately never makes."
+    },
+    "fault_types": [
+      { "category": "Server Setting", "type": "Server Deployment", "prevalence": 0.5366, "severity_idx": 0.35, "effort_idx": 0.40, "observability": "probe", "check": "install_ok, process spawns, and initialize completes within the connect timeout" },
+      { "category": "Server Setting", "type": "Server Network Configuration", "prevalence": 0.4878, "severity_idx": 0.23, "effort_idx": 0.22, "observability": "partial", "check": "stdio transport declared and honoured" },
+      { "category": "Server Setting", "type": "API Usage", "prevalence": 0.6098, "severity_idx": 0.33, "effort_idx": 0.38, "observability": "needs-credentials", "check": null },
+      { "category": "Server Setting", "type": "Server Dependency", "prevalence": 0.4390, "severity_idx": 0.28, "effort_idx": 0.26, "observability": "probe", "check": "clean install into an empty prefix succeeds with --ignore-scripts; missing peer or native deps surface here" },
+      { "category": "Server Setting", "type": "Server Platform Incompatibility", "prevalence": 0.4878, "severity_idx": 0.38, "effort_idx": 0.35, "observability": "probe", "check": "runs on the recorded host platform; platform is recorded in every result so cross-platform faults stay attributable" },
+      { "category": "Server Setting", "type": "Server Infrastructure", "prevalence": 0.2927, "severity_idx": 0.31, "effort_idx": 0.32, "observability": "partial", "check": "startup does not require external infrastructure to answer tools/list" },
+      { "category": "Server Setting", "type": "Server Logging", "prevalence": 0.3902, "severity_idx": 0.20, "effort_idx": 0.33, "observability": "probe", "check": "stderr carries logs and stdout carries only JSON-RPC frames; log volume during a quiet session is bounded" },
+      { "category": "Server Setting", "type": "Server Resource Synchronization", "prevalence": 0.1951, "severity_idx": 0.19, "effort_idx": 0.18, "observability": "partial", "check": "two consecutive tools/list calls in one session return identical results" },
+      { "category": "Server Setting", "type": "Server Resource Handling", "prevalence": 0.4146, "severity_idx": 0.36, "effort_idx": 0.28, "observability": "probe", "check": "process exits on stdin close; no orphan after client disconnect" },
+      { "category": "Server/Tool Configuration", "type": "Tool Authentication", "prevalence": 0.3824, "severity_idx": 0.33, "effort_idx": 0.41, "observability": "probe", "check": "auth_hygiene dimension: declared secrets, argv exposure, canary leak" },
+      { "category": "Server/Tool Configuration", "type": "Tool Authorization", "prevalence": 0.2059, "severity_idx": 0.35, "effort_idx": 0.35, "observability": "needs-credentials", "check": null },
+      { "category": "Server/Tool Configuration", "type": "Tool Call / Execution", "prevalence": 0.5294, "severity_idx": 0.28, "effort_idx": 0.30, "observability": "partial", "check": "a malformed call returns rather than hanging or killing the process" },
+      { "category": "Server/Tool Configuration", "type": "Tool Response Handling", "prevalence": 0.6667, "severity_idx": 0.35, "effort_idx": 0.39, "observability": "partial", "check": "responses conform to the content-block shape; error_legibility dimension" },
+      { "category": "Server/Tool Configuration", "type": "Tool Discovery & Registration", "prevalence": 0.2727, "severity_idx": 0.37, "effort_idx": 0.36, "observability": "probe", "check": "tools/list returns a non-empty, pagination-complete, schema-valid list with unique names" },
+      { "category": "Server/Tool Configuration", "type": "Tool Dependency", "prevalence": 0.2424, "severity_idx": 0.31, "effort_idx": 0.31, "observability": "partial", "check": "no tool description declares an undocumented prerequisite tool call" },
+      { "category": "Server/Tool Configuration", "type": "Tool Connection Synchronization", "prevalence": 0.3939, "severity_idx": 0.28, "effort_idx": 0.28, "observability": "partial", "check": "no protocol errors or response-id mismatches during the session" },
+      { "category": "Server/Tool Configuration", "type": "Incorrect Tool Connection Setting", "prevalence": 0.2424, "severity_idx": 0.21, "effort_idx": 0.24, "observability": "probe", "check": "the transport and command declared in the registry entry actually start the server" },
+      { "category": "Server/Host Configuration", "type": "Host's Server Config", "prevalence": 0.5333, "severity_idx": 0.24, "effort_idx": 0.18, "observability": "host-side", "check": null },
+      { "category": "Server/Host Configuration", "type": "Host Logging", "prevalence": 0.1379, "severity_idx": 0.10, "effort_idx": 0.13, "observability": "host-side", "check": null },
+      { "category": "Server/Host Configuration", "type": "Large Language Model (LLM)", "prevalence": 0.5333, "severity_idx": 0.26, "effort_idx": 0.36, "observability": "host-side", "check": null },
+      { "category": "Server/Host Configuration", "type": "Host Dependency", "prevalence": 0.4000, "severity_idx": 0.25, "effort_idx": 0.25, "observability": "host-side", "check": null },
+      { "category": "Server/Host Configuration", "type": "Host's Hook Config", "prevalence": 0.1667, "severity_idx": 0.07, "effort_idx": 0.07, "observability": "host-side", "check": null },
+      { "category": "Server/Host Configuration", "type": "Host Authorization", "prevalence": 0.1333, "severity_idx": 0.10, "effort_idx": 0.18, "observability": "host-side", "check": null },
+      { "category": "Server/Host Configuration", "type": "Host Connection Mismatch", "prevalence": 0.4333, "severity_idx": 0.42, "effort_idx": 0.25, "observability": "partial", "check": "the protocol version negotiated at initialize is recorded; a server that refuses the current client version is a mismatch source" },
+      { "category": "Server/Host Configuration", "type": "Incorrect Host Connection Setting", "prevalence": 0.2333, "severity_idx": 0.33, "effort_idx": 0.20, "observability": "host-side", "check": null },
+      { "category": "Server/Host Configuration", "type": "Host Connection Synchronization", "prevalence": 0.3667, "severity_idx": 0.27, "effort_idx": 0.27, "observability": "host-side", "check": null },
+      { "category": "Server/Host Configuration", "type": "Session Isolation", "prevalence": 0.2000, "severity_idx": 0.27, "effort_idx": 0.23, "observability": "partial", "check": "two sequential sessions against the same install return identical tool lists, so no state bleeds between sessions" },
+      { "category": "Server/Host Configuration", "type": "Session Update", "prevalence": 0.2333, "severity_idx": 0.27, "effort_idx": 0.23, "observability": "host-side", "check": null },
+      { "category": "Documentation", "type": "Documentation", "prevalence": 0.6452, "severity_idx": 0.25, "effort_idx": 0.29, "observability": "probe", "check": "schema_clarity dimension plus presence of a description on the registry entry" }
+    ]
+  },
+  "generic_name_corpus": [
+    "search", "query", "get", "list", "read", "write", "create", "update", "delete",
+    "fetch", "run", "execute", "exec", "call", "send", "add", "remove", "find",
+    "read_file", "write_file", "list_files", "search_files", "get_data", "run_query",
+    "help", "status", "info", "ping", "test", "echo", "eval", "shell", "command"
+  ],
+  "injection_directive_patterns": [
+    "ignore (all )?(previous|prior|above)",
+    "disregard (the )?(previous|prior|above|system)",
+    "do not (tell|inform|mention|reveal|show)( this)?( to)? the user",
+    "without (telling|informing|asking) the user",
+    "you (must|should) always (call|use|invoke)",
+    "always (call|use|invoke) this tool (first|before)",
+    "before (responding|answering)[^.]{0,40}(you must|always)",
+    "system prompt",
+    "new instructions?:",
+    "</?(system|instructions?|important)>",
+    "act as (if|though)",
+    "bypass",
+    "your (real|true) (task|goal|objective) is"
+  ],
+  "scoring": {
+    "method": "Each signal scores 1-5 by band. A dimension score is the unweighted mean of its measurable signals. The overall score is the weighted mean of dimension scores, renormalised over measured dimensions.",
+    "unmeasured_policy": "A dimension that could not be measured is recorded as null and dropped from the weighted mean. It is never imputed and never scored as zero.",
+    "grades": [
+      { "min": 4.5, "grade": "A" }, { "min": 3.75, "grade": "B" }, { "min": 3.0, "grade": "C" },
+      { "min": 2.25, "grade": "D" }, { "min": 0, "grade": "F" }
+    ],
+    "hard_fail_signals": ["canary_leaked", "invisible_char_hits"],
+    "hard_fail_policy": "A hard-fail signal caps the overall grade at D regardless of the weighted score, and is reported verbatim."
+  },
+  "explicitly_not_measured": [
+    "Per-call response token cost against live data. Requires real credentials, which the harness never holds. Tier 2, out of spike scope.",
+    "Runtime latency. Not reproducible on a shared desktop under variable load.",
+    "Correctness of tool output. Requires ground truth per server.",
+    "Remote-only servers (streamable-http or SSE with no installable package). Recorded as skipped, with reason.",
+    "Anything requiring a model in the loop. v1.0.0 is deliberately inference-free so the numbers are deterministic; a model-judged layer can be added at v1.1 once the deterministic floor is proven reproducible."
+  ]
+}

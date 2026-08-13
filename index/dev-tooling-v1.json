@@ -1,0 +1,1514 @@
+{
+  "index_id": "dev-tooling-v1",
+  "generated_from": {
+    "run_id": "run-2026-08-13-0208-7936eadf",
+    "config_hash": "7936eadff6487bd905f5bbba40f3940dddb7bb3531ee31282fedd6d0a916313f",
+    "measured_at": "2026-08-13T02:26:47.158Z",
+    "harness_version": "0.1.4",
+    "rubric_measured_under": "mcp-server-quality@1.1.1",
+    "rubric_scored_under": "mcp-server-quality@1.1.1",
+    "tokenizer": {
+      "library": "gpt-tokenizer",
+      "encoding": "o200k_base",
+      "model_alias": "gpt-4o"
+    },
+    "cohort_selection_hash": "9e40a7e2fc407f20d9ad20a82d7b66d23ebfa94c07f4417246d9920119610589",
+    "mcp_clients": {
+      "legacy": "1.30.0",
+      "modern": "2.0.0"
+    },
+    "failure_classes_spec": "failure-classes@1.1.0"
+  },
+  "caveats": [
+    "The cohort is ranked by npm downloads within one vertical from a dated registry snapshot. It is a sample of what a buyer plausibly has installed, not a random sample of the registry, and must never be described as representative.",
+    "Defect counts are a floor, not a total: these rules see only what a black-box probe without live credentials can see. Nothing here covers output correctness, runtime behaviour, or anything behind an auth wall.",
+    "Grades are an editorial reading of the signals under a named rubric and change whenever the rubric does. The signals do not change.",
+    "Token counts are tokenizer-dependent. This index uses gpt-tokenizer o200k_base; a different tokenizer gives different absolute numbers and very similar ratios.",
+    "Servers that could not be measured are reported with an attribution (server, harness or environment) rather than as a defect of the server."
+  ],
+  "totals": {
+    "attempted": 50,
+    "probed": 38,
+    "token_spread": {
+      "min": 335,
+      "max": 125005,
+      "ratio": 373.1,
+      "total_if_all_installed": 270244
+    },
+    "servers_with_at_least_one_defect": 31,
+    "handshakes_raw": {
+      "legacy": 38,
+      "none": 11,
+      "not_reached": 1
+    },
+    "handshakes": {
+      "modern": 0,
+      "legacy": 38,
+      "neither_while_speaking_jsonrpc": 0,
+      "did_not_start_so_never_asked": 11,
+      "note": "The last bucket is not a protocol finding: those servers failed before any handshake could complete, most of them because they refuse to start without live credentials or deployment details. Their causes and attributions are on each server record."
+    }
+  },
+  "servers": [
+    {
+      "registry_name": "com.smartbear/smartbear-mcp",
+      "npm_package": "@smartbear/mcp",
+      "pinned_version": "0.34.0",
+      "downloads_last_week": 14432,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 149,
+      "tool_definition_tokens": 125005,
+      "tokens_per_tool_median": 583,
+      "tokens_per_tool_max": 4985,
+      "heaviest_tool": "qtm4j_search_test_cases",
+      "context_injection_tokens_total": 125048,
+      "grade": "D",
+      "uncapped_grade": "C",
+      "caps_applied": [
+        {
+          "id": "tool_defs_10k_caps_at_c",
+          "max_grade": "C",
+          "signal": "tool_definition_tokens",
+          "value": 125005,
+          "label": "Tool definitions cost 10,000+ tokens"
+        },
+        {
+          "id": "tool_defs_25k_caps_at_d",
+          "max_grade": "D",
+          "signal": "tool_definition_tokens",
+          "value": 125005,
+          "label": "Tool definitions cost 25,000+ tokens"
+        }
+      ],
+      "overall_score": 3.53,
+      "defects": {
+        "count": 8,
+        "major": 3,
+        "minor": 5,
+        "ids": [
+          "tool_defs_over_10k",
+          "context_injection_over_12k",
+          "median_tool_over_500",
+          "tool_count_over_40",
+          "untyped_params",
+          "description_length_out_of_band",
+          "many_embedded_urls",
+          "many_declared_secrets"
+        ]
+      }
+    },
+    {
+      "registry_name": "com.postman/postman-mcp-server",
+      "npm_package": "@postman/postman-mcp-server",
+      "pinned_version": "2.11.2",
+      "downloads_last_week": 4937,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 42,
+      "tool_definition_tokens": 33553,
+      "tokens_per_tool_median": 236.5,
+      "tokens_per_tool_max": 8864,
+      "heaviest_tool": "putCollection",
+      "context_injection_tokens_total": 33622,
+      "grade": "D",
+      "uncapped_grade": "C",
+      "caps_applied": [
+        {
+          "id": "tool_defs_10k_caps_at_c",
+          "max_grade": "C",
+          "signal": "tool_definition_tokens",
+          "value": 33553,
+          "label": "Tool definitions cost 10,000+ tokens"
+        },
+        {
+          "id": "tool_defs_25k_caps_at_d",
+          "max_grade": "D",
+          "signal": "tool_definition_tokens",
+          "value": 33553,
+          "label": "Tool definitions cost 25,000+ tokens"
+        }
+      ],
+      "overall_score": 3.742,
+      "defects": {
+        "count": 5,
+        "major": 2,
+        "minor": 3,
+        "ids": [
+          "tool_defs_over_10k",
+          "context_injection_over_12k",
+          "tool_count_over_40",
+          "weak_namespacing",
+          "many_embedded_urls"
+        ]
+      }
+    },
+    {
+      "registry_name": "com.gitkraken/gk-cli",
+      "npm_package": "@gitkraken/gk",
+      "pinned_version": "3.1.70",
+      "downloads_last_week": 4795,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 31,
+      "tool_definition_tokens": 5581,
+      "tokens_per_tool_median": 147,
+      "tokens_per_tool_max": 551,
+      "heaviest_tool": "issues_assigned_to_me",
+      "context_injection_tokens_total": 5755,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.179,
+      "defects": {
+        "count": 2,
+        "major": 1,
+        "minor": 1,
+        "ids": [
+          "errors_do_not_name_param",
+          "cohort_name_collision"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.b1ff/atlassian-dc-mcp-jira",
+      "npm_package": "@atlassian-dc-mcp/jira",
+      "pinned_version": "0.29.0",
+      "downloads_last_week": 3716,
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "id": "requires_deployment_config",
+        "attribution": "server",
+        "label": "Requires instance-specific deployment details before it will list tools"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "com.mendapi/mendapi",
+      "npm_package": "mendapi",
+      "pinned_version": "0.5.6",
+      "downloads_last_week": 2188,
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "id": "silent_exit",
+        "attribution": "server",
+        "label": "Closed the connection with no diagnostic output at all"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "io.github.b1ff/atlassian-dc-mcp-bitbucket",
+      "npm_package": "@atlassian-dc-mcp/bitbucket",
+      "pinned_version": "0.29.0",
+      "downloads_last_week": 1579,
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "id": "requires_deployment_config",
+        "attribution": "server",
+        "label": "Requires instance-specific deployment details before it will list tools"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "com.githits/githits",
+      "npm_package": "githits",
+      "pinned_version": "0.8.0",
+      "downloads_last_week": 1577,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 15,
+      "tool_definition_tokens": 10297,
+      "tokens_per_tool_median": 610,
+      "tokens_per_tool_max": 1694,
+      "heaviest_tool": "search",
+      "context_injection_tokens_total": 11272,
+      "grade": "C",
+      "uncapped_grade": "B",
+      "caps_applied": [
+        {
+          "id": "tool_defs_10k_caps_at_c",
+          "max_grade": "C",
+          "signal": "tool_definition_tokens",
+          "value": 10297,
+          "label": "Tool definitions cost 10,000+ tokens"
+        }
+      ],
+      "overall_score": 3.995,
+      "defects": {
+        "count": 6,
+        "major": 3,
+        "minor": 3,
+        "ids": [
+          "tool_defs_over_10k",
+          "median_tool_over_500",
+          "params_missing_description",
+          "description_length_out_of_band",
+          "cohort_name_collision",
+          "generic_tool_names"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.AkashGoenka/coldstart",
+      "npm_package": "@cstart/coldstart",
+      "pinned_version": "2.2.17",
+      "downloads_last_week": 849,
+      "status": "install_failed",
+      "handshake": null,
+      "protocol_version": null,
+      "failure": null,
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "io.github.AINative-Studio/ainative-zerodb-memory-mcp",
+      "npm_package": "ainative-zerodb-memory-mcp",
+      "pinned_version": "1.2.7",
+      "downloads_last_week": 804,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 18,
+      "tool_definition_tokens": 2539,
+      "tokens_per_tool_median": 129,
+      "tokens_per_tool_max": 247,
+      "heaviest_tool": "zerodb_search_memory",
+      "context_injection_tokens_total": 2539,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.36,
+      "defects": {
+        "count": 3,
+        "major": 3,
+        "minor": 0,
+        "ids": [
+          "untyped_params",
+          "errors_unstructured",
+          "accepts_malformed_args"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.Alex88Ryabov/ng-token-saver",
+      "npm_package": "@alex-apps/ng-token-saver",
+      "pinned_version": "0.1.7",
+      "downloads_last_week": 653,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 6,
+      "tool_definition_tokens": 787,
+      "tokens_per_tool_median": 133.5,
+      "tokens_per_tool_max": 189,
+      "heaviest_tool": "ng_find_usages",
+      "context_injection_tokens_total": 787,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.71,
+      "defects": {
+        "count": 1,
+        "major": 1,
+        "minor": 0,
+        "ids": [
+          "params_missing_description"
+        ]
+      }
+    },
+    {
+      "registry_name": "dev.aicommander/mcp",
+      "npm_package": "@aicommander/mcp",
+      "pinned_version": "1.0.17",
+      "downloads_last_week": 630,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 3,
+      "tool_definition_tokens": 1278,
+      "tokens_per_tool_median": 318,
+      "tokens_per_tool_max": 747,
+      "heaviest_tool": "remote_exec",
+      "context_injection_tokens_total": 1420,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.512,
+      "defects": {
+        "count": 2,
+        "major": 1,
+        "minor": 1,
+        "ids": [
+          "description_length_out_of_band",
+          "model_directive_in_description"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.aryamthecodebreaker/fixmap",
+      "npm_package": "@aryam/fixmap",
+      "pinned_version": "0.8.8",
+      "downloads_last_week": 509,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 5,
+      "tool_definition_tokens": 1330,
+      "tokens_per_tool_median": 282,
+      "tokens_per_tool_max": 466,
+      "heaviest_tool": "fixmap_plan",
+      "context_injection_tokens_total": 1330,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.7,
+      "defects": {
+        "count": 0,
+        "major": 0,
+        "minor": 0,
+        "ids": []
+      }
+    },
+    {
+      "registry_name": "io.github.Azure/containerization-assist",
+      "npm_package": "containerization-assist-mcp",
+      "pinned_version": "1.5.0",
+      "downloads_last_week": 484,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 15,
+      "tool_definition_tokens": 5936,
+      "tokens_per_tool_median": 326,
+      "tokens_per_tool_max": 1024,
+      "heaviest_tool": "generate-k8s-manifests",
+      "context_injection_tokens_total": 5965,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.248,
+      "defects": {
+        "count": 1,
+        "major": 1,
+        "minor": 0,
+        "ids": [
+          "untyped_params"
+        ]
+      }
+    },
+    {
+      "registry_name": "com.kenxcomp/kenotex-mcp",
+      "npm_package": "kenotex-mcp",
+      "pinned_version": "1.2.3",
+      "downloads_last_week": 432,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 22,
+      "tool_definition_tokens": 2351,
+      "tokens_per_tool_median": 92.5,
+      "tokens_per_tool_max": 276,
+      "heaviest_tool": "create_todo",
+      "context_injection_tokens_total": 2351,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.184,
+      "defects": {
+        "count": 3,
+        "major": 2,
+        "minor": 1,
+        "ids": [
+          "params_missing_description",
+          "cohort_name_collision",
+          "weak_namespacing"
+        ]
+      }
+    },
+    {
+      "registry_name": "com.driflyte/driflyte-mcp-server",
+      "npm_package": "@driflyte/mcp-server",
+      "pinned_version": "0.1.15",
+      "downloads_last_week": 399,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-06-18",
+      "failure": null,
+      "tools": 2,
+      "tool_definition_tokens": 541,
+      "tokens_per_tool_median": 269.5,
+      "tokens_per_tool_max": 398,
+      "heaviest_tool": "search",
+      "context_injection_tokens_total": 1133,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.396,
+      "defects": {
+        "count": 3,
+        "major": 1,
+        "minor": 2,
+        "ids": [
+          "cohort_name_collision",
+          "generic_tool_names",
+          "weak_namespacing"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.alexcloudstar/makers-page-mcp",
+      "npm_package": "makers-page-mcp",
+      "pinned_version": "0.1.2",
+      "downloads_last_week": 376,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 8,
+      "tool_definition_tokens": 674,
+      "tokens_per_tool_median": 85.5,
+      "tokens_per_tool_max": 117,
+      "heaviest_tool": "create_draft",
+      "context_injection_tokens_total": 674,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.783,
+      "defects": {
+        "count": 0,
+        "major": 0,
+        "minor": 0,
+        "ids": []
+      }
+    },
+    {
+      "registry_name": "io.github.AugustusW/sharedoc-mcp",
+      "npm_package": "sharedoc-mcp",
+      "pinned_version": "2.1.4",
+      "downloads_last_week": 351,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 8,
+      "tool_definition_tokens": 877,
+      "tokens_per_tool_median": 111.5,
+      "tokens_per_tool_max": 139,
+      "heaviest_tool": "search_shared_docs",
+      "context_injection_tokens_total": 877,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.615,
+      "defects": {
+        "count": 1,
+        "major": 1,
+        "minor": 0,
+        "ids": [
+          "params_missing_description"
+        ]
+      }
+    },
+    {
+      "registry_name": "com.docfork/docfork-mcp",
+      "npm_package": "docfork",
+      "pinned_version": "1.3.0",
+      "downloads_last_week": 331,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 2,
+      "tool_definition_tokens": 335,
+      "tokens_per_tool_median": 167,
+      "tokens_per_tool_max": 224,
+      "heaviest_tool": "docfork_search_docs",
+      "context_injection_tokens_total": 335,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.887,
+      "defects": {
+        "count": 0,
+        "major": 0,
+        "minor": 0,
+        "ids": []
+      }
+    },
+    {
+      "registry_name": "io.github.BASHBOP/otito",
+      "npm_package": "@bashbop/otito",
+      "pinned_version": "1.6.0",
+      "downloads_last_week": 308,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-06-18",
+      "failure": null,
+      "tools": 13,
+      "tool_definition_tokens": 2805,
+      "tokens_per_tool_median": 221,
+      "tokens_per_tool_max": 439,
+      "heaviest_tool": "review_gate",
+      "context_injection_tokens_total": 2805,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.475,
+      "defects": {
+        "count": 0,
+        "major": 0,
+        "minor": 0,
+        "ids": []
+      }
+    },
+    {
+      "registry_name": "com.pinappai/mcp",
+      "npm_package": "@pinappai/mcp",
+      "pinned_version": "0.9.9",
+      "downloads_last_week": 257,
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "id": "refuses_placeholder_credentials",
+        "attribution": "server",
+        "label": "Refuses to start without valid credentials"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "dev.sexai/sexai-mcp",
+      "npm_package": "sexai-mcp",
+      "pinned_version": "0.11.11",
+      "downloads_last_week": 257,
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "id": "refuses_placeholder_credentials",
+        "attribution": "server",
+        "label": "Refuses to start without valid credentials"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "io.github.Belius303/frappe-inspector",
+      "npm_package": "@frappe-inspector/mcp",
+      "pinned_version": "1.4.0",
+      "downloads_last_week": 255,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 12,
+      "tool_definition_tokens": 1179,
+      "tokens_per_tool_median": 96,
+      "tokens_per_tool_max": 148,
+      "heaviest_tool": "explain_frappe_finding",
+      "context_injection_tokens_total": 1179,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.549,
+      "defects": {
+        "count": 1,
+        "major": 1,
+        "minor": 0,
+        "ids": [
+          "params_missing_description"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.alfredoizdev/contextforge-mcp",
+      "npm_package": "contextforge-mcp",
+      "pinned_version": "0.5.0",
+      "downloads_last_week": 243,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 67,
+      "tool_definition_tokens": 7550,
+      "tokens_per_tool_median": 99,
+      "tokens_per_tool_max": 394,
+      "heaviest_tool": "memory_ingest",
+      "context_injection_tokens_total": 7550,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.133,
+      "defects": {
+        "count": 3,
+        "major": 2,
+        "minor": 1,
+        "ids": [
+          "tool_count_over_40",
+          "params_missing_description",
+          "untyped_params"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.aryankumar06/infimium",
+      "npm_package": "infimium",
+      "pinned_version": "0.3.1",
+      "downloads_last_week": 241,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 11,
+      "tool_definition_tokens": 790,
+      "tokens_per_tool_median": 61,
+      "tokens_per_tool_max": 132,
+      "heaviest_tool": "project_memory",
+      "context_injection_tokens_total": 790,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.465,
+      "defects": {
+        "count": 4,
+        "major": 2,
+        "minor": 2,
+        "ids": [
+          "params_missing_description",
+          "cohort_name_collision",
+          "generic_tool_names",
+          "many_declared_secrets"
+        ]
+      }
+    },
+    {
+      "registry_name": "com.adrianczuczka/mason",
+      "npm_package": "mason-context",
+      "pinned_version": "0.6.0",
+      "downloads_last_week": 216,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 18,
+      "tool_definition_tokens": 4060,
+      "tokens_per_tool_median": 187,
+      "tokens_per_tool_max": 462,
+      "heaviest_tool": "save_snapshot",
+      "context_injection_tokens_total": 4409,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.253,
+      "defects": {
+        "count": 3,
+        "major": 3,
+        "minor": 0,
+        "ids": [
+          "untyped_params",
+          "cohort_name_collision",
+          "model_directive_in_description"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.ashfordeOU/grasp",
+      "npm_package": "grasp-mcp-server",
+      "pinned_version": "3.21.0",
+      "downloads_last_week": 200,
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "id": "scans_working_directory",
+        "attribution": "server",
+        "label": "Blocks startup on indexing its working directory"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "ai.wild-card/deepcontext",
+      "npm_package": "@wildcard-ai/deepcontext",
+      "pinned_version": "0.1.15",
+      "downloads_last_week": 198,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2024-11-05",
+      "failure": null,
+      "tools": 4,
+      "tool_definition_tokens": 2079,
+      "tokens_per_tool_median": 365.5,
+      "tokens_per_tool_max": 1038,
+      "heaviest_tool": "search_codebase",
+      "context_injection_tokens_total": 2106,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 3.849,
+      "defects": {
+        "count": 6,
+        "major": 3,
+        "minor": 3,
+        "ids": [
+          "params_missing_description",
+          "description_length_out_of_band",
+          "errors_unstructured",
+          "accepts_malformed_args",
+          "errors_do_not_name_param",
+          "many_declared_secrets"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.BasilSkyWalk/parecode",
+      "npm_package": "parecode",
+      "pinned_version": "0.7.0",
+      "downloads_last_week": 198,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 3,
+      "tool_definition_tokens": 1636,
+      "tokens_per_tool_median": 546,
+      "tokens_per_tool_max": 814,
+      "heaviest_tool": "ParecodeEdit",
+      "context_injection_tokens_total": 1636,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.262,
+      "defects": {
+        "count": 5,
+        "major": 2,
+        "minor": 3,
+        "ids": [
+          "median_tool_over_500",
+          "description_length_out_of_band",
+          "errors_unstructured",
+          "accepts_malformed_args",
+          "weak_namespacing"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.aaronsb/jira-cloud",
+      "npm_package": "@aaronsb/jira-cloud-mcp",
+      "pinned_version": "0.10.0",
+      "downloads_last_week": 192,
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "id": "requires_deployment_config",
+        "attribution": "server",
+        "label": "Requires instance-specific deployment details before it will list tools"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "com.get-obra/obra-cto",
+      "npm_package": "obra-cto",
+      "pinned_version": "0.3.0",
+      "downloads_last_week": 163,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 5,
+      "tool_definition_tokens": 1031,
+      "tokens_per_tool_median": 162,
+      "tokens_per_tool_max": 423,
+      "heaviest_tool": "score_build_readiness",
+      "context_injection_tokens_total": 1031,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.696,
+      "defects": {
+        "count": 0,
+        "major": 0,
+        "minor": 0,
+        "ids": []
+      }
+    },
+    {
+      "registry_name": "eu.metaengine/mcp-server",
+      "npm_package": "@metaengine/mcp-server",
+      "pinned_version": "1.4.1",
+      "downloads_last_week": 142,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 7,
+      "tool_definition_tokens": 12446,
+      "tokens_per_tool_median": 1547,
+      "tokens_per_tool_max": 6089,
+      "heaviest_tool": "generate_code",
+      "context_injection_tokens_total": 12524,
+      "grade": "C",
+      "uncapped_grade": "B",
+      "caps_applied": [
+        {
+          "id": "tool_defs_10k_caps_at_c",
+          "max_grade": "C",
+          "signal": "tool_definition_tokens",
+          "value": 12446,
+          "label": "Tool definitions cost 10,000+ tokens"
+        },
+        {
+          "id": "median_tool_1200_caps_at_c",
+          "max_grade": "C",
+          "signal": "tokens_per_tool_median",
+          "value": 1547,
+          "label": "Median tool costs 1,200+ tokens"
+        }
+      ],
+      "overall_score": 3.783,
+      "defects": {
+        "count": 5,
+        "major": 3,
+        "minor": 2,
+        "ids": [
+          "tool_defs_over_10k",
+          "context_injection_over_12k",
+          "median_tool_over_500",
+          "untyped_params",
+          "description_length_out_of_band"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.AndyAnh174/vibe-hnindex",
+      "npm_package": "vibe-hnindex",
+      "pinned_version": "0.1.2",
+      "downloads_last_week": 131,
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "id": "missing_native_binary",
+        "attribution": "harness",
+        "label": "Ships a binary fetched by a postinstall script, which this harness suppresses"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "io.github.aradar46/reuse-before-generate",
+      "npm_package": "reuse-before-generate",
+      "pinned_version": "0.2.3",
+      "downloads_last_week": 124,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 1,
+      "tool_definition_tokens": 557,
+      "tokens_per_tool_median": 555,
+      "tokens_per_tool_max": 555,
+      "heaviest_tool": "check_before_building",
+      "context_injection_tokens_total": 557,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.66,
+      "defects": {
+        "count": 2,
+        "major": 0,
+        "minor": 2,
+        "ids": [
+          "median_tool_over_500",
+          "description_length_out_of_band"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.Aderix/vantagate-mcp-server",
+      "npm_package": "@vantagate/mcp-server",
+      "pinned_version": "1.0.2",
+      "downloads_last_week": 117,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 2,
+      "tool_definition_tokens": 817,
+      "tokens_per_tool_median": 408,
+      "tokens_per_tool_max": 572,
+      "heaviest_tool": "create_vantagate_checkpoint",
+      "context_injection_tokens_total": 817,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.502,
+      "defects": {
+        "count": 2,
+        "major": 1,
+        "minor": 1,
+        "ids": [
+          "untyped_params",
+          "description_length_out_of_band"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.AshMet/vibemap-mcp",
+      "npm_package": "@vibemap.ai/mcp-server",
+      "pinned_version": "2.8.1",
+      "downloads_last_week": 116,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 35,
+      "tool_definition_tokens": 5787,
+      "tokens_per_tool_median": 137,
+      "tokens_per_tool_max": 643,
+      "heaviest_tool": "vibemap_create_persona",
+      "context_injection_tokens_total": 6394,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.205,
+      "defects": {
+        "count": 1,
+        "major": 1,
+        "minor": 0,
+        "ids": [
+          "params_missing_description"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.attebury/remogram",
+      "npm_package": "@remogram/mcp",
+      "pinned_version": "0.2.0-beta.4",
+      "downloads_last_week": 99,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 40,
+      "tool_definition_tokens": 4397,
+      "tokens_per_tool_median": 81,
+      "tokens_per_tool_max": 324,
+      "heaviest_tool": "cr_open",
+      "context_injection_tokens_total": 4397,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.237,
+      "defects": {
+        "count": 3,
+        "major": 2,
+        "minor": 1,
+        "ids": [
+          "params_missing_description",
+          "cohort_name_collision",
+          "many_declared_secrets"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.Abhishekkumar2021/github",
+      "npm_package": "@abhishekmcp/github",
+      "pinned_version": "0.2.0",
+      "downloads_last_week": 98,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 16,
+      "tool_definition_tokens": 1364,
+      "tokens_per_tool_median": 86,
+      "tokens_per_tool_max": 129,
+      "heaviest_tool": "list_issues",
+      "context_injection_tokens_total": 1364,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.52,
+      "defects": {
+        "count": 2,
+        "major": 2,
+        "minor": 0,
+        "ids": [
+          "params_missing_description",
+          "cohort_name_collision"
+        ]
+      }
+    },
+    {
+      "registry_name": "ai.getoptimal/optibot",
+      "npm_package": "@optimalai/optibot-mcp",
+      "pinned_version": "1.4.1",
+      "downloads_last_week": 86,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 22,
+      "tool_definition_tokens": 1958,
+      "tokens_per_tool_median": 60.5,
+      "tokens_per_tool_max": 287,
+      "heaviest_tool": "trigger_security_scan",
+      "context_injection_tokens_total": 1958,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.592,
+      "defects": {
+        "count": 0,
+        "major": 0,
+        "minor": 0,
+        "ids": []
+      }
+    },
+    {
+      "registry_name": "io.github.AutomateLab-tech/content-distribution",
+      "npm_package": "@automatelab/content-distribution-mcp",
+      "pinned_version": "2.2.1",
+      "downloads_last_week": 85,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 8,
+      "tool_definition_tokens": 4235,
+      "tokens_per_tool_median": 367.5,
+      "tokens_per_tool_max": 1154,
+      "heaviest_tool": "post.publish",
+      "context_injection_tokens_total": 4235,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.32,
+      "defects": {
+        "count": 2,
+        "major": 1,
+        "minor": 1,
+        "ids": [
+          "params_missing_description",
+          "many_declared_secrets"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.alisaitteke/npm-mcp",
+      "npm_package": "@alisaitteke/npm-mcp",
+      "pinned_version": "0.0.3",
+      "downloads_last_week": 76,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 12,
+      "tool_definition_tokens": 1013,
+      "tokens_per_tool_median": 82.5,
+      "tokens_per_tool_max": 119,
+      "heaviest_tool": "analyze_npx_command",
+      "context_injection_tokens_total": 1261,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.623,
+      "defects": {
+        "count": 1,
+        "major": 1,
+        "minor": 0,
+        "ids": [
+          "untyped_params"
+        ]
+      }
+    },
+    {
+      "registry_name": "com.trestlescan/trestle",
+      "npm_package": "@trestlescan/mcp",
+      "pinned_version": "1.4.1",
+      "downloads_last_week": 68,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 5,
+      "tool_definition_tokens": 356,
+      "tokens_per_tool_median": 57,
+      "tokens_per_tool_max": 134,
+      "heaviest_tool": "scan_proposed",
+      "context_injection_tokens_total": 1100,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.557,
+      "defects": {
+        "count": 3,
+        "major": 1,
+        "minor": 2,
+        "ids": [
+          "params_missing_description",
+          "errors_do_not_name_param",
+          "generic_tool_names"
+        ]
+      }
+    },
+    {
+      "registry_name": "com.formpaste/formpaste",
+      "npm_package": "formpaste-mcp",
+      "pinned_version": "1.0.1",
+      "downloads_last_week": 63,
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "id": "refuses_placeholder_credentials",
+        "attribution": "server",
+        "label": "Refuses to start without valid credentials"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "io.github.Algiras/debugium",
+      "npm_package": "@algiras/debugium",
+      "pinned_version": "0.1.2",
+      "downloads_last_week": 61,
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "id": "missing_native_binary",
+        "attribution": "harness",
+        "label": "Ships a binary fetched by a postinstall script, which this harness suppresses"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "io.github.apatilgtn/k8scortex-mcp",
+      "npm_package": "k8scortex-mcp",
+      "pinned_version": "1.0.2",
+      "downloads_last_week": 54,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 75,
+      "tool_definition_tokens": 7943,
+      "tokens_per_tool_median": 92,
+      "tokens_per_tool_max": 225,
+      "heaviest_tool": "set_resource_limits",
+      "context_injection_tokens_total": 7943,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 3.918,
+      "defects": {
+        "count": 6,
+        "major": 4,
+        "minor": 2,
+        "ids": [
+          "tool_count_over_40",
+          "untyped_params",
+          "errors_unstructured",
+          "accepts_malformed_args",
+          "errors_do_not_name_param",
+          "cohort_name_collision"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.bgauryy/octocode-mcp",
+      "npm_package": "octocode-mcp",
+      "pinned_version": "7.0.9",
+      "downloads_last_week": null,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-06-18",
+      "failure": null,
+      "tools": 5,
+      "tool_definition_tokens": 5451,
+      "tokens_per_tool_median": 1058,
+      "tokens_per_tool_max": 1505,
+      "heaviest_tool": "githubSearchPullRequests",
+      "context_injection_tokens_total": 5902,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.034,
+      "defects": {
+        "count": 3,
+        "major": 0,
+        "minor": 3,
+        "ids": [
+          "median_tool_over_500",
+          "description_length_out_of_band",
+          "weak_namespacing"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.BitePro/chrome-debugger-mcp",
+      "npm_package": "chrome-debugger-mcp",
+      "pinned_version": "1.0.4",
+      "downloads_last_week": null,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 18,
+      "tool_definition_tokens": 2876,
+      "tokens_per_tool_median": 143.5,
+      "tokens_per_tool_max": 434,
+      "heaviest_tool": "waitForSpecificPause",
+      "context_injection_tokens_total": 2876,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.379,
+      "defects": {
+        "count": 1,
+        "major": 0,
+        "minor": 1,
+        "ids": [
+          "weak_namespacing"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.bitofacoder/omni-mcp-server",
+      "npm_package": "@bitofacoder/omni-mcp-server",
+      "pinned_version": "1.1.1",
+      "downloads_last_week": null,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 13,
+      "tool_definition_tokens": 712,
+      "tokens_per_tool_median": 51,
+      "tokens_per_tool_max": 101,
+      "heaviest_tool": "memory_store",
+      "context_injection_tokens_total": 712,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.564,
+      "defects": {
+        "count": 3,
+        "major": 2,
+        "minor": 1,
+        "ids": [
+          "params_missing_description",
+          "errors_do_not_name_param",
+          "cohort_name_collision"
+        ]
+      }
+    },
+    {
+      "registry_name": "io.github.bm1016bm-svg/evidrift",
+      "npm_package": "evidrift",
+      "pinned_version": "0.4.0",
+      "downloads_last_week": null,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 2,
+      "tool_definition_tokens": 467,
+      "tokens_per_tool_median": 233,
+      "tokens_per_tool_max": 267,
+      "heaviest_tool": "evidrift_record",
+      "context_injection_tokens_total": 485,
+      "grade": "A",
+      "uncapped_grade": "A",
+      "caps_applied": [],
+      "overall_score": 4.85,
+      "defects": {
+        "count": 0,
+        "major": 0,
+        "minor": 0,
+        "ids": []
+      }
+    },
+    {
+      "registry_name": "io.github.bomly-dev/bomly-cli",
+      "npm_package": "bomly-mcp",
+      "pinned_version": "0.21.3",
+      "downloads_last_week": null,
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "id": "missing_native_binary",
+        "attribution": "harness",
+        "label": "Ships a binary fetched by a postinstall script, which this harness suppresses"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tokens_per_tool_median": null,
+      "tokens_per_tool_max": null,
+      "heaviest_tool": null,
+      "context_injection_tokens_total": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "caps_applied": null,
+      "overall_score": null,
+      "defects": null
+    },
+    {
+      "registry_name": "io.github.bromoket/x64dbg",
+      "npm_package": "x64dbg-mcp-server",
+      "pinned_version": "2.3.0",
+      "downloads_last_week": null,
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 23,
+      "tool_definition_tokens": 7651,
+      "tokens_per_tool_median": 296,
+      "tokens_per_tool_max": 1010,
+      "heaviest_tool": "x64dbg_breakpoints",
+      "context_injection_tokens_total": 7651,
+      "grade": "B",
+      "uncapped_grade": "B",
+      "caps_applied": [],
+      "overall_score": 4.13,
+      "defects": {
+        "count": 1,
+        "major": 1,
+        "minor": 0,
+        "ids": [
+          "params_missing_description"
+        ]
+      }
+    }
+  ]
+}

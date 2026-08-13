@@ -1,0 +1,1627 @@
+{
+  "cohort_id": "dev-tooling-v1",
+  "vertical": "dev-tooling",
+  "built_at": "2026-08-11T02:17:26.746Z",
+  "snapshot": "registry-snapshot-2026-08-11.json",
+  "snapshot_content_hash": "8df1f09c41f79fb691272392c2d84c3a05d690899b40029227174269b4fe60b8",
+  "verticals_spec_version": "1.0.0",
+  "size": 50,
+  "pool": {
+    "snapshot_servers": 20999,
+    "keyword_candidates": 299,
+    "pinnable": 295,
+    "rejected": {
+      "no_npm_stdio": 14002,
+      "no_keyword": 6698,
+      "excluded": 0
+    }
+  },
+  "selection_hash": "9e40a7e2fc407f20d9ad20a82d7b66d23ebfa94c07f4417246d9920119610589",
+  "servers": [
+    {
+      "registry_name": "com.smartbear/smartbear-mcp",
+      "title": "SmartBear MCP",
+      "description": "MCP server for AI access to SmartBear tools, including BugSnag, Reflect, Swagger, PactFlow, QTM4J.",
+      "registry_version": "0.34.0",
+      "website": null,
+      "npm_package": "@smartbear/mcp",
+      "npm_version_declared": "0.34.0",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "BearQ workspace API token. Leave empty to disable BearQ tools. Learn more: https://developer.smartbear.com/smartbear-mcp/docs/bearq-integration",
+          "isSecret": true,
+          "name": "BEARQ_API_TOKEN"
+        },
+        {
+          "description": "Override the BearQ public API base URL (optional). Defaults to https://api.bearq.smartbear.com",
+          "name": "BEARQ_API_BASE_URL"
+        },
+        {
+          "description": "BugSnag auth token. Leave empty to disable BugSnag tools. Learn more: https://developer.smartbear.com/smartbear-mcp/docs/bugsnag-integration",
+          "isSecret": true,
+          "name": "BUGSNAG_AUTH_TOKEN"
+        },
+        {
+          "description": "BugSnag project API key (optional; narrows interactions to a single project). Learn more: https://developer.smartbear.com/smartbear-mcp/docs/bugsnag-integration",
+          "name": "BUGSNAG_PROJECT_API_KEY"
+        },
+        {
+          "description": "Reflect API token. Leave empty to disable Reflect tools. Learn more: https://developer.smartbear.com/smartbear-mcp/docs/reflect-integration",
+          "isSecret": true,
+          "name": "REFLECT_API_TOKEN"
+        },
+        {
+          "description": "Swagger API key. Leave empty to disable Swagger tools. Learn more: https://developer.smartbear.com/smartbear-mcp/docs/swagger-portal-integration",
+          "isSecret": true,
+          "name": "SWAGGER_API_KEY"
+        },
+        {
+          "description": "Swagger Functional Testing API token. Leave empty to disable Functional Testing tools. Learn more: https://developer.smartbear.com/smartbear-mcp/docs/functional-testing-integration",
+          "isSecret": true,
+          "name": "SWAGGER_FUNCTIONAL_TESTING_API_TOKEN"
+        },
+        {
+          "description": "Override the Swagger Functional Testing API base URL (optional). Defaults to https://api.reflect.run/v1",
+          "name": "SWAGGER_FUNCTIONAL_TESTING_BASE_PATH"
+        },
+        {
+          "description": "PactFlow/Pact Broker base URL. Leave empty to disable Pact tools. Learn more: https://developer.smartbear.com/smartbear-mcp/docs/contract-testing-with-pactflow",
+          "name": "PACT_BROKER_BASE_URL"
+        },
+        {
+          "description": "PactFlow authentication token. Learn more: https://developer.smartbear.com/smartbear-mcp/docs/contract-testing-with-pactflow",
+          "isSecret": true,
+          "name": "PACT_BROKER_TOKEN"
+        },
+        {
+          "description": "Pact Broker username (alternative to token). Learn more: https://developer.smartbear.com/smartbear-mcp/docs/contract-testing-with-pactflow",
+          "name": "PACT_BROKER_USERNAME"
+        },
+        {
+          "description": "Pact Broker password (alternative to token). Learn more: https://developer.smartbear.com/smartbear-mcp/docs/contract-testing-with-pactflow",
+          "isSecret": true,
+          "name": "PACT_BROKER_PASSWORD"
+        },
+        {
+          "description": "The Zephyr Cloud API token for authentication. Learn more: https://support.smartbear.com/zephyr/docs/en/rest-api/api-access-tokens-management.html",
+          "isSecret": true,
+          "name": "ZEPHYR_API_TOKEN"
+        },
+        {
+          "description": " The Zephyr Cloud API base url. Should be changed depending on the region of your Jira instance. Learn more: https://support.smartbear.com/zephyr-scale-cloud/api-docs/#section/Authentication/Accessing-the-API",
+          "name": "ZEPHYR_BASE_URL"
+        },
+        {
+          "description": "QTM4J (QMetry Test Management for Jira) API key. Leave empty to disable QTM4J tools. Learn more: https://developer.smartbear.com/smartbear-mcp/docs/qtm4j-integration",
+          "isSecret": true,
+          "name": "QTM4J_API_KEY"
+        },
+        {
+          "description": "QTM4J base URL (optional). Defaults to https://qtmcloud.qmetry.com. Override when using a self-hosted or region-specific instance.",
+          "name": "QTM4J_BASE_URL"
+        },
+        {
+          "description": "QTM4J Automation API key used exclusively by the automation import tools. Leave empty to disable automation tools. Learn more: https://developer.smartbear.com/smartbear-mcp/docs/qtm4j-integration",
+          "isSecret": true,
+          "name": "QTM4J_AUTOMATION_API_KEY"
+        }
+      ],
+      "match_terms": [
+        "swagger"
+      ],
+      "downloads_last_week": 14432,
+      "latest_version": "0.34.0",
+      "pinned_version": "0.34.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.postman/postman-mcp-server",
+      "title": null,
+      "description": "A basic MCP server to operate on the Postman API.",
+      "registry_version": "2.11.2",
+      "website": null,
+      "npm_package": "@postman/postman-mcp-server",
+      "npm_version_declared": "2.11.2",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "A valid Postman API key.",
+          "isRequired": true,
+          "isSecret": true,
+          "name": "POSTMAN_API_KEY"
+        }
+      ],
+      "match_terms": [
+        "postman"
+      ],
+      "downloads_last_week": 4937,
+      "latest_version": "2.11.2",
+      "pinned_version": "2.11.2",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.gitkraken/gk-cli",
+      "title": null,
+      "description": "The GitKraken MCP Server for managing repos, PRs, issues across GitHub, GitLab, Bitbucket and more.",
+      "registry_version": "3.1.70",
+      "website": null,
+      "npm_package": "@gitkraken/gk",
+      "npm_version_declared": "3.1.70",
+      "runtime_hint": null,
+      "package_arguments": [
+        {
+          "value": "mcp",
+          "type": "positional"
+        }
+      ],
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "github",
+        "gitlab",
+        "bitbucket"
+      ],
+      "downloads_last_week": 4795,
+      "latest_version": "3.1.70",
+      "pinned_version": "3.1.70",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.b1ff/atlassian-dc-mcp-jira",
+      "title": null,
+      "description": "MCP server for Atlassian Jira Data Center - search, view, and create issues",
+      "registry_version": "0.29.0",
+      "website": null,
+      "npm_package": "@atlassian-dc-mcp/jira",
+      "npm_version_declared": "0.29.0",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Absolute path to a shared dotenv-style config file. When set, values are read from this file before direct environment variable overrides are applied.",
+          "format": "string",
+          "name": "ATLASSIAN_DC_MCP_CONFIG_FILE"
+        },
+        {
+          "description": "Jira host domain (e.g. your-instance.atlassian.net). Required unless provided through ATLASSIAN_DC_MCP_CONFIG_FILE or JIRA_API_BASE_PATH.",
+          "format": "string",
+          "name": "JIRA_HOST"
+        },
+        {
+          "description": "Jira API base path (alternative to JIRA_HOST). Required unless provided through ATLASSIAN_DC_MCP_CONFIG_FILE or JIRA_HOST.",
+          "format": "string",
+          "name": "JIRA_API_BASE_PATH"
+        },
+        {
+          "description": "Jira Personal Access Token or API token. Required unless provided through ATLASSIAN_DC_MCP_CONFIG_FILE.",
+          "format": "string",
+          "isSecret": true,
+          "name": "JIRA_API_TOKEN"
+        }
+      ],
+      "match_terms": [
+        "jira"
+      ],
+      "downloads_last_week": 3716,
+      "latest_version": "0.29.0",
+      "pinned_version": "0.29.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.mendapi/mendapi",
+      "title": "mendapi",
+      "description": "Detect API breaking changes, scan your codebase for impact, and draft the fix. Runs locally.",
+      "registry_version": "0.5.6",
+      "website": "https://mendapi.com",
+      "npm_package": "mendapi",
+      "npm_version_declared": "0.5.6",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "codebase"
+      ],
+      "downloads_last_week": 2188,
+      "latest_version": "0.5.7",
+      "pinned_version": "0.5.6",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.b1ff/atlassian-dc-mcp-bitbucket",
+      "title": null,
+      "description": "MCP server for Atlassian Bitbucket Data Center - interact with repositories and code",
+      "registry_version": "0.29.0",
+      "website": null,
+      "npm_package": "@atlassian-dc-mcp/bitbucket",
+      "npm_version_declared": "0.29.0",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Absolute path to a shared dotenv-style config file. When set, values are read from this file before direct environment variable overrides are applied.",
+          "format": "string",
+          "name": "ATLASSIAN_DC_MCP_CONFIG_FILE"
+        },
+        {
+          "description": "Bitbucket host domain (e.g. your-instance.atlassian.net). Required unless provided through ATLASSIAN_DC_MCP_CONFIG_FILE or BITBUCKET_API_BASE_PATH.",
+          "format": "string",
+          "name": "BITBUCKET_HOST"
+        },
+        {
+          "description": "Bitbucket API base path (alternative to BITBUCKET_HOST). Required unless provided through ATLASSIAN_DC_MCP_CONFIG_FILE or BITBUCKET_HOST.",
+          "format": "string",
+          "name": "BITBUCKET_API_BASE_PATH"
+        },
+        {
+          "description": "Bitbucket Personal Access Token or API token. Required unless provided through ATLASSIAN_DC_MCP_CONFIG_FILE.",
+          "format": "string",
+          "isSecret": true,
+          "name": "BITBUCKET_API_TOKEN"
+        }
+      ],
+      "match_terms": [
+        "bitbucket",
+        "repositories"
+      ],
+      "downloads_last_week": 1579,
+      "latest_version": "0.29.0",
+      "pinned_version": "0.29.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.githits/githits",
+      "title": "GitHits",
+      "description": "Search public open-source code, documentation, metadata, vulnerabilities, changelogs, and examples.",
+      "registry_version": "0.8.0",
+      "website": "https://githits.com",
+      "npm_package": "githits",
+      "npm_version_declared": "0.8.0",
+      "runtime_hint": "npx",
+      "package_arguments": [
+        {
+          "value": "mcp",
+          "type": "positional"
+        },
+        {
+          "value": "start",
+          "type": "positional"
+        }
+      ],
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "source code"
+      ],
+      "downloads_last_week": 1577,
+      "latest_version": "0.8.0",
+      "pinned_version": "0.8.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.AkashGoenka/coldstart",
+      "title": "coldstart",
+      "description": "Codebase memory for AI agents: an AST index plus agent-written notes that self-stale.",
+      "registry_version": "2.2.17",
+      "website": "https://coldstartmcp.dev/",
+      "npm_package": "@cstart/coldstart",
+      "npm_version_declared": "2.2.17",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "codebase"
+      ],
+      "downloads_last_week": 849,
+      "latest_version": "2.2.17",
+      "pinned_version": "2.2.17",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.AINative-Studio/ainative-zerodb-memory-mcp",
+      "title": null,
+      "description": "ZeroDB agent-memory MCP — 18 tools: memory + write-back to Slack, Gmail, Calendar, GitHub.",
+      "registry_version": "1.2.7",
+      "website": null,
+      "npm_package": "ainative-zerodb-memory-mcp",
+      "npm_version_declared": "1.2.7",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "github"
+      ],
+      "downloads_last_week": 804,
+      "latest_version": "1.2.7",
+      "pinned_version": "1.2.7",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.Alex88Ryabov/ng-token-saver",
+      "title": "Angular token saver",
+      "description": "Compiler-backed Angular template answers, component contracts and version facts for AI agents",
+      "registry_version": "0.1.7",
+      "website": "https://github.com/Alex88Ryabov/alex-apps-ng-token-saver#readme",
+      "npm_package": "@alex-apps/ng-token-saver",
+      "npm_version_declared": "0.1.7",
+      "runtime_hint": "npx",
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Idle milliseconds before a language server session shuts down; 0 disables the shutdown. Default 900000.",
+          "format": "number",
+          "name": "NG_TOKEN_SAVER_IDLE_MS"
+        },
+        {
+          "description": "Path to a file to append raw LSP traffic to, for debugging.",
+          "format": "filepath",
+          "name": "NG_TOKEN_SAVER_TRACE"
+        }
+      ],
+      "match_terms": [
+        "compiler"
+      ],
+      "downloads_last_week": 653,
+      "latest_version": "0.1.7",
+      "pinned_version": "0.1.7",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "dev.aicommander/mcp",
+      "title": null,
+      "description": "Remote command execution on your machines — an SSH/Ansible alternative, by AIC-… code or alias.",
+      "registry_version": "1.0.17",
+      "website": "https://aicommander.dev",
+      "npm_package": "@aicommander/mcp",
+      "npm_version_declared": "1.0.17",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Account API key (or OAuth access token) for the optional accounts/alias features — saved machines, aliases, account access. Generate one for free at aicommander.dev.",
+          "isSecret": true,
+          "name": "AICOMMANDER_TOKEN"
+        },
+        {
+          "description": "Base URL of the AI Commander relay. Defaults to the hosted service; only set this to point at a different endpoint.",
+          "default": "https://aicommander.dev",
+          "name": "AICOMMANDER_SERVER"
+        }
+      ],
+      "match_terms": [
+        "ansible"
+      ],
+      "downloads_last_week": 630,
+      "latest_version": "1.0.44",
+      "pinned_version": "1.0.17",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.aryamthecodebreaker/fixmap",
+      "title": null,
+      "description": "Deterministic local-first repo context for coding agents with one-command GitHub issue analysis.",
+      "registry_version": "0.8.8",
+      "website": null,
+      "npm_package": "@aryam/fixmap",
+      "npm_version_declared": "0.8.8",
+      "runtime_hint": "npx",
+      "package_arguments": [
+        {
+          "value": "mcp",
+          "type": "positional"
+        }
+      ],
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "github"
+      ],
+      "downloads_last_week": 509,
+      "latest_version": "0.8.8",
+      "pinned_version": "0.8.8",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.Azure/containerization-assist",
+      "title": "Containerization Assist",
+      "description": "TypeScript MCP server for AI-powered containerization workflows with Docker and Kubernetes support",
+      "registry_version": "1.5.0",
+      "website": "https://github.com/Azure/containerization-assist#readme",
+      "npm_package": "containerization-assist-mcp",
+      "npm_version_declared": "1.5.0",
+      "runtime_hint": null,
+      "package_arguments": [
+        {
+          "value": "start",
+          "type": "positional"
+        }
+      ],
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Docker socket path or named pipe",
+          "name": "DOCKER_SOCKET"
+        },
+        {
+          "description": "Logging level (debug, info, warn, error)",
+          "name": "LOG_LEVEL"
+        }
+      ],
+      "match_terms": [
+        "kubernetes"
+      ],
+      "downloads_last_week": 484,
+      "latest_version": "1.5.0",
+      "pinned_version": "1.5.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.kenxcomp/kenotex-mcp",
+      "title": null,
+      "description": "Let your coding agent manage real todos, events, and check-in habits in Kenotex on your Mac.",
+      "registry_version": "1.2.3",
+      "website": null,
+      "npm_package": "kenotex-mcp",
+      "npm_version_declared": "1.2.3",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Override the auto-discovered local API token. Normally unnecessary — the server finds it on disk.",
+          "isSecret": true,
+          "name": "KENOTEX_TOKEN"
+        },
+        {
+          "description": "Override the local server address. Defaults to http://127.0.0.1:21519.",
+          "name": "KENOTEX_HOST"
+        }
+      ],
+      "match_terms": [
+        "coding agent"
+      ],
+      "downloads_last_week": 432,
+      "latest_version": "1.2.3",
+      "pinned_version": "1.2.3",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.driflyte/driflyte-mcp-server",
+      "title": null,
+      "description": "Driflyte MCP server which lets AI assistants query topic-specific knowledge from web and GitHub.",
+      "registry_version": "0.1.15",
+      "website": null,
+      "npm_package": "@driflyte/mcp-server",
+      "npm_version_declared": "0.1.15",
+      "runtime_hint": "npx",
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "github"
+      ],
+      "downloads_last_week": 399,
+      "latest_version": "0.1.15",
+      "pinned_version": "0.1.15",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.alexcloudstar/makers-page-mcp",
+      "title": null,
+      "description": "Marketing Assistant MCP: draft, approve, and publish posts to X from your coding agent.",
+      "registry_version": "0.1.2",
+      "website": null,
+      "npm_package": "makers-page-mcp",
+      "npm_version_declared": "0.1.2",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "X (Twitter) OAuth 2.0 Client ID from the X developer portal",
+          "isRequired": true,
+          "format": "string",
+          "name": "X_CLIENT_ID"
+        },
+        {
+          "description": "X (Twitter) OAuth 2.0 Client Secret (only required for confidential clients)",
+          "format": "string",
+          "isSecret": true,
+          "name": "X_CLIENT_SECRET"
+        },
+        {
+          "description": "OAuth redirect URI, must exactly match the callback registered in the X developer portal",
+          "format": "string",
+          "default": "http://127.0.0.1:8879/callback",
+          "name": "X_REDIRECT_URI"
+        }
+      ],
+      "match_terms": [
+        "coding agent"
+      ],
+      "downloads_last_week": 376,
+      "latest_version": "0.4.0",
+      "pinned_version": "0.1.2",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.AugustusW/sharedoc-mcp",
+      "title": null,
+      "description": "Share agent-generated Markdown as links — GitHub gists today, your own server tomorrow.",
+      "registry_version": "2.1.4",
+      "website": null,
+      "npm_package": "sharedoc-mcp",
+      "npm_version_declared": "2.1.4",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Storage backend: 'gist' (secret gists via logged-in gh CLI, default) or 'selfhost' (local SQLite + built-in viewer)",
+          "format": "string",
+          "name": "SHAREDOC_BACKEND"
+        },
+        {
+          "description": "URL prefix used in share links (selfhost) — set to your tunnel or reverse-proxy hostname",
+          "format": "string",
+          "name": "SHAREDOC_PUBLIC_URL"
+        }
+      ],
+      "match_terms": [
+        "github"
+      ],
+      "downloads_last_week": 351,
+      "latest_version": "2.2.0",
+      "pinned_version": "2.1.4",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.docfork/docfork-mcp",
+      "title": null,
+      "description": "Up-to-date docs for AI. DEPRECATED: Use io.github.docfork/docfork instead.",
+      "registry_version": "1.3.3",
+      "website": null,
+      "npm_package": "docfork",
+      "npm_version_declared": "1.3.0",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "github"
+      ],
+      "downloads_last_week": 331,
+      "latest_version": "2.2.5",
+      "pinned_version": "1.3.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.BASHBOP/otito",
+      "title": "Òtítọ́",
+      "description": "Deterministic local repository context, impact analysis, and merge-readiness evidence for AI agents.",
+      "registry_version": "1.6.0",
+      "website": "https://bashbop.github.io/otito/",
+      "npm_package": "@bashbop/otito",
+      "npm_version_declared": "1.6.0",
+      "runtime_hint": null,
+      "package_arguments": [
+        {
+          "value": "mcp",
+          "type": "positional"
+        }
+      ],
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "repository"
+      ],
+      "downloads_last_week": 308,
+      "latest_version": "1.6.0",
+      "pinned_version": "1.6.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.pinappai/mcp",
+      "title": "PinAppAI",
+      "description": "Visual website feedback your coding agent applies: pin change requests on the live site over MCP.",
+      "registry_version": "0.9.9",
+      "website": "https://pinappai.com/docs/mcp/",
+      "npm_package": "@pinappai/mcp",
+      "npm_version_declared": "0.9.9",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "PinAppAI workspace API key (ppk_...). Optional: interactive setups use `npx @pinappai/mcp login` instead; set this only for CI/headless.",
+          "format": "string",
+          "isSecret": true,
+          "name": "PINAPPAI_API_KEY"
+        }
+      ],
+      "match_terms": [
+        "coding agent"
+      ],
+      "downloads_last_week": 257,
+      "latest_version": "0.9.10",
+      "pinned_version": "0.9.9",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "dev.sexai/sexai-mcp",
+      "title": null,
+      "description": "The network where AI agents breed — publish, import a GitHub repo as an agent, cross them.",
+      "registry_version": "0.11.11",
+      "website": null,
+      "npm_package": "sexai-mcp",
+      "npm_version_declared": "0.11.11",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Your agent's EVM wallet private key. Needed only for OWNER actions (breed-for-yourself, get_private, confirm_payment, set_listing, update/delete, export_repo, 8004). Reads (list/get/lineage) and import_repo need no key. Used only to sign EIP-191 auth messages; never leaves your machine.",
+          "format": "string",
+          "isSecret": true,
+          "name": "SEXAI_AGENT_PRIVATE_KEY"
+        }
+      ],
+      "match_terms": [
+        "github"
+      ],
+      "downloads_last_week": 257,
+      "latest_version": "0.11.11",
+      "pinned_version": "0.11.11",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.Belius303/frappe-inspector",
+      "title": "Frappe Inspector",
+      "description": "Static analysis tools for Frappe Framework and ERPNext projects via local stdio MCP.",
+      "registry_version": "1.4.0",
+      "website": "https://frappeinspector.xyz/install",
+      "npm_package": "@frappe-inspector/mcp",
+      "npm_version_declared": "1.4.0",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Optional Universal Pro license key for advanced Frappe Inspector capabilities.",
+          "format": "string",
+          "isSecret": true,
+          "name": "FRAPPE_INSPECTOR_LICENSE_KEY"
+        }
+      ],
+      "match_terms": [
+        "static analysis"
+      ],
+      "downloads_last_week": 255,
+      "latest_version": "1.4.0",
+      "pinned_version": "1.4.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.alfredoizdev/contextforge-mcp",
+      "title": null,
+      "description": "Persistent memory MCP server for Claude Code, Cursor, and GitHub Copilot.",
+      "registry_version": "0.5.0",
+      "website": null,
+      "npm_package": "contextforge-mcp",
+      "npm_version_declared": "0.5.0",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Your API key from the ContextForge dashboard at contextforge.dev",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true,
+          "name": "CONTEXTFORGE_API_KEY"
+        },
+        {
+          "description": "API endpoint URL (defaults to production)",
+          "format": "string",
+          "default": "https://api.contextforge.dev",
+          "name": "CONTEXTFORGE_API_URL"
+        }
+      ],
+      "match_terms": [
+        "github"
+      ],
+      "downloads_last_week": 243,
+      "latest_version": "0.5.0",
+      "pinned_version": "0.5.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.aryankumar06/infimium",
+      "title": "Infimium",
+      "description": "Private AI context layer for semantic code search, dependency graphs, memory, and workspaces.",
+      "registry_version": "0.3.1",
+      "website": null,
+      "npm_package": "infimium",
+      "npm_version_declared": "0.3.1",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Optional Tinyfish API key for web_search.",
+          "format": "string",
+          "isSecret": true,
+          "name": "SEARCH_API_KEY"
+        },
+        {
+          "description": "Search provider. Use tinyfish for the current web_search implementation.",
+          "format": "string",
+          "name": "SEARCH_PROVIDER"
+        },
+        {
+          "description": "Absolute path to the codebase Infimium should index.",
+          "format": "string",
+          "name": "CODEBASE_PATH"
+        },
+        {
+          "description": "Absolute path to local docs Infimium should index.",
+          "format": "string",
+          "name": "LOCAL_DOCS_PATH"
+        },
+        {
+          "description": "ChromaDB HTTP endpoint.",
+          "format": "string",
+          "name": "CHROMADB_HOST"
+        },
+        {
+          "description": "Ollama HTTP endpoint.",
+          "format": "string",
+          "name": "OLLAMA_HOST"
+        },
+        {
+          "description": "Comma-separated commands allowed by the shell tool.",
+          "format": "string",
+          "name": "SHELL_ALLOWLIST"
+        }
+      ],
+      "match_terms": [
+        "code search"
+      ],
+      "downloads_last_week": 241,
+      "latest_version": "0.5.9",
+      "pinned_version": "0.3.1",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.adrianczuczka/mason",
+      "title": null,
+      "description": "Context engineering MCP server — generates CLAUDE.md files via structured codebase analysis",
+      "registry_version": "0.6.0",
+      "website": null,
+      "npm_package": "mason-context",
+      "npm_version_declared": "0.6.0",
+      "runtime_hint": "npx",
+      "package_arguments": null,
+      "runtime_arguments": [
+        {
+          "value": "mason-context",
+          "type": "named",
+          "name": "-p"
+        },
+        {
+          "value": "mason-mcp",
+          "type": "positional"
+        }
+      ],
+      "environment_variables": null,
+      "match_terms": [
+        "codebase"
+      ],
+      "downloads_last_week": 216,
+      "latest_version": "0.6.0",
+      "pinned_version": "0.6.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.ashfordeOU/grasp",
+      "title": "Grasp — Code Architecture & Dependency Analysis",
+      "description": "Codebase analysis: dependency graphs, security scanning, and refactor plans for GitHub and GitLab.",
+      "registry_version": "3.21.0",
+      "website": "https://github.com/ashfordeOU/grasp",
+      "npm_package": "grasp-mcp-server",
+      "npm_version_declared": "3.21.0",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "github",
+        "gitlab",
+        "codebase",
+        "refactor"
+      ],
+      "downloads_last_week": 200,
+      "latest_version": "3.21.0",
+      "pinned_version": "3.21.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "ai.wild-card/deepcontext",
+      "title": null,
+      "description": "Advanced codebase indexing and semantic search MCP server",
+      "registry_version": "0.1.15",
+      "website": null,
+      "npm_package": "@wildcard-ai/deepcontext",
+      "npm_version_declared": "0.1.15",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Jina AI API key for embeddings generation",
+          "format": "string",
+          "isSecret": true,
+          "name": "JINA_API_KEY"
+        },
+        {
+          "description": "Turbopuffer API key for vector storage",
+          "format": "string",
+          "isSecret": true,
+          "name": "TURBOPUFFER_API_KEY"
+        },
+        {
+          "description": "Wildcard API key for authentication",
+          "format": "string",
+          "isSecret": true,
+          "name": "WILDCARD_API_KEY"
+        }
+      ],
+      "match_terms": [
+        "codebase"
+      ],
+      "downloads_last_week": 198,
+      "latest_version": "0.1.15",
+      "pinned_version": "0.1.15",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.BasilSkyWalk/parecode",
+      "title": null,
+      "description": "Token-aware ripgrep code search and atomic multi-file edits for coding agents.",
+      "registry_version": "0.7.0",
+      "website": null,
+      "npm_package": "parecode",
+      "npm_version_declared": "0.7.0",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "code search"
+      ],
+      "downloads_last_week": 198,
+      "latest_version": "0.9.1",
+      "pinned_version": "0.7.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.aaronsb/jira-cloud",
+      "title": "Jira Cloud",
+      "description": "MCP server for Jira Cloud — manage issues, sprints, boards, filters, and custom fields",
+      "registry_version": "0.10.0",
+      "website": "https://github.com/aaronsb/jira-cloud#readme",
+      "npm_package": "@aaronsb/jira-cloud-mcp",
+      "npm_version_declared": "0.10.0",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Jira API token (generate at https://id.atlassian.com/manage/api-tokens)",
+          "isRequired": true,
+          "isSecret": true,
+          "name": "JIRA_API_TOKEN"
+        },
+        {
+          "description": "Atlassian account email address",
+          "isRequired": true,
+          "name": "JIRA_EMAIL"
+        },
+        {
+          "description": "Jira instance URL (e.g., https://your-team.atlassian.net)",
+          "isRequired": true,
+          "name": "JIRA_HOST"
+        }
+      ],
+      "match_terms": [
+        "jira"
+      ],
+      "downloads_last_week": 192,
+      "latest_version": "0.11.1",
+      "pinned_version": "0.10.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.get-obra/obra-cto",
+      "title": null,
+      "description": "Local-first MCP that scores your codebase's build readiness. Your code never leaves your machine.",
+      "registry_version": "0.3.0",
+      "website": null,
+      "npm_package": "obra-cto",
+      "npm_version_declared": "0.3.0",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "codebase"
+      ],
+      "downloads_last_week": 163,
+      "latest_version": "0.3.1",
+      "pinned_version": "0.3.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "eu.metaengine/mcp-server",
+      "title": "MetaEngine",
+      "description": "Spec-first code generation: OpenAPI, GraphQL, Protobuf, and SQL to typed clients in 11 languages.",
+      "registry_version": "1.4.1",
+      "website": "https://www.metaengine.eu/mcp",
+      "npm_package": "@metaengine/mcp-server",
+      "npm_version_declared": "1.4.1",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Override the MetaEngine generation API endpoint (defaults to https://api.metaengine.eu)",
+          "format": "string",
+          "name": "METAENGINE_API_URL"
+        }
+      ],
+      "match_terms": [
+        "openapi"
+      ],
+      "downloads_last_week": 142,
+      "latest_version": "1.4.1",
+      "pinned_version": "1.4.1",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.AndyAnh174/vibe-hnindex",
+      "title": null,
+      "description": "Index source code into a local knowledge base, search with keyword + semantic + hybrid modes.",
+      "registry_version": "0.1.2",
+      "website": null,
+      "npm_package": "vibe-hnindex",
+      "npm_version_declared": "0.1.2",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Ollama embedding server URL",
+          "format": "string",
+          "name": "OLLAMA_URL"
+        },
+        {
+          "description": "Ollama embedding model name (default: bge-m3:567m)",
+          "format": "string",
+          "name": "OLLAMA_MODEL"
+        },
+        {
+          "description": "Qdrant vector database URL",
+          "format": "string",
+          "name": "QDRANT_URL"
+        },
+        {
+          "description": "SQLite database storage path",
+          "format": "string",
+          "name": "STORAGE_PATH"
+        }
+      ],
+      "match_terms": [
+        "source code"
+      ],
+      "downloads_last_week": 131,
+      "latest_version": "0.12.1",
+      "pinned_version": "0.1.2",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.aradar46/reuse-before-generate",
+      "title": "Reuse Before Generate",
+      "description": "Checks whether your idea already exists before your agent builds it. Searches GitHub, npm, Python.",
+      "registry_version": "0.2.3",
+      "website": null,
+      "npm_package": "reuse-before-generate",
+      "npm_version_declared": "0.2.3",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Optional GitHub token. Raises the search rate limit from 10 requests/minute to 30.",
+          "isSecret": true,
+          "name": "GITHUB_TOKEN"
+        }
+      ],
+      "match_terms": [
+        "github"
+      ],
+      "downloads_last_week": 124,
+      "latest_version": "0.10.0",
+      "pinned_version": "0.2.3",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.Aderix/vantagate-mcp-server",
+      "title": null,
+      "description": "VantaGate MCP Server & OpenAPI integration - Human-in-the-Loop for AI Agents",
+      "registry_version": "1.0.2",
+      "website": null,
+      "npm_package": "@vantagate/mcp-server",
+      "npm_version_declared": "1.0.2",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Your VantaGate API Key (Format: vg_123...)",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true,
+          "name": "VANTA_API_KEY"
+        }
+      ],
+      "match_terms": [
+        "openapi"
+      ],
+      "downloads_last_week": 117,
+      "latest_version": "1.0.2",
+      "pinned_version": "1.0.2",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.AshMet/vibemap-mcp",
+      "title": null,
+      "description": "Load & create VibeMap product specs from your coding agent; sync build progress.",
+      "registry_version": "2.8.1",
+      "website": null,
+      "npm_package": "@vibemap.ai/mcp-server",
+      "npm_version_declared": "2.8.1",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "API key from vibemap.ai -> Account -> MCP (Pro plan)",
+          "isRequired": true,
+          "isSecret": true,
+          "name": "VIBEMAP_API_KEY"
+        },
+        {
+          "description": "Defaults to https://vibemap.ai",
+          "name": "VIBEMAP_BASE_URL"
+        }
+      ],
+      "match_terms": [
+        "coding agent"
+      ],
+      "downloads_last_week": 116,
+      "latest_version": "2.9.0",
+      "pinned_version": "2.8.1",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.attebury/remogram",
+      "title": "Remogram",
+      "description": "SCM & forge boundary MCP: normalized, typed JSON from attributed Gitea, GitLab, and GitHub providers",
+      "registry_version": "0.2.0-beta.4",
+      "website": null,
+      "npm_package": "@remogram/mcp",
+      "npm_version_declared": "0.2.0-beta.4",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "GitHub API token for github-api repositories.",
+          "format": "string",
+          "isSecret": true,
+          "name": "GITHUB_TOKEN"
+        },
+        {
+          "description": "Alternative GitHub API token for github-api repositories.",
+          "format": "string",
+          "isSecret": true,
+          "name": "GH_TOKEN"
+        },
+        {
+          "description": "GitLab API token for gitlab-api repositories.",
+          "format": "string",
+          "isSecret": true,
+          "name": "GITLAB_TOKEN"
+        },
+        {
+          "description": "Gitea API token for gitea-api repositories.",
+          "format": "string",
+          "isSecret": true,
+          "name": "GITEA_TOKEN"
+        },
+        {
+          "description": "Repository root for Remogram to inspect when the MCP host launches from another working directory.",
+          "format": "string",
+          "name": "REMOGRAM_CWD"
+        },
+        {
+          "description": "Optional path to a local operator write-command overlay.",
+          "format": "string",
+          "name": "REMOGRAM_OPERATOR_CONFIG"
+        }
+      ],
+      "match_terms": [
+        "github",
+        "gitlab"
+      ],
+      "downloads_last_week": 99,
+      "latest_version": "0.3.0",
+      "pinned_version": "0.2.0-beta.4",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.Abhishekkumar2021/github",
+      "title": "GitHub",
+      "description": "GitHub via MCP: search, repos, issues, PRs, files, notifications. OAuth device flow or token.",
+      "registry_version": "0.2.0",
+      "website": "https://github.com/Abhishekkumar2021/mcp-suite/tree/main/servers/github#readme",
+      "npm_package": "@abhishekmcp/github",
+      "npm_version_declared": "0.2.0",
+      "runtime_hint": "npx",
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "A GitHub Personal Access Token (skips the OAuth device flow).",
+          "format": "string",
+          "isSecret": true,
+          "name": "GITHUB_TOKEN"
+        },
+        {
+          "description": "OAuth App client id (public) to enable the device-flow login.",
+          "format": "string",
+          "name": "GITHUB_CLIENT_ID"
+        },
+        {
+          "description": "Set to 1 or true to disable issue-creating/commenting tools.",
+          "format": "string",
+          "name": "GITHUB_READONLY"
+        }
+      ],
+      "match_terms": [
+        "github"
+      ],
+      "downloads_last_week": 98,
+      "latest_version": "0.2.0",
+      "pinned_version": "0.2.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "ai.getoptimal/optibot",
+      "title": "Optibot",
+      "description": "AI code review for your AI assistant — review local changes, branch diffs, and patch files.",
+      "registry_version": "1.4.1",
+      "website": "https://getoptimal.ai",
+      "npm_package": "@optimalai/optibot-mcp",
+      "npm_version_declared": "1.4.1",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Optional Optibot API key (optk_...) for non-interactive auth. If unset, use the login tool for browser-based OAuth.",
+          "isSecret": true,
+          "name": "OPTIBOT_API_KEY"
+        }
+      ],
+      "match_terms": [
+        "code review"
+      ],
+      "downloads_last_week": 86,
+      "latest_version": "1.4.1",
+      "pinned_version": "1.4.1",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.AutomateLab-tech/content-distribution",
+      "title": null,
+      "description": "Publish content to DEV.to, Hashnode, GitHub Discussions, Reddit, Bluesky, LinkedIn, and Medium.",
+      "registry_version": "2.2.1",
+      "website": null,
+      "npm_package": "@automatelab/content-distribution-mcp",
+      "npm_version_declared": "2.2.1",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "DEV.to API key for publishing articles",
+          "format": "string",
+          "isSecret": true,
+          "name": "DEV_TO_API_KEY"
+        },
+        {
+          "description": "Hashnode personal access token",
+          "format": "string",
+          "isSecret": true,
+          "name": "HASHNODE_TOKEN"
+        },
+        {
+          "description": "Hashnode publication ID",
+          "format": "string",
+          "name": "HASHNODE_PUBLICATION_ID"
+        },
+        {
+          "description": "GitHub personal access token for GitHub Discussions",
+          "format": "string",
+          "isSecret": true,
+          "name": "GITHUB_TOKEN"
+        },
+        {
+          "description": "GitHub repo for Discussions in owner/repo format",
+          "format": "string",
+          "name": "GITHUB_DISCUSSION_REPO"
+        },
+        {
+          "description": "Reddit OAuth app client ID",
+          "format": "string",
+          "isSecret": true,
+          "name": "REDDIT_CLIENT_ID"
+        },
+        {
+          "description": "Reddit OAuth app client secret",
+          "format": "string",
+          "isSecret": true,
+          "name": "REDDIT_CLIENT_SECRET"
+        },
+        {
+          "description": "Reddit account username",
+          "format": "string",
+          "name": "REDDIT_USERNAME"
+        },
+        {
+          "description": "Reddit account password",
+          "format": "string",
+          "isSecret": true,
+          "name": "REDDIT_PASSWORD"
+        },
+        {
+          "description": "Bluesky handle (e.g. you.bsky.social)",
+          "format": "string",
+          "name": "BLUESKY_IDENTIFIER"
+        },
+        {
+          "description": "Bluesky app password",
+          "format": "string",
+          "isSecret": true,
+          "name": "BLUESKY_PASSWORD"
+        },
+        {
+          "description": "State backend (default: yaml)",
+          "format": "string",
+          "name": "DISTRIBUTION_BACKEND"
+        },
+        {
+          "description": "Directory for YAML state files (default: ~/.distribution-mcp)",
+          "format": "string",
+          "name": "DISTRIBUTION_BACKEND_DIR"
+        }
+      ],
+      "match_terms": [
+        "github"
+      ],
+      "downloads_last_week": 85,
+      "latest_version": "3.0.0",
+      "pinned_version": "2.2.1",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.alisaitteke/npm-mcp",
+      "title": null,
+      "description": "MCP server for npm package management, security analysis, and compatibility checking",
+      "registry_version": "0.0.3",
+      "website": null,
+      "npm_package": "@alisaitteke/npm-mcp",
+      "npm_version_declared": "0.0.3",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "npm package"
+      ],
+      "downloads_last_week": 76,
+      "latest_version": "0.0.3",
+      "pinned_version": "0.0.3",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.trestlescan/trestle",
+      "title": "Trestle",
+      "description": "Detects leaked secrets (API keys, tokens, private keys) in source code.",
+      "registry_version": "1.4.1",
+      "website": "https://trestlescan.com",
+      "npm_package": "@trestlescan/mcp",
+      "npm_version_declared": "1.4.1",
+      "runtime_hint": "npx",
+      "package_arguments": [
+        {
+          "description": "Path to the workspace Trestle should scan.",
+          "isRequired": true,
+          "default": ".",
+          "type": "positional",
+          "valueHint": "workspace_path"
+        }
+      ],
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "source code"
+      ],
+      "downloads_last_week": 68,
+      "latest_version": "1.4.1",
+      "pinned_version": "1.4.1",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "com.formpaste/formpaste",
+      "title": null,
+      "description": "Create and wire up contact forms from your coding agent. Forms, snippets, and submissions.",
+      "registry_version": "1.0.0",
+      "website": "https://formpaste.com",
+      "npm_package": "formpaste-mcp",
+      "npm_version_declared": "1.0.1",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Formpaste API token starting with fpat_, minted in the dashboard under Settings -> API & MCP. Use a setup-scoped token unless the agent needs to read submission content.",
+          "isRequired": true,
+          "isSecret": true,
+          "name": "FORMPASTE_TOKEN"
+        }
+      ],
+      "match_terms": [
+        "coding agent"
+      ],
+      "downloads_last_week": 63,
+      "latest_version": "1.0.1",
+      "pinned_version": "1.0.1",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.Algiras/debugium",
+      "title": null,
+      "description": "AI-driven live debugger with MCP bridge for Python, JS, TS, Rust, Java, C/C++",
+      "registry_version": "1.0.0",
+      "website": null,
+      "npm_package": "@algiras/debugium",
+      "npm_version_declared": "0.1.2",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "debugger"
+      ],
+      "downloads_last_week": 61,
+      "latest_version": "0.1.3",
+      "pinned_version": "0.1.2",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.apatilgtn/k8scortex-mcp",
+      "title": null,
+      "description": "Kubernetes MCP server: 75 tools for GKE, AKS, EKS, RBAC, audit logging, GitOps, multi-cluster.",
+      "registry_version": "1.0.2",
+      "website": null,
+      "npm_package": "k8scortex-mcp",
+      "npm_version_declared": "1.0.2",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Path to your kubeconfig file. Defaults to ~/.kube/config if not set.",
+          "format": "string",
+          "name": "KUBECONFIG"
+        },
+        {
+          "description": "Set to 'true' to disable JWT authentication (recommended for local use).",
+          "format": "string",
+          "name": "DISABLE_AUTH"
+        }
+      ],
+      "match_terms": [
+        "kubernetes"
+      ],
+      "downloads_last_week": 54,
+      "latest_version": "1.0.2",
+      "pinned_version": "1.0.2",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.bgauryy/octocode-mcp",
+      "title": "Octocode MCP - AI Context Platform",
+      "description": "AI code research platform. Search, analyze, and extract insights from any GitHub repository.",
+      "registry_version": "7.0.9",
+      "website": null,
+      "npm_package": "octocode-mcp",
+      "npm_version_declared": "7.0.9",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "GitHub Personal Access Token. Optional - authenticate via GitHub CLI (gh auth login) for automatic token management, or set this token manually for CI/CD environments.",
+          "isSecret": true,
+          "name": "GITHUB_TOKEN"
+        }
+      ],
+      "match_terms": [
+        "github",
+        "repository"
+      ],
+      "downloads_last_week": null,
+      "latest_version": "18.2.2",
+      "pinned_version": "7.0.9",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.BitePro/chrome-debugger-mcp",
+      "title": "Chrome Debugger MCP",
+      "description": "Chrome breakpoint debugging MCP server for inspecting runtime values and stepping through code",
+      "registry_version": "1.0.4",
+      "website": null,
+      "npm_package": "chrome-debugger-mcp",
+      "npm_version_declared": "1.0.4",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "debugger"
+      ],
+      "downloads_last_week": null,
+      "latest_version": "1.0.4",
+      "pinned_version": "1.0.4",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.bitofacoder/omni-mcp-server",
+      "title": null,
+      "description": "All-in-one MCP server: GitHub, Git, Slack, web fetch, memory, and filesystem. Agent Mode opt-in.",
+      "registry_version": "1.1.1",
+      "website": null,
+      "npm_package": "@bitofacoder/omni-mcp-server",
+      "npm_version_declared": "1.1.1",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "GitHub token for the GitHub tools (optional)",
+          "format": "string",
+          "isSecret": true,
+          "name": "GITHUB_PERSONAL_ACCESS_TOKEN"
+        },
+        {
+          "description": "Slack bot token for slack_send_message (optional)",
+          "format": "string",
+          "isSecret": true,
+          "name": "SLACK_BOT_TOKEN"
+        },
+        {
+          "description": "Set to 'true' to enable Agent Mode (shell execution and file writes). Disabled by default.",
+          "format": "string",
+          "name": "OMNI_AGENT_MODE"
+        }
+      ],
+      "match_terms": [
+        "github"
+      ],
+      "downloads_last_week": null,
+      "latest_version": "1.1.1",
+      "pinned_version": "1.1.1",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.bm1016bm-svg/evidrift",
+      "title": "Evidrift",
+      "description": "Catch TypeScript API and OpenAPI contract drift in AI-generated code, then revalidate it in CI.",
+      "registry_version": "0.4.0",
+      "website": null,
+      "npm_package": "evidrift",
+      "npm_version_declared": "0.4.0",
+      "runtime_hint": "npx",
+      "package_arguments": [
+        {
+          "value": "mcp",
+          "type": "positional"
+        }
+      ],
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "openapi"
+      ],
+      "downloads_last_week": null,
+      "latest_version": "0.4.0",
+      "pinned_version": "0.4.0",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.bomly-dev/bomly-cli",
+      "title": "Bomly",
+      "description": "Give your coding agent the dependency graph it is about to change: scan, diff, explain, audit",
+      "registry_version": "0.21.3",
+      "website": "https://bomly.dev/cli",
+      "npm_package": "bomly-mcp",
+      "npm_version_declared": "0.21.3",
+      "runtime_hint": "npx",
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": null,
+      "match_terms": [
+        "coding agent"
+      ],
+      "downloads_last_week": null,
+      "latest_version": "0.21.3",
+      "pinned_version": "0.21.3",
+      "pin_source": "registry-declared"
+    },
+    {
+      "registry_name": "io.github.bromoket/x64dbg",
+      "title": null,
+      "description": "MCP server for x64dbg debugger - 23 mega-tools for AI-powered reverse engineering and debugging",
+      "registry_version": "2.3.0",
+      "website": null,
+      "npm_package": "x64dbg-mcp-server",
+      "npm_version_declared": "2.3.0",
+      "runtime_hint": null,
+      "package_arguments": null,
+      "runtime_arguments": null,
+      "environment_variables": [
+        {
+          "description": "Host where the x64dbg plugin REST API listens",
+          "format": "string",
+          "name": "X64DBG_MCP_HOST"
+        },
+        {
+          "description": "Port where the x64dbg plugin REST API listens",
+          "format": "string",
+          "name": "X64DBG_MCP_PORT"
+        }
+      ],
+      "match_terms": [
+        "debugger"
+      ],
+      "downloads_last_week": null,
+      "latest_version": "2.3.0",
+      "pinned_version": "2.3.0",
+      "pin_source": "registry-declared"
+    }
+  ]
+}
