@@ -131,6 +131,30 @@ beside the grade. `rubric/rubric-v1.1.0.md` has the reasoning and the case again
 
 A sweep of 50 servers takes roughly 25 minutes, dominated by npm install time.
 
+## Scheduled automation, and how to remove it
+
+One scheduled task exists on the workstation this harness was built on:
+
+| | |
+|---|---|
+| Name | `MCP Context Index Watch` |
+| When | daily, 8:15 AM, `StartWhenAvailable` |
+| Runs | `scriptswatch-daily.ps1` -> `npm run watch` |
+| Does | npm metadata check, appends `results/versions.jsonl`, rewrites the drift report, writes `results/last-watch.txt` |
+| Does NOT | install, execute any server, re-probe, re-pin the cohort, or push anything public |
+
+Publishing an updated drift report stays manual on purpose: `node scripts/build-publication.mjs`,
+then commit and push. An automation that publishes to a public repo with no human in the loop is a
+different risk class from one that writes a local file.
+
+**Delete this task when the harness moves to a Linux box.** It points at an absolute workstation
+path and will fail silently, or worse keep succeeding against a stale checkout, once the sweep
+lives somewhere else. On Linux the same thing is a cron line and belongs there instead.
+
+```powershell
+Unregister-ScheduledTask -TaskName "MCP Context Index Watch" -Confirm:$false
+```
+
 ## Append-only, and why
 
 `results/runs.jsonl` is never rewritten. Every run appends one header record and one record per
