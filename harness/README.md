@@ -62,6 +62,7 @@ src/
   reproduce.js  the go/no-go: compare two runs under an identical config hash
   rescore.js    re-read history under a different rubric, without re-probing anything
   report.js     latest full sweep -> markdown index
+  watch.js      npm metadata only -> which pinned versions moved, and what to re-probe
 data/           registry snapshots and pinned cohorts
 results/        runs.jsonl, scores.jsonl and reproducibility.jsonl, all append-only
 docs/           generated index
@@ -84,6 +85,7 @@ npm run reproduce                     # GO / NO-GO
 npm run report                        # docs/index-dev-tooling-v1.md
 
 npm run rescore                       # re-read the whole log under a newer rubric, no re-probing
+npm run watch                         # metadata-only: which pinned versions moved on npm
 ```
 
 Environment overrides: `VERTICAL`, `COHORT_SIZE`, `COHORT`, `RUBRIC`, `LIMIT`, `ONLY`, `RUN_NOTE`,

@@ -11,7 +11,8 @@
     "reproduce": "node src/reproduce.js",
     "report": "node src/report.js",
     "rescore": "node src/rescore.js",
-    "test": "node test/era-probe.test.mjs"
+    "test": "node test/era-probe.test.mjs",
+    "watch": "node src/watch.js"
   },
   "dependencies": {
     "@modelcontextprotocol/client": "2.0.0",

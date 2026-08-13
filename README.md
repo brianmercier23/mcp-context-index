@@ -82,6 +82,26 @@ servers for having migrated, which is the one failure mode that would invalidate
 position. And recorded per server from the start, it makes the index the running record of who
 migrated when.
 
+## How fast this goes stale
+
+A published index of a fast-moving registry is a photograph, and the honest thing is to say when
+it was taken and how much has moved since. So the harness also runs a metadata-only watcher —
+no installs, no execution, a few seconds — that reports which pinned versions have been passed.
+
+**2 days after this cohort was pinned, 23 of its 50 servers had
+already published a newer version.** The largest jump is `octocode-mcp`, 62
+versions past the pin (7.0.9 to 18.2.2). Current drift report, checked
+2026-08-13: **[index/version-drift-dev-tooling-v1.md](index/version-drift-dev-tooling-v1.md)**.
+
+That number is the argument for the whole approach rather than against it. Anything that scrapes
+registry listings is describing a population that has already changed; pinning the versions is
+what makes a measurement mean something a month later. The index reports what was measured, at
+the version it was measured at, and the drift report says what has moved since. Neither pretends
+to be the other.
+
+It is also why the interesting question here is not "what is this server's score" but "what
+changed" — which is the question an append-only log can answer and a dashboard cannot.
+
 ## What is measured
 
 Per server, from a real MCP session against a pinned sandboxed install:
@@ -121,7 +141,7 @@ The sweep needs no credentials and makes no model calls. It costs machine time a
 
 | Path | What |
 |---|---|
-| [`index/`](index/) | the published index: markdown to read, JSON to consume |
+| [`index/`](index/) | the published index (markdown to read, JSON to consume) and the version-drift report that qualifies it |
 | [`METHOD.md`](METHOD.md) | how a number is produced, and what is not measured |
 | [`PROVENANCE.md`](PROVENANCE.md) | corrections, including this project's own errors |
 | [`rubric/`](rubric/) | the executable rubric, its companions, and the failure-class taxonomy |

@@ -133,6 +133,24 @@ landed in a user's project directory. A probe that is not isolated measures its 
   multi-round-trip requests, caching hints, tasks, and whether a modern server also still serves
   legacy clients are not.
 
+## Version drift, and why the sweep is not on a schedule
+
+Re-running the pinned cohort produces byte-identical numbers by design, so re-measuring nightly
+would burn machine time to reprint the same index. What changes is the registry underneath it.
+
+`npm run watch` checks npm metadata for every pinned package — no install, no execution, a few
+seconds — and reports which versions have been passed, which pinned versions have been unpublished,
+and which latest versions carry a deprecation notice. It appends to `results/versions.jsonl` on the
+same append-only contract as everything else, and writes the drift report published beside the index.
+
+It deliberately does not re-probe. It prints the exact `ONLY=` command to re-measure just the movers,
+because spending twenty minutes of machine time is a decision rather than a side effect. It also does
+not re-select the cohort: a server entering or leaving the top 50 by downloads changes the selection
+hash, which makes a new cohort, not drift within this one.
+
+A re-probe of movers is a partial sweep. It is flagged `partial_sweep` in the log and can never be
+published as an index — that guard exists so a three-server spot check cannot be mistaken for one.
+
 ## Cohort selection
 
 Servers are ranked by npm downloads within a vertical defined in `rubric/verticals-*.json`, from a

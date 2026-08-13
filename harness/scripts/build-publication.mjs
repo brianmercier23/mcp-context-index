@@ -60,6 +60,20 @@ const notAskedCount = recs.filter(
   (r) => r.handshake?.answered === 'none' && r.failure_class?.id !== 'no_handshake_response',
 ).length;
 
+// Version drift: what has moved on npm since the cohort was pinned. Read from the watcher's
+// append-only log so the README cannot claim a staleness figure the log does not support.
+const versionsPath = path.join(HARNESS, 'results', 'versions.jsonl');
+const versionRows = fs.existsSync(versionsPath) ? readJSONL(versionsPath) : [];
+const lastCheck = versionRows.filter((r) => r.record_type === 'version_check').pop() ?? null;
+const lastDrift = lastCheck
+  ? versionRows.filter((r) => r.record_type === 'version_drift' && r.checked_at === lastCheck.checked_at)
+  : [];
+const topMover = lastDrift.filter((r) => r.moved).sort((a, b) => (b.versions_ahead || 0) - (a.versions_ahead || 0))[0] ?? null;
+const cohortMeta = JSON.parse(fs.readFileSync(path.join(HARNESS, 'data', `cohort-${cohortId}.json`), 'utf8'));
+const driftDays = lastCheck
+  ? Math.max(1, Math.round((Date.parse(lastCheck.checked_at) - Date.parse(cohortMeta.built_at)) / 86400000))
+  : null;
+
 const repros = readJSONL(path.join(HARNESS, 'results', 'reproducibility.jsonl'));
 const latestRepro = repros[repros.length - 1];
 // Consecutive GO verdicts, counted back from the most recent. The one NO-GO in the log was
@@ -89,6 +103,16 @@ const values = {
   LEGACY: String(era('legacy')),
   NEITHER: String(neitherCount),
   NOT_STARTED: String(notAskedCount),
+  MOVED: lastCheck ? String(lastCheck.counts.moved) : '0',
+  STILL_PINNED: lastCheck ? String(lastCheck.counts.checked - lastCheck.counts.moved) : '0',
+  COHORT_SIZE: lastCheck ? String(lastCheck.counts.checked) : String(recs.length),
+  DRIFT_DAYS: driftDays === null ? '0' : String(driftDays),
+  DRIFT_DATE: lastCheck ? lastCheck.checked_at.slice(0, 10) : '',
+  TOP_MOVER: topMover ? topMover.npm_package : 'none',
+  TOP_MOVER_FROM: topMover ? topMover.pinned_version : '',
+  TOP_MOVER_TO: topMover ? topMover.latest_version : '',
+  TOP_MOVER_AHEAD: topMover ? String(topMover.versions_ahead) : '0',
+  DRIFT_PATH: `index/version-drift-${cohortId}.md`,
 };
 
 // ---- assemble --------------------------------------------------------------
@@ -181,6 +205,12 @@ const indexJson = {
 mkdirp(path.join(TARGET, 'index'));
 fs.writeFileSync(path.join(TARGET, 'index', `${cohortId}.json`), JSON.stringify(indexJson, null, 2) + '\n');
 
+// the version-drift report, alongside the index it qualifies
+const driftFile = `version-drift-${cohortId}.md`;
+if (fs.existsSync(path.join(HARNESS, 'docs', driftFile))) {
+  copy(path.join('docs', driftFile), path.join('index', driftFile));
+}
+
 // method, provenance, licence
 copy(path.join('publication', 'METHOD.md'), 'METHOD.md');
 copy(path.join('publication', 'PROVENANCE.md'), 'PROVENANCE.md');
@@ -214,7 +244,7 @@ for (const f of fs.readdirSync(path.join(HARNESS, 'data'))) {
 // is published at index/ instead, and SPIKE-FINDINGS.md, which is the internal working record and
 // carries commercial reasoning that has no place in an index that claims independence.
 const HELD_BACK = ['SPIKE-FINDINGS.md'];
-copyDir('docs', 'docs', (f) => !f.startsWith('index-') && !HELD_BACK.includes(f));
+copyDir('docs', 'docs', (f) => !f.startsWith('index-') && !f.startsWith('version-drift-') && !HELD_BACK.includes(f));
 
 // the instrument
 copy('README.md', path.join('harness', 'README.md'));
