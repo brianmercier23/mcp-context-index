@@ -102,6 +102,15 @@ same way (an endpoint answering with HTML, a server reporting protocol version `
 measurement changed: classification is diagnostic, and every server measured in those runs
 measured identically in the next.
 
+### The commerce index called an independent sandbox a reference implementation
+
+The implementation labelled `ucp-sandbox (reference)` in `commerce-mcp-v1` is ucpsandbox.com, a
+public UCP test environment that names no operator and does not describe itself as an official or
+reference implementation of the protocol. It uses the phrase "reference stores" for its sample
+shops, and the label borrowed that. It is not published by the UCP project. The label stays in the
+log as recorded; read it as `ucpsandbox.com`. The measurement (an `invalid_tool_schema` failure:
+none of its 15 tools declares a type on its `outputSchema`) is unaffected.
+
 ## Corrections to the published sources this project was built on
 
 These were found by checking primary sources directly rather than search summaries, and each one
