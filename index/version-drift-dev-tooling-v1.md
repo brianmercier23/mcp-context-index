@@ -1,14 +1,14 @@
 # Version drift — dev-tooling-v1
 
-Checked 2026-08-13T03:09:26.716Z against the pinned cohort. 50 packages, npm metadata only:
+Checked 2026-10-25T12:15:02.932Z against the pinned cohort. 50 packages, npm metadata only:
 nothing was installed, executed or measured.
 
 | | |
 |---|---:|
-| Still on the pinned version | **27** |
-| Published a newer version | **23** |
-| Pinned version or package no longer on npm | **0** |
-| Latest version marked deprecated | **0** |
+| Still on the pinned version | **16** |
+| Published a newer version | **33** |
+| Pinned version or package no longer on npm | **1** |
+| Latest version marked deprecated | **1** |
 
 The published index does not move when this file does. The index reports pinned versions,
 and a version that moved on npm has not been measured until a sweep measures it.
@@ -17,36 +17,57 @@ and a version that moved on npm has not been measured until a sweep measures it.
 
 | Server | Pinned | Latest | Versions ahead |
 |---|---|---|---:|
-| `octocode-mcp` | 7.0.9 | **18.2.2** | 62 |
-| `vibe-hnindex` | 0.1.2 | **0.12.1** | 34 |
-| `infimium` | 0.3.1 | **0.5.9** | 16 |
-| `@aicommander/mcp` | 1.0.17 | **1.0.49** | 14 |
+| `octocode-mcp` | 7.0.9 | **19.1.0** | 63 |
+| `githits` | 0.8.0 | **0.35.0** | 45 |
+| `vibe-hnindex` | 0.1.2 | **0.16.1** | 42 |
+| `@aicommander/mcp` | 1.0.17 | **1.6.4** | 39 |
+| `mason-context` | 0.6.0 | **0.23.1** | 32 |
+| `@bashbop/otito` | 1.6.0 | **3.5.0** (deprecated) | 22 |
+| `infimium` | 0.3.1 | **0.5.10** | 17 |
+| `bomly-mcp` | 0.21.3 | **0.29.0** | 14 |
 | `docfork` | 1.3.0 | **2.2.5** | 13 |
+| `@atlassian-dc-mcp/jira` | 0.29.0 | **0.38.0** | 11 |
+| `@atlassian-dc-mcp/bitbucket` | 0.29.0 | **0.38.0** | 11 |
+| `contextforge-mcp` | 0.5.0 | **0.13.2** | 11 |
+| `@smartbear/mcp` | 0.34.0 | **0.42.0** | 9 |
+| `@postman/postman-mcp-server` | 2.11.2 | **2.14.0** | 6 |
+| `@cstart/coldstart` | 2.2.17 | **2.3.4** | 6 |
 | `parecode` | 0.7.0 | **0.9.1** | 4 |
-| `makers-page-mcp` | 0.1.2 | **0.4.0** | 3 |
+| `@aaronsb/jira-cloud-mcp` | 0.10.0 | **0.11.3** | 4 |
+| `@gitkraken/gk` | 3.1.70 | **3.1.77** | 3 |
+| `ainative-zerodb-memory-mcp` | 1.2.7 | **1.2.10** | 3 |
+| `reuse-before-generate` | 0.2.3 | **2.1.0** | 3 |
+| `@vibemap.ai/mcp-server` | 2.8.1 | **2.11.0** | 3 |
+| `@optimalai/optibot-mcp` | 1.4.1 | **1.7.0** | 3 |
 | `@automatelab/content-distribution-mcp` | 2.2.1 | **3.0.0** | 3 |
-| `@aaronsb/jira-cloud-mcp` | 0.10.0 | **0.11.1** | 2 |
+| `mendapi` | 0.5.6 | **0.5.8** | 2 |
+| `@aryam/fixmap` | 0.8.8 | **0.9.0** | 2 |
+| `kenotex-mcp` | 1.2.3 | **1.3.1** | 2 |
+| `@metaengine/mcp-server` | 1.4.1 | **1.5.0** | 2 |
 | `@remogram/mcp` | 0.2.0-beta.4 | **0.3.0** | 2 |
-| `@smartbear/mcp` | 0.34.0 | **0.35.0** | 1 |
-| `mendapi` | 0.5.6 | **0.5.7** | 1 |
-| `githits` | 0.8.0 | **0.9.0** | 1 |
-| `@cstart/coldstart` | 2.2.17 | **2.2.18** | 1 |
-| `@aryam/fixmap` | 0.8.8 | **0.8.9** | 1 |
+| `@alex-apps/ng-token-saver` | 0.1.7 | **0.2.0** | 1 |
 | `sharedoc-mcp` | 2.1.4 | **2.2.0** | 1 |
-| `@bashbop/otito` | 1.6.0 | **1.6.1** | 1 |
 | `@pinappai/mcp` | 0.9.9 | **0.9.10** | 1 |
 | `obra-cto` | 0.3.0 | **0.3.1** | 1 |
-| `reuse-before-generate` | 0.2.3 | **0.10.0** | 1 |
-| `@vibemap.ai/mcp-server` | 2.8.1 | **2.9.0** | 1 |
 | `@algiras/debugium` | 0.1.2 | **0.1.3** | 1 |
-| `bomly-mcp` | 0.21.3 | **0.22.0** | 1 |
 
 Re-probe exactly these, and nothing else:
 
 ```bash
-ONLY="octocode-mcp,vibe-hnindex,infimium,@aicommander/mcp,docfork,parecode,makers-page-mcp,@automatelab/content-distribution-mcp,@aaronsb/jira-cloud-mcp,@remogram/mcp,@smartbear/mcp,mendapi,githits,@cstart/coldstart,@aryam/fixmap,sharedoc-mcp,@bashbop/otito,@pinappai/mcp,obra-cto,reuse-before-generate,@vibemap.ai/mcp-server,@algiras/debugium,bomly-mcp" npm run run
+ONLY="octocode-mcp,githits,vibe-hnindex,@aicommander/mcp,mason-context,@bashbop/otito,infimium,bomly-mcp,docfork,@atlassian-dc-mcp/jira,@atlassian-dc-mcp/bitbucket,contextforge-mcp,@smartbear/mcp,@postman/postman-mcp-server,@cstart/coldstart,parecode,@aaronsb/jira-cloud-mcp,@gitkraken/gk,ainative-zerodb-memory-mcp,reuse-before-generate,@vibemap.ai/mcp-server,@optimalai/optibot-mcp,@automatelab/content-distribution-mcp,mendapi,@aryam/fixmap,kenotex-mcp,@metaengine/mcp-server,@remogram/mcp,@alex-apps/ng-token-saver,sharedoc-mcp,@pinappai/mcp,obra-cto,@algiras/debugium" npm run run
 ```
 
 That is a partial sweep: it is flagged `partial_sweep` in the log and can never be
 published as an index. Re-pinning the cohort is a separate, deliberate act.
+
+## No longer resolvable
+
+- `makers-page-mcp@0.1.2` — the pinned version is gone from npm and so is the package
+
+A measurement of a version nobody can install any more is history, not a buying guide.
+These rows should be re-pinned or dropped at the next cohort revision.
+
+## Latest version marked deprecated
+
+- `@bashbop/otito` — latest (3.5.0) carries an npm deprecation notice
 
