@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
+import { loadRemote, byImplementation } from '../src/remote-report.js';
 
 const HARNESS = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const TARGET = path.resolve(process.argv[2] || path.join(HARNESS, '..', 'mcp-context-index'));
@@ -115,6 +116,35 @@ const values = {
   DRIFT_PATH: `index/version-drift-${cohortId}.md`,
 };
 
+// The commerce index: remote endpoints, its own log, its own config hash. Read the same way, from
+// results/remote-runs.jsonl, and published beside the dev-tooling index rather than merged into it.
+const COMMERCE_ID = 'commerce-mcp-v1';
+const commerce = fs.existsSync(path.join(HARNESS, 'docs', `index-${COMMERCE_ID}.md`)) ? loadRemote(COMMERCE_ID) : null;
+if (commerce) {
+  const impls = byImplementation(commerce.recs);
+  const measured = impls.filter((i) => i.probed > 0).sort((a, b) => b.max_tokens - a.max_tokens);
+  const wix = measured.find((i) => i.implementation === 'wix-ucp');
+  const C = commerce.H;
+  Object.assign(values, {
+    C_INDEX_PATH: `index/${COMMERCE_ID}.md`,
+    C_DATE: C.finished_at.slice(0, 10),
+    C_ATTEMPTED: String(C.counts.attempted),
+    C_IMPLS: String(impls.length),
+    C_MEASURED: String(C.counts.probed),
+    C_MEASURED_IMPLS: String(measured.length),
+    C_MIN_TOK: num(C.token_spread.min),
+    C_MAX_TOK: num(C.token_spread.max),
+    C_RATIO: String(C.token_spread.ratio),
+    C_TOP_IMPL: measured[0].implementation,
+    C_TOP_TOK: num(measured[0].max_tokens),
+    C_WIX_TOK: wix ? num(wix.max_tokens) : '',
+    C_TOP_VS_WIX: wix ? String(Math.round(measured[0].max_tokens / wix.max_tokens)) : '',
+    C_MODERN: String(C.handshakes.modern ?? 0),
+    C_REPRO_STABLE: commerce.repro ? String(commerce.repro.byte_identical) : '0',
+    C_REPRO_BOTH: commerce.repro ? String(commerce.repro.measured_in_both) : '0',
+  });
+}
+
 // ---- assemble --------------------------------------------------------------
 
 if (fs.existsSync(TARGET)) {
@@ -211,6 +241,54 @@ if (fs.existsSync(path.join(HARNESS, 'docs', driftFile))) {
   copy(path.join('docs', driftFile), path.join('index', driftFile));
 }
 
+if (commerce) {
+  copy(path.join('docs', `index-${COMMERCE_ID}.md`), path.join('index', `${COMMERCE_ID}.md`));
+  copy(path.join('data', `cohort-${COMMERCE_ID}.json`), path.join('data', `cohort-${COMMERCE_ID}.json`));
+  const C = commerce.H;
+  const commerceJson = {
+    index_id: COMMERCE_ID,
+    generated_from: {
+      run_id: C.run_id,
+      config_hash: C.config_hash,
+      measured_at: C.finished_at,
+      harness_version: C.harness_version,
+      rubric: C.rubric,
+      tokenizer: C.tokenizer,
+      transport: C.transport,
+      cohort_selection_hash: C.cohort_selection_hash,
+      mcp_clients: C.mcp_clients ?? null,
+    },
+    caveats: [
+      'Stores were hand-picked from public adopter directories, one to three per platform. Not a random sample; the unit graded is the implementation, not the store.',
+      'Read-only: handshake and list calls only, no tool is ever called. Error legibility is unmeasured and dropped from the weighting; name collisions are not scored because shared names are the point of a shared protocol.',
+      'Tool-definition tokens include outputSchema, which the protocol ships. tool_definition_tokens_input_only is the lower bound for hosts that inject only name, description and inputSchema.',
+      'Endpoints requiring credentials before tools/list are reported as auth_required and not graded. Both UCP and PAP permit this.',
+      'Token counts are tokenizer-dependent (gpt-tokenizer o200k_base).',
+    ],
+    reproducibility: commerce.repro,
+    totals: { attempted: C.counts.attempted, measured: C.counts.probed, token_spread: C.token_spread, handshakes: C.handshakes, failures: C.http_failures },
+    implementations: byImplementation(commerce.recs),
+    endpoints: commerce.recs.map((r) => ({
+      id: r.server.id,
+      implementation: r.server.implementation,
+      protocol: r.server.protocol,
+      url: r.server.url,
+      status: r.status,
+      handshake: r.handshake?.answered ?? null,
+      protocol_version: r.protocol_version ?? null,
+      failure: r.http_failure ?? null,
+      tools: r.signals?.tool_count ?? null,
+      tool_definition_tokens: r.signals?.tool_definition_tokens ?? null,
+      tool_definition_tokens_input_only: r.signals?.tool_definition_tokens_input_only ?? null,
+      tool_surface_hash: r.tool_surface_hash ?? null,
+      grade: r.score?.grade ?? null,
+      uncapped_grade: r.score?.uncapped_grade ?? null,
+      defects: r.score ? r.score.defects.ids : null,
+    })),
+  };
+  fs.writeFileSync(path.join(TARGET, 'index', `${COMMERCE_ID}.json`), JSON.stringify(commerceJson, null, 2) + '\n');
+}
+
 // method, provenance, licence
 copy(path.join('publication', 'METHOD.md'), 'METHOD.md');
 copy(path.join('publication', 'PROVENANCE.md'), 'PROVENANCE.md');
@@ -243,7 +321,7 @@ for (const f of fs.readdirSync(path.join(HARNESS, 'data'))) {
 // Run conditions and per-server evidence. Two deliberate exclusions: the generated index, which
 // is published at index/ instead, and SPIKE-FINDINGS.md, which is the internal working record and
 // carries commercial reasoning that has no place in an index that claims independence.
-const HELD_BACK = ['SPIKE-FINDINGS.md'];
+const HELD_BACK = ['SPIKE-FINDINGS.md', 'commerce-mcp-v0-spike.md'];
 copyDir('docs', 'docs', (f) => !f.startsWith('index-') && !f.startsWith('version-drift-') && !HELD_BACK.includes(f));
 
 // the instrument

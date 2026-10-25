@@ -20,6 +20,29 @@ run `run-2026-08-13-0208-7936eadf` · config `7936eadf`
 The most expensive server in this cohort costs more context than the other 37
 put together, and it is the most-downloaded server in the set.
 
+### Second index: commerce
+
+**[Commerce MCP, 16 implementations](index/commerce-mcp-v1.md)** · measured 2026-10-25
+
+Online stores now publish MCP endpoints for shopping agents, through the Universal Commerce
+Protocol (UCP) and the Personal Agent Protocol (PAP). This index reads each store's manifest,
+connects to the endpoint it names, and measures what an agent is handed before it does anything.
+It is read-only: it lists tools and never calls one.
+
+| | |
+|---|---|
+| Endpoints attempted | **38**, across 27 implementations (platforms, plugins and individual PAP services) |
+| Measured | **22** endpoints, 16 implementations |
+| Cheapest tool surface | **273** tokens |
+| Most expensive | **45,030** tokens (`shopify-ucp`) |
+| Same UCP job, heaviest vs Wix | **36x** (45,030 vs 1,236) |
+| Answering the 2026-07-28 handshake | **4** endpoints |
+| Two full sweeps | **22 of 22** byte-identical |
+
+Stores on one platform share one tool surface, so the unit graded is the platform or plugin, and
+every store on it inherits the grade. Its caveats differ from the dev-tooling index and are listed
+at the top of the index itself.
+
 ## Read the caveats first
 
 These four are load-bearing. They are repeated in the index itself and in

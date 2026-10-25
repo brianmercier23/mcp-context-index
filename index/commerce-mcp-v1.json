@@ -1,0 +1,1367 @@
+{
+  "index_id": "commerce-mcp-v1",
+  "generated_from": {
+    "run_id": "run-2026-10-25-1517-cd900dba",
+    "config_hash": "cd900dba3ecf53d4f4605e4c8e32f5ec4916e85355f1efbb51e11a85d5a488cf",
+    "measured_at": "2026-10-25T15:21:03.769Z",
+    "harness_version": "0.1.4",
+    "rubric": "mcp-server-quality@1.1.1",
+    "tokenizer": {
+      "library": "gpt-tokenizer",
+      "encoding": "o200k_base",
+      "model_alias": "gpt-4o"
+    },
+    "transport": "streamable-http",
+    "cohort_selection_hash": "commerce-mcp-v1@2026-10-25",
+    "mcp_clients": {
+      "legacy": "1.30.0",
+      "modern": "2.0.0"
+    }
+  },
+  "caveats": [
+    "Stores were hand-picked from public adopter directories, one to three per platform. Not a random sample; the unit graded is the implementation, not the store.",
+    "Read-only: handshake and list calls only, no tool is ever called. Error legibility is unmeasured and dropped from the weighting; name collisions are not scored because shared names are the point of a shared protocol.",
+    "Tool-definition tokens include outputSchema, which the protocol ships. tool_definition_tokens_input_only is the lower bound for hosts that inject only name, description and inputSchema.",
+    "Endpoints requiring credentials before tools/list are reported as auth_required and not graded. Both UCP and PAP permit this.",
+    "Token counts are tokenizer-dependent (gpt-tokenizer o200k_base)."
+  ],
+  "reproducibility": {
+    "compared": [
+      "run-2026-10-25-1514-cd900dba",
+      "run-2026-10-25-1517-cd900dba"
+    ],
+    "measured_in_both": 22,
+    "byte_identical": 22,
+    "grade_changes": 0,
+    "status_changes": 0
+  },
+  "totals": {
+    "attempted": 38,
+    "measured": 22,
+    "token_spread": {
+      "min": 273,
+      "max": 45030,
+      "ratio": 164.9
+    },
+    "handshakes": {
+      "legacy": 18,
+      "none": 16,
+      "modern": 4
+    },
+    "failures": {
+      "auth_required": 9,
+      "rate_limited": 1,
+      "no_handshake_response": 1,
+      "not_an_mcp_endpoint": 2,
+      "invalid_protocol_version": 2,
+      "invalid_tool_schema": 1
+    }
+  },
+  "implementations": [
+    {
+      "implementation": "shopify-storefront-mcp",
+      "protocol": "shopify",
+      "endpoints": 1,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "tools": "1",
+      "tokens": "273",
+      "tokens_input_only": "273",
+      "max_tokens": 273,
+      "heaviest_tool": "search_shop_policies_and_faqs",
+      "grade": "A",
+      "uncapped_grade": "A",
+      "defect_ids": [],
+      "failures": []
+    },
+    {
+      "implementation": "shopify-ucp",
+      "protocol": "ucp",
+      "endpoints": 3,
+      "probed": 3,
+      "distinct_surfaces": 2,
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "tools": "13–15",
+      "tokens": "41,361–45,030",
+      "tokens_input_only": "12,854–15,010",
+      "max_tokens": 45030,
+      "heaviest_tool": "complete_checkout",
+      "grade": "D",
+      "uncapped_grade": "C",
+      "defect_ids": [
+        "tool_defs_over_10k",
+        "context_injection_over_12k",
+        "median_tool_over_500",
+        "description_length_out_of_band"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "wix-ucp",
+      "protocol": "ucp",
+      "endpoints": 3,
+      "probed": 3,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-03-26",
+      "tools": "8",
+      "tokens": "1,236",
+      "tokens_input_only": "1,236",
+      "max_tokens": 1236,
+      "heaviest_tool": "create_checkout",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "untyped_params"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "bigcommerce-ucp",
+      "protocol": "ucp",
+      "endpoints": 2,
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "auth_required"
+      ]
+    },
+    {
+      "implementation": "jumpseller-ucp",
+      "protocol": "ucp",
+      "endpoints": 2,
+      "probed": 2,
+      "distinct_surfaces": 1,
+      "handshake": "modern",
+      "protocol_version": "2026-07-28",
+      "tools": "7",
+      "tokens": "1,216",
+      "tokens_input_only": "1,216",
+      "max_tokens": 1216,
+      "heaviest_tool": "update_cart",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "untyped_params",
+        "weak_namespacing"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "salla-ucp",
+      "protocol": "ucp",
+      "endpoints": 2,
+      "probed": 2,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-06-18",
+      "tools": "12",
+      "tokens": "3,002",
+      "tokens_input_only": "3,002",
+      "max_tokens": 3002,
+      "heaviest_tool": "create_checkout",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "untyped_params"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "magento-agent-mcp",
+      "protocol": "ucp",
+      "endpoints": 2,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "modern",
+      "protocol_version": "2026-07-28",
+      "tools": "14",
+      "tokens": "2,953",
+      "tokens_input_only": "2,953",
+      "max_tokens": 2953,
+      "heaviest_tool": "create_cart",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "params_missing_description",
+        "untyped_params"
+      ],
+      "failures": [
+        "rate_limited"
+      ]
+    },
+    {
+      "implementation": "woo-plugin:/ucp/mcp",
+      "protocol": "ucp",
+      "endpoints": 1,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "tools": "3",
+      "tokens": "376",
+      "tokens_input_only": "376",
+      "max_tokens": 376,
+      "heaviest_tool": "search_catalog",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "params_missing_description",
+        "untyped_params"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "woo-plugin:wp-json/ucp/v1",
+      "protocol": "ucp",
+      "endpoints": 1,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "tools": "8",
+      "tokens": "2,398",
+      "tokens_input_only": "1,758",
+      "max_tokens": 2398,
+      "heaviest_tool": "complete_checkout",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "params_missing_description"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "woo-plugin:wp-json/univcopr/v1",
+      "protocol": "ucp",
+      "endpoints": 1,
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "no_handshake_response"
+      ]
+    },
+    {
+      "implementation": "woo-plugin:wp-json/wt-ucp/v1",
+      "protocol": "ucp",
+      "endpoints": 1,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "tools": "13",
+      "tokens": "2,419",
+      "tokens_input_only": "1,978",
+      "max_tokens": 2419,
+      "heaviest_tool": "complete_checkout",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "params_missing_description",
+        "untyped_params"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "pap-sandbox",
+      "protocol": "pap",
+      "endpoints": 1,
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "auth_required"
+      ]
+    },
+    {
+      "implementation": "pap-demo:poppyseed",
+      "protocol": "pap",
+      "endpoints": 1,
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "auth_required"
+      ]
+    },
+    {
+      "implementation": "pap:ample",
+      "protocol": "pap",
+      "endpoints": 1,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "modern",
+      "protocol_version": "2026-07-28",
+      "tools": "104",
+      "tokens": "16,066",
+      "tokens_input_only": "16,066",
+      "max_tokens": 16066,
+      "heaviest_tool": "ample_deploy",
+      "grade": "C",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "tool_defs_over_10k",
+        "context_injection_over_12k",
+        "tool_count_over_40",
+        "params_missing_description"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "pap:stacktree",
+      "protocol": "pap",
+      "endpoints": 1,
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "auth_required"
+      ]
+    },
+    {
+      "implementation": "pap:saferate",
+      "protocol": "pap",
+      "endpoints": 1,
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "auth_required"
+      ]
+    },
+    {
+      "implementation": "pap:autoura",
+      "protocol": "pap",
+      "endpoints": 1,
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "auth_required"
+      ]
+    },
+    {
+      "implementation": "pap:tilopay",
+      "protocol": "pap",
+      "endpoints": 1,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "tools": "6",
+      "tokens": "1,981",
+      "tokens_input_only": "1,981",
+      "max_tokens": 1981,
+      "heaviest_tool": "pap_quote_cart",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "params_missing_description"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "pap-bench:neutral-state",
+      "protocol": "pap",
+      "endpoints": 2,
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "auth_required"
+      ]
+    },
+    {
+      "implementation": "tray-ucp",
+      "protocol": "ucp",
+      "endpoints": 2,
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "not_an_mcp_endpoint"
+      ]
+    },
+    {
+      "implementation": "boutir-ucp",
+      "protocol": "ucp",
+      "endpoints": 2,
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "invalid_protocol_version"
+      ]
+    },
+    {
+      "implementation": "vtex-adapter:catyai",
+      "protocol": "ucp",
+      "endpoints": 1,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "tools": "2",
+      "tokens": "1,734",
+      "tokens_input_only": "1,734",
+      "max_tokens": 1734,
+      "heaviest_tool": "caty_affiliate_catalog",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "median_tool_over_500",
+        "description_length_out_of_band"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "vtex-adapter:vtex-ucp-adapter",
+      "protocol": "ucp",
+      "endpoints": 1,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "tools": "9",
+      "tokens": "3,136",
+      "tokens_input_only": "3,136",
+      "max_tokens": 3136,
+      "heaviest_tool": "create_checkout",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "params_missing_description"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "odoo-ucp",
+      "protocol": "ucp",
+      "endpoints": 1,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-06-18",
+      "tools": "3",
+      "tokens": "1,227",
+      "tokens_input_only": "1,227",
+      "max_tokens": 1227,
+      "heaviest_tool": "ucp.create_checkout",
+      "grade": "A",
+      "uncapped_grade": "A",
+      "defect_ids": [
+        "median_tool_over_500"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "custom:/hooks/ucp/mcp",
+      "protocol": "ucp",
+      "endpoints": 1,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-06-18",
+      "tools": "9",
+      "tokens": "1,815",
+      "tokens_input_only": "1,466",
+      "max_tokens": 1815,
+      "heaviest_tool": "complete_checkout",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "untyped_params"
+      ],
+      "failures": []
+    },
+    {
+      "implementation": "ucp-sandbox (reference)",
+      "protocol": "ucp",
+      "endpoints": 1,
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "invalid_tool_schema"
+      ]
+    },
+    {
+      "implementation": "custom:agentdiet (ucpchecker lists under Shopware)",
+      "protocol": "ucp",
+      "endpoints": 1,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "tools": "15",
+      "tokens": "1,633",
+      "tokens_input_only": "959",
+      "max_tokens": 1633,
+      "heaviest_tool": "complete_checkout",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "untyped_params"
+      ],
+      "failures": []
+    }
+  ],
+  "endpoints": [
+    {
+      "id": "shopify-storefront@allbirds.com",
+      "implementation": "shopify-storefront-mcp",
+      "protocol": "shopify",
+      "url": "https://allbirds.com/api/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 1,
+      "tool_definition_tokens": 273,
+      "tool_definition_tokens_input_only": 273,
+      "tool_surface_hash": "f7ceb969a6154622",
+      "grade": "A",
+      "uncapped_grade": "A",
+      "defects": []
+    },
+    {
+      "id": "shopify-ucp@allbirds.com",
+      "implementation": "shopify-ucp",
+      "protocol": "ucp",
+      "url": "https://weareallbirds.myshopify.com/api/ucp/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 15,
+      "tool_definition_tokens": 45030,
+      "tool_definition_tokens_input_only": 15010,
+      "tool_surface_hash": "3efcae389f500580",
+      "grade": "D",
+      "uncapped_grade": "C",
+      "defects": [
+        "tool_defs_over_10k",
+        "context_injection_over_12k",
+        "median_tool_over_500",
+        "description_length_out_of_band"
+      ]
+    },
+    {
+      "id": "shopify-ucp@finest-filters.co.uk",
+      "implementation": "shopify-ucp",
+      "protocol": "ucp",
+      "url": "https://e1sqv6-va.myshopify.com/api/ucp/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 13,
+      "tool_definition_tokens": 41361,
+      "tool_definition_tokens_input_only": 12854,
+      "tool_surface_hash": "bebff263806f3a71",
+      "grade": "D",
+      "uncapped_grade": "C",
+      "defects": [
+        "tool_defs_over_10k",
+        "context_injection_over_12k",
+        "median_tool_over_500"
+      ]
+    },
+    {
+      "id": "shopify-ucp@taavita.com",
+      "implementation": "shopify-ucp",
+      "protocol": "ucp",
+      "url": "https://2a4397-07.myshopify.com/api/ucp/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 13,
+      "tool_definition_tokens": 41361,
+      "tool_definition_tokens_input_only": 12854,
+      "tool_surface_hash": "bebff263806f3a71",
+      "grade": "D",
+      "uncapped_grade": "C",
+      "defects": [
+        "tool_defs_over_10k",
+        "context_injection_over_12k",
+        "median_tool_over_500"
+      ]
+    },
+    {
+      "id": "wix-ucp@breezecanna.com",
+      "implementation": "wix-ucp",
+      "protocol": "ucp",
+      "url": "https://www.wixapis.com/ecom/ucp/953daff2-25ca-4250-bda9-337ea4e9f6b6/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-03-26",
+      "failure": null,
+      "tools": 8,
+      "tool_definition_tokens": 1236,
+      "tool_definition_tokens_input_only": 1236,
+      "tool_surface_hash": "bb81938d7269c462",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "untyped_params"
+      ]
+    },
+    {
+      "id": "wix-ucp@quirkyartbylara.com",
+      "implementation": "wix-ucp",
+      "protocol": "ucp",
+      "url": "https://www.wixapis.com/ecom/ucp/2a70818e-ecb9-48ab-9f29-4b09bbaafe69/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-03-26",
+      "failure": null,
+      "tools": 8,
+      "tool_definition_tokens": 1236,
+      "tool_definition_tokens_input_only": 1236,
+      "tool_surface_hash": "bb81938d7269c462",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "untyped_params"
+      ]
+    },
+    {
+      "id": "wix-ucp@rallyeproductions.com",
+      "implementation": "wix-ucp",
+      "protocol": "ucp",
+      "url": "https://www.wixapis.com/ecom/ucp/28605a12-a0e4-44f9-b8c6-7a17d068c3f4/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-03-26",
+      "failure": null,
+      "tools": 8,
+      "tool_definition_tokens": 1236,
+      "tool_definition_tokens_input_only": 1236,
+      "tool_surface_hash": "bb81938d7269c462",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "untyped_params"
+      ]
+    },
+    {
+      "id": "bigcommerce-ucp@untilgone.com",
+      "implementation": "bigcommerce-ucp",
+      "protocol": "ucp",
+      "url": "https://untilgone.com/api/ucp/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 401,
+        "class": "auth_required"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "bigcommerce-ucp@jacksonsleisure.com",
+      "implementation": "bigcommerce-ucp",
+      "protocol": "ucp",
+      "url": "https://www.jacksonsleisure.com/api/ucp/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 401,
+        "class": "auth_required"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "jumpseller-ucp@magic4ever.cl",
+      "implementation": "jumpseller-ucp",
+      "protocol": "ucp",
+      "url": "https://www.magic4ever.cl/api/ucp/mcp",
+      "status": "probed",
+      "handshake": "modern",
+      "protocol_version": "2026-07-28",
+      "failure": null,
+      "tools": 7,
+      "tool_definition_tokens": 1216,
+      "tool_definition_tokens_input_only": 1216,
+      "tool_surface_hash": "aa0d158d1f0989c6",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "untyped_params",
+        "weak_namespacing"
+      ]
+    },
+    {
+      "id": "jumpseller-ucp@magri.cl",
+      "implementation": "jumpseller-ucp",
+      "protocol": "ucp",
+      "url": "https://www.magri.cl/api/ucp/mcp",
+      "status": "probed",
+      "handshake": "modern",
+      "protocol_version": "2026-07-28",
+      "failure": null,
+      "tools": 7,
+      "tool_definition_tokens": 1216,
+      "tool_definition_tokens_input_only": 1216,
+      "tool_surface_hash": "aa0d158d1f0989c6",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "untyped_params",
+        "weak_namespacing"
+      ]
+    },
+    {
+      "id": "salla-ucp@addfahad.com",
+      "implementation": "salla-ucp",
+      "protocol": "ucp",
+      "url": "https://addfahad.com/_app/ucp/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-06-18",
+      "failure": null,
+      "tools": 12,
+      "tool_definition_tokens": 3002,
+      "tool_definition_tokens_input_only": 3002,
+      "tool_surface_hash": "94eabb79e3797975",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "untyped_params"
+      ]
+    },
+    {
+      "id": "salla-ucp@adeemtea.com",
+      "implementation": "salla-ucp",
+      "protocol": "ucp",
+      "url": "https://adeemtea.com/_app/ucp/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-06-18",
+      "failure": null,
+      "tools": 12,
+      "tool_definition_tokens": 3002,
+      "tool_definition_tokens_input_only": 3002,
+      "tool_surface_hash": "94eabb79e3797975",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "untyped_params"
+      ]
+    },
+    {
+      "id": "magento-ucp@seatosummit.es",
+      "implementation": "magento-agent-mcp",
+      "protocol": "ucp",
+      "url": "https://seatosummit.es/agent/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 429,
+        "class": "rate_limited"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "magento-ucp@serverkast.com",
+      "implementation": "magento-agent-mcp",
+      "protocol": "ucp",
+      "url": "https://www.serverkast.com/agent/mcp",
+      "status": "probed",
+      "handshake": "modern",
+      "protocol_version": "2026-07-28",
+      "failure": null,
+      "tools": 14,
+      "tool_definition_tokens": 2953,
+      "tool_definition_tokens_input_only": 2953,
+      "tool_surface_hash": "78d5f939c055b2da",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "params_missing_description",
+        "untyped_params"
+      ]
+    },
+    {
+      "id": "woo-ucp-root@houseofattar.co.uk",
+      "implementation": "woo-plugin:/ucp/mcp",
+      "protocol": "ucp",
+      "url": "https://houseofattar.co.uk/ucp/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 3,
+      "tool_definition_tokens": 376,
+      "tool_definition_tokens_input_only": 376,
+      "tool_surface_hash": "ce7eff4144cb91c2",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "params_missing_description",
+        "untyped_params"
+      ]
+    },
+    {
+      "id": "woo-ucp-v1@petitcoto.com",
+      "implementation": "woo-plugin:wp-json/ucp/v1",
+      "protocol": "ucp",
+      "url": "https://petitcoto.com/wp-json/ucp/v1/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 8,
+      "tool_definition_tokens": 2398,
+      "tool_definition_tokens_input_only": 1758,
+      "tool_surface_hash": "7fcd14da9a1783bc",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "params_missing_description"
+      ]
+    },
+    {
+      "id": "woo-univcopr@toysvision.com",
+      "implementation": "woo-plugin:wp-json/univcopr/v1",
+      "protocol": "ucp",
+      "url": "https://toysvision.com/wp-json/univcopr/v1/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": null,
+        "class": "no_handshake_response"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "woo-wt-ucp@fitnesseddy.com",
+      "implementation": "woo-plugin:wp-json/wt-ucp/v1",
+      "protocol": "ucp",
+      "url": "https://fitnesseddy.com/wp-json/wt-ucp/v1/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 13,
+      "tool_definition_tokens": 2419,
+      "tool_definition_tokens_input_only": 1978,
+      "tool_surface_hash": "c7021db4b53c2500",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "params_missing_description",
+        "untyped_params"
+      ]
+    },
+    {
+      "id": "pap@flowers.papsandbox.com",
+      "implementation": "pap-sandbox",
+      "protocol": "pap",
+      "url": "https://flowers.papsandbox.com/poppy/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 401,
+        "class": "auth_required"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "pap@withpoppyseed.dev",
+      "implementation": "pap-demo:poppyseed",
+      "protocol": "pap",
+      "url": "https://www.withpoppyseed.dev/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 401,
+        "class": "auth_required"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "pap@ample.computer",
+      "implementation": "pap:ample",
+      "protocol": "pap",
+      "url": "https://api.ample.computer/mcp",
+      "status": "probed",
+      "handshake": "modern",
+      "protocol_version": "2026-07-28",
+      "failure": null,
+      "tools": 104,
+      "tool_definition_tokens": 16066,
+      "tool_definition_tokens_input_only": 16066,
+      "tool_surface_hash": "106f18a124b5b644",
+      "grade": "C",
+      "uncapped_grade": "B",
+      "defects": [
+        "tool_defs_over_10k",
+        "context_injection_over_12k",
+        "tool_count_over_40",
+        "params_missing_description"
+      ]
+    },
+    {
+      "id": "pap@stacktr.ee",
+      "implementation": "pap:stacktree",
+      "protocol": "pap",
+      "url": "https://api.stacktr.ee/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 401,
+        "class": "auth_required"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "pap@saferate.com",
+      "implementation": "pap:saferate",
+      "protocol": "pap",
+      "url": "https://mcp.saferate.com/mcp/account",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 401,
+        "class": "auth_required"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "pap@planmyvisit.to",
+      "implementation": "pap:autoura",
+      "protocol": "pap",
+      "url": "https://api.autoura.com/api/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 401,
+        "class": "auth_required"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "pap@tilopay.shop",
+      "implementation": "pap:tilopay",
+      "protocol": "pap",
+      "url": "https://mcp.tilopay.com/pap/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 6,
+      "tool_definition_tokens": 1981,
+      "tool_definition_tokens_input_only": 1981,
+      "tool_surface_hash": "61ece38ce2296a1a",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "params_missing_description"
+      ]
+    },
+    {
+      "id": "pap@dub-bench",
+      "implementation": "pap-bench:neutral-state",
+      "protocol": "pap",
+      "url": "https://neutral-state-jev-dub-bench.vercel.app/api/neutral-state/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 401,
+        "class": "auth_required"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "pap@os-bench",
+      "implementation": "pap-bench:neutral-state",
+      "protocol": "pap",
+      "url": "https://neutral-state-jev-os-bench.vercel.app/api/neutral-state/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 401,
+        "class": "auth_required"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "tray-ucp@capas25atacado.com.br",
+      "implementation": "tray-ucp",
+      "protocol": "ucp",
+      "url": "https://www.capas25atacado.com.br/mcp-app/ucp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": null,
+        "class": "not_an_mcp_endpoint"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "tray-ucp@luvinco.com.br",
+      "implementation": "tray-ucp",
+      "protocol": "ucp",
+      "url": "https://www.luvinco.com.br/mcp-app/ucp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": null,
+        "class": "not_an_mcp_endpoint"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "boutir-ucp@pacehandmade.boutir.com",
+      "implementation": "boutir-ucp",
+      "protocol": "ucp",
+      "url": "https://pacehandmade.boutir.com/apis/ucp/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": null,
+        "class": "invalid_protocol_version"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "boutir-ucp@minidresser.co",
+      "implementation": "boutir-ucp",
+      "protocol": "ucp",
+      "url": "https://minidresser.co/apis/ucp/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": null,
+        "class": "invalid_protocol_version"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "vtex-adapter:catyai@shop.catyai.io",
+      "implementation": "vtex-adapter:catyai",
+      "protocol": "ucp",
+      "url": "https://api.catyai.io/api/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 2,
+      "tool_definition_tokens": 1734,
+      "tool_definition_tokens_input_only": 1734,
+      "tool_surface_hash": "ab1341f5da983012",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "median_tool_over_500",
+        "description_length_out_of_band"
+      ]
+    },
+    {
+      "id": "vtex-adapter:vercel@vtex-ucp-adapter.vercel.app",
+      "implementation": "vtex-adapter:vtex-ucp-adapter",
+      "protocol": "ucp",
+      "url": "https://vtex-ucp-adapter.vercel.app/ucp/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 9,
+      "tool_definition_tokens": 3136,
+      "tool_definition_tokens_input_only": 3136,
+      "tool_surface_hash": "a3c444b56635ccb8",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "params_missing_description"
+      ]
+    },
+    {
+      "id": "odoo-ucp@singon.com.np",
+      "implementation": "odoo-ucp",
+      "protocol": "ucp",
+      "url": "https://singon.com.np/api/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-06-18",
+      "failure": null,
+      "tools": 3,
+      "tool_definition_tokens": 1227,
+      "tool_definition_tokens_input_only": 1227,
+      "tool_surface_hash": "0d32d83e63631eb3",
+      "grade": "A",
+      "uncapped_grade": "A",
+      "defects": [
+        "median_tool_over_500"
+      ]
+    },
+    {
+      "id": "custom-hooks@scatterinstrumentsonline.com",
+      "implementation": "custom:/hooks/ucp/mcp",
+      "protocol": "ucp",
+      "url": "https://scatterinstrumentsonline.com/hooks/ucp/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-06-18",
+      "failure": null,
+      "tools": 9,
+      "tool_definition_tokens": 1815,
+      "tool_definition_tokens_input_only": 1466,
+      "tool_surface_hash": "3683506fc2822048",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "untyped_params"
+      ]
+    },
+    {
+      "id": "ucp-sandbox@flowers.ucpsandbox.com",
+      "implementation": "ucp-sandbox (reference)",
+      "protocol": "ucp",
+      "url": "https://flowers.ucpsandbox.com/mcp",
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": "2025-11-25",
+      "failure": {
+        "status": null,
+        "class": "invalid_tool_schema"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
+    },
+    {
+      "id": "custom-agentdiet@agentdiet.dev",
+      "implementation": "custom:agentdiet (ucpchecker lists under Shopware)",
+      "protocol": "ucp",
+      "url": "https://agentdiet.dev/ucp/mcp",
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "failure": null,
+      "tools": 15,
+      "tool_definition_tokens": 1633,
+      "tool_definition_tokens_input_only": 959,
+      "tool_surface_hash": "ef9ab1cc07ac3fab",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "untyped_params"
+      ]
+    }
+  ]
+}

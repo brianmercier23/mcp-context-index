@@ -160,3 +160,26 @@ method: change the criteria and you change the cohort, which changes every aggre
 This makes the cohort a sample of **what a buyer plausibly has installed**, which is the
 population an audit is sold against. It does not make it representative of the registry, and it
 must never be described as such.
+
+## Remote endpoints (the commerce index)
+
+The commerce index measures servers that run on someone else's infrastructure, so three things
+change and the rest does not.
+
+- **Nothing is installed.** The probe connects over Streamable HTTP to the endpoint a store's
+  `/.well-known/ucp` or `/.well-known/poppy.json` manifest names. Same client stacks, same era
+  order (`server/discover` first, then `initialize`), same `tools/list` measurement, same rubric.
+- **No tool is ever called.** The dev-tooling index sends deliberately malformed calls to measure
+  error legibility. Against a checkout endpoint that is still a call, so it is not made. The
+  dimension is unmeasured and drops out of the weighting. Auth hygiene signals that depend on a
+  local install (argv secrets, canary leaks) are likewise unmeasured.
+- **Name collisions are not scored.** In a shared protocol, two implementations exposing
+  `create_checkout` is the design, not a defect.
+
+Requests are sequential, paused between endpoints, and carry a User-Agent naming the project.
+Remote runs have their own config hash (it records `transport: streamable-http`) and their own
+log, `results/remote-runs.jsonl`, so they can never be compared with a stdio run.
+
+Failures are classified from the error each handshake attempt returns: `auth_required` (reported,
+not a defect: both protocols permit gating `tools/list`), `rate_limited`, `not_an_mcp_endpoint`,
+`invalid_protocol_version`, `invalid_tool_schema` and `no_handshake_response`.

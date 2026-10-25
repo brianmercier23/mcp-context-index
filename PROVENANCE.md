@@ -91,6 +91,17 @@ uncontrolled input to the measurement, and it has now been observed acting as on
 
 ---
 
+### The first commerce runs filed every failure under one class
+
+The remote failure classifier first read only the session error, which carries the response body
+but not the HTTP status. Run `run-2026-10-25-1456` therefore records all 11 of its failures as
+`protocol_error`; 9 were authentication walls. The classifier was corrected to read both handshake
+attempts, and three classes were added after the first `commerce-mcp-v1` pass filed 5 failures the
+same way (an endpoint answering with HTML, a server reporting protocol version `2.0`, and a
+`tools/list` result failing schema validation). Those runs stay in the log as written. No
+measurement changed: classification is diagnostic, and every server measured in those runs
+measured identically in the next.
+
 ## Corrections to the published sources this project was built on
 
 These were found by checking primary sources directly rather than search summaries, and each one
@@ -139,3 +150,10 @@ core. The 2026-07-28 era ships in a new 2.0 package family — `@modelcontextpro
 `core`, `server` and framework adapters. A harness that assumed "upgrade the SDK" would have
 concluded, wrongly, that no client supported the new specification yet. This one depends on both
 packages and records which of them measured each server.
+
+### papchecker's site list shows no MCP routes; most PAP manifests declare one
+
+papchecker.com, used to select the PAP endpoints, lists each publisher's routes as company agent,
+APIs or website. Reading the `poppy.json` files directly on 2026-10-25, 9 of the 13 reachable
+manifests declare an `apis` entry of type `mcp`. Those manifests declare protocol versions 0.1 and
+0.2 while the specification was at draft 0.3.

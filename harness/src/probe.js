@@ -3,7 +3,8 @@
 // no wall-clock-dependent value in any recorded metric.
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { Client as ModernClient } from '@modelcontextprotocol/client';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import { Client as ModernClient, StreamableHTTPClientTransport as ModernHttpTransport } from '@modelcontextprotocol/client';
 import { StdioClientTransport as ModernStdioTransport } from '@modelcontextprotocol/client/stdio';
 import { stableStringify, countTokens, median } from './lib.js';
 
@@ -48,6 +49,17 @@ export function tokenizeTools(tools) {
   };
 }
 
+// A launch with a url is a remote server: Streamable HTTP in place of a spawned process. Same
+// session, same measurements. The stdio branch is the exact constructor call it always was.
+function makeTransport(launch, modern) {
+  if (launch.url) {
+    const opts = launch.headers ? { requestInit: { headers: launch.headers } } : undefined;
+    return modern ? new ModernHttpTransport(new URL(launch.url), opts) : new StreamableHTTPClientTransport(new URL(launch.url), opts);
+  }
+  const spec = { command: launch.command, args: launch.args, env: launch.env, cwd: launch.cwd, stderr: 'pipe' };
+  return modern ? new ModernStdioTransport(spec) : new StdioClientTransport(spec);
+}
+
 async function listAllTools(client, reqOpts) {
   const tools = [];
   let cursor;
@@ -71,13 +83,7 @@ async function listAllTools(client, reqOpts) {
 // the era is modern, so a legacy server costs one throwaway spawn and no handshake.
 export async function detectEra(launch) {
   const out = { handshake: null, discover: null, negotiated_version: null, probe_error: null };
-  const transport = new ModernStdioTransport({
-    command: launch.command,
-    args: launch.args,
-    env: launch.env,
-    cwd: launch.cwd,
-    stderr: 'pipe',
-  });
+  const transport = makeTransport(launch, true);
   const client = new ModernClient(
     { name: 'mcp-probe', version: '0.1.0' },
     { versionNegotiation: { mode: { pin: MODERN_PROTOCOL }, probe: { timeoutMs: DISCOVER_MS } } },
@@ -122,14 +128,16 @@ export async function session(launch, { collectErrors = false, canary = null, er
   // true. Bypassing it keeps that check a measurement of the server, not of the client.
   const reqOpts = modern ? { cacheMode: 'bypass' } : undefined;
 
-  const transport = modern
-    ? new ModernStdioTransport({ command: launch.command, args: launch.args, env: launch.env, cwd: launch.cwd, stderr: 'pipe' })
-    : new StdioClientTransport({ command: launch.command, args: launch.args, env: launch.env, cwd: launch.cwd, stderr: 'pipe' });
+  const transport = makeTransport(launch, modern);
 
   // The stdio transport has no setProtocolVersion (only HTTP transports need one), so the
   // negotiated version is captured by supplying the optional hook the client calls if present.
+  // The HTTP transport has a real one that sets the version header, so it is wrapped, not replaced.
   let negotiated = null;
-  if (!modern) transport.setProtocolVersion = (v) => { negotiated = v; };
+  if (!modern) {
+    const own = transport.setProtocolVersion?.bind(transport);
+    transport.setProtocolVersion = (v) => { negotiated = v; own?.(v); };
+  }
 
   const client = modern
     ? new ModernClient({ name: 'mcp-probe', version: '0.1.0' }, { versionNegotiation: { mode: { pin: MODERN_PROTOCOL }, probe: { timeoutMs: DISCOVER_MS } } })

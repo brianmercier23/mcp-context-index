@@ -1,0 +1,315 @@
+{
+  "cohort_id": "commerce-mcp-v1",
+  "created": "2026-10-25",
+  "status": "baseline",
+  "unit": "implementation, not store. Stores on one platform share one tool surface; two to three stores per platform are probed to test that, and the platform is the thing graded.",
+  "selection": "Hand-picked 2026-10-25. Stores: first listed per platform in ucpchecker.com/directory?q=<platform>, plus seven well-known Shopify brands; MCP endpoint read from each store's /.well-known/ucp. PAP: every papchecker.com/sites publisher whose /.well-known/poppy.json declares an apis entry of type mcp. v1 adds every remaining ucpchecker.com/platforms/<platform> page (2026-10-25) whose example stores declare an MCP transport.",
+  "probe_policy": "Read-only. Handshake plus tools/list (twice, two sessions), prompts/list and resources/list if advertised. No tools/call of any kind, so no cart, checkout or account action is ever attempted. Sequential, one endpoint at a time, self-identifying User-Agent.",
+  "selection_hash": "commerce-mcp-v1@2026-10-25",
+  "servers": [
+    {
+      "id": "shopify-storefront@allbirds.com",
+      "implementation": "shopify-storefront-mcp",
+      "protocol": "shopify",
+      "store": "allbirds.com",
+      "url": "https://allbirds.com/api/mcp"
+    },
+    {
+      "id": "shopify-ucp@allbirds.com",
+      "implementation": "shopify-ucp",
+      "protocol": "ucp",
+      "store": "allbirds.com",
+      "url": "https://weareallbirds.myshopify.com/api/ucp/mcp"
+    },
+    {
+      "id": "shopify-ucp@finest-filters.co.uk",
+      "implementation": "shopify-ucp",
+      "protocol": "ucp",
+      "store": "finest-filters.co.uk",
+      "url": "https://e1sqv6-va.myshopify.com/api/ucp/mcp"
+    },
+    {
+      "id": "shopify-ucp@taavita.com",
+      "implementation": "shopify-ucp",
+      "protocol": "ucp",
+      "store": "taavita.com",
+      "url": "https://2a4397-07.myshopify.com/api/ucp/mcp"
+    },
+    {
+      "id": "wix-ucp@breezecanna.com",
+      "implementation": "wix-ucp",
+      "protocol": "ucp",
+      "store": "breezecanna.com",
+      "url": "https://www.wixapis.com/ecom/ucp/953daff2-25ca-4250-bda9-337ea4e9f6b6/mcp"
+    },
+    {
+      "id": "wix-ucp@quirkyartbylara.com",
+      "implementation": "wix-ucp",
+      "protocol": "ucp",
+      "store": "quirkyartbylara.com",
+      "url": "https://www.wixapis.com/ecom/ucp/2a70818e-ecb9-48ab-9f29-4b09bbaafe69/mcp"
+    },
+    {
+      "id": "wix-ucp@rallyeproductions.com",
+      "implementation": "wix-ucp",
+      "protocol": "ucp",
+      "store": "rallyeproductions.com",
+      "url": "https://www.wixapis.com/ecom/ucp/28605a12-a0e4-44f9-b8c6-7a17d068c3f4/mcp"
+    },
+    {
+      "id": "bigcommerce-ucp@untilgone.com",
+      "implementation": "bigcommerce-ucp",
+      "protocol": "ucp",
+      "store": "untilgone.com",
+      "url": "https://untilgone.com/api/ucp/mcp"
+    },
+    {
+      "id": "bigcommerce-ucp@jacksonsleisure.com",
+      "implementation": "bigcommerce-ucp",
+      "protocol": "ucp",
+      "store": "jacksonsleisure.com",
+      "url": "https://www.jacksonsleisure.com/api/ucp/mcp"
+    },
+    {
+      "id": "jumpseller-ucp@magic4ever.cl",
+      "implementation": "jumpseller-ucp",
+      "protocol": "ucp",
+      "store": "magic4ever.cl",
+      "url": "https://www.magic4ever.cl/api/ucp/mcp"
+    },
+    {
+      "id": "jumpseller-ucp@magri.cl",
+      "implementation": "jumpseller-ucp",
+      "protocol": "ucp",
+      "store": "magri.cl",
+      "url": "https://www.magri.cl/api/ucp/mcp"
+    },
+    {
+      "id": "salla-ucp@addfahad.com",
+      "implementation": "salla-ucp",
+      "protocol": "ucp",
+      "store": "addfahad.com",
+      "url": "https://addfahad.com/_app/ucp/mcp"
+    },
+    {
+      "id": "salla-ucp@adeemtea.com",
+      "implementation": "salla-ucp",
+      "protocol": "ucp",
+      "store": "adeemtea.com",
+      "url": "https://adeemtea.com/_app/ucp/mcp"
+    },
+    {
+      "id": "magento-ucp@seatosummit.es",
+      "implementation": "magento-agent-mcp",
+      "protocol": "ucp",
+      "store": "seatosummit.es",
+      "url": "https://seatosummit.es/agent/mcp"
+    },
+    {
+      "id": "magento-ucp@serverkast.com",
+      "implementation": "magento-agent-mcp",
+      "protocol": "ucp",
+      "store": "serverkast.com",
+      "url": "https://www.serverkast.com/agent/mcp"
+    },
+    {
+      "id": "woo-ucp-root@houseofattar.co.uk",
+      "implementation": "woo-plugin:/ucp/mcp",
+      "protocol": "ucp",
+      "store": "houseofattar.co.uk",
+      "url": "https://houseofattar.co.uk/ucp/mcp"
+    },
+    {
+      "id": "woo-ucp-v1@petitcoto.com",
+      "implementation": "woo-plugin:wp-json/ucp/v1",
+      "protocol": "ucp",
+      "store": "petitcoto.com",
+      "url": "https://petitcoto.com/wp-json/ucp/v1/mcp"
+    },
+    {
+      "id": "woo-univcopr@toysvision.com",
+      "implementation": "woo-plugin:wp-json/univcopr/v1",
+      "protocol": "ucp",
+      "store": "toysvision.com",
+      "url": "https://toysvision.com/wp-json/univcopr/v1/mcp"
+    },
+    {
+      "id": "woo-wt-ucp@fitnesseddy.com",
+      "implementation": "woo-plugin:wp-json/wt-ucp/v1",
+      "protocol": "ucp",
+      "store": "fitnesseddy.com",
+      "url": "https://fitnesseddy.com/wp-json/wt-ucp/v1/mcp"
+    },
+    {
+      "id": "pap@flowers.papsandbox.com",
+      "implementation": "pap-sandbox",
+      "protocol": "pap",
+      "store": "flowers.papsandbox.com",
+      "url": "https://flowers.papsandbox.com/poppy/mcp"
+    },
+    {
+      "id": "pap@withpoppyseed.dev",
+      "implementation": "pap-demo:poppyseed",
+      "protocol": "pap",
+      "store": "withpoppyseed.dev",
+      "url": "https://www.withpoppyseed.dev/mcp"
+    },
+    {
+      "id": "pap@ample.computer",
+      "implementation": "pap:ample",
+      "protocol": "pap",
+      "store": "ample.computer",
+      "url": "https://api.ample.computer/mcp"
+    },
+    {
+      "id": "pap@stacktr.ee",
+      "implementation": "pap:stacktree",
+      "protocol": "pap",
+      "store": "stacktr.ee",
+      "url": "https://api.stacktr.ee/mcp"
+    },
+    {
+      "id": "pap@saferate.com",
+      "implementation": "pap:saferate",
+      "protocol": "pap",
+      "store": "saferate.com",
+      "url": "https://mcp.saferate.com/mcp/account"
+    },
+    {
+      "id": "pap@planmyvisit.to",
+      "implementation": "pap:autoura",
+      "protocol": "pap",
+      "store": "planmyvisit.to",
+      "url": "https://api.autoura.com/api/mcp"
+    },
+    {
+      "id": "pap@tilopay.shop",
+      "implementation": "pap:tilopay",
+      "protocol": "pap",
+      "store": "tilopay.shop",
+      "url": "https://mcp.tilopay.com/pap/mcp"
+    },
+    {
+      "id": "pap@dub-bench",
+      "implementation": "pap-bench:neutral-state",
+      "protocol": "pap",
+      "store": "neutral-state-jev-dub-bench.vercel.app",
+      "url": "https://neutral-state-jev-dub-bench.vercel.app/api/neutral-state/mcp"
+    },
+    {
+      "id": "pap@os-bench",
+      "implementation": "pap-bench:neutral-state",
+      "protocol": "pap",
+      "store": "neutral-state-jev-os-bench.vercel.app",
+      "url": "https://neutral-state-jev-os-bench.vercel.app/api/neutral-state/mcp"
+    },
+    {
+      "id": "tray-ucp@capas25atacado.com.br",
+      "implementation": "tray-ucp",
+      "protocol": "ucp",
+      "store": "capas25atacado.com.br",
+      "url": "https://www.capas25atacado.com.br/mcp-app/ucp"
+    },
+    {
+      "id": "tray-ucp@luvinco.com.br",
+      "implementation": "tray-ucp",
+      "protocol": "ucp",
+      "store": "luvinco.com.br",
+      "url": "https://www.luvinco.com.br/mcp-app/ucp"
+    },
+    {
+      "id": "boutir-ucp@pacehandmade.boutir.com",
+      "implementation": "boutir-ucp",
+      "protocol": "ucp",
+      "store": "pacehandmade.boutir.com",
+      "url": "https://pacehandmade.boutir.com/apis/ucp/mcp"
+    },
+    {
+      "id": "boutir-ucp@minidresser.co",
+      "implementation": "boutir-ucp",
+      "protocol": "ucp",
+      "store": "minidresser.co",
+      "url": "https://minidresser.co/apis/ucp/mcp"
+    },
+    {
+      "id": "vtex-adapter:catyai@shop.catyai.io",
+      "implementation": "vtex-adapter:catyai",
+      "protocol": "ucp",
+      "store": "shop.catyai.io",
+      "url": "https://api.catyai.io/api/mcp"
+    },
+    {
+      "id": "vtex-adapter:vercel@vtex-ucp-adapter.vercel.app",
+      "implementation": "vtex-adapter:vtex-ucp-adapter",
+      "protocol": "ucp",
+      "store": "vtex-ucp-adapter.vercel.app",
+      "url": "https://vtex-ucp-adapter.vercel.app/ucp/mcp"
+    },
+    {
+      "id": "odoo-ucp@singon.com.np",
+      "implementation": "odoo-ucp",
+      "protocol": "ucp",
+      "store": "singon.com.np",
+      "url": "https://singon.com.np/api/mcp"
+    },
+    {
+      "id": "custom-hooks@scatterinstrumentsonline.com",
+      "implementation": "custom:/hooks/ucp/mcp",
+      "protocol": "ucp",
+      "store": "scatterinstrumentsonline.com",
+      "url": "https://scatterinstrumentsonline.com/hooks/ucp/mcp"
+    },
+    {
+      "id": "ucp-sandbox@flowers.ucpsandbox.com",
+      "implementation": "ucp-sandbox (reference)",
+      "protocol": "ucp",
+      "store": "flowers.ucpsandbox.com",
+      "url": "https://flowers.ucpsandbox.com/mcp"
+    },
+    {
+      "id": "custom-agentdiet@agentdiet.dev",
+      "implementation": "custom:agentdiet (ucpchecker lists under Shopware)",
+      "protocol": "ucp",
+      "store": "agentdiet.dev",
+      "url": "https://agentdiet.dev/ucp/mcp"
+    }
+  ],
+  "ucp_without_mcp": {
+    "bareconnect": [
+      "kanapatatriad.com",
+      "brainysbeauty.com",
+      "bedzrah.com"
+    ],
+    "cafe24": [
+      "ectque00901.cafe24.com",
+      "todiv.cafe24.com"
+    ],
+    "tiendanube": [
+      "gerstore2.mitiendanube.com"
+    ],
+    "shoptet": [
+      "abmoto.cz",
+      "ababu.cz"
+    ],
+    "zid": [
+      "al7adi15.com (non-UCP manifest shape)",
+      "alfajr-sa.com (non-UCP manifest shape)"
+    ],
+    "woocommerce": [
+      "houseofparfum.nl",
+      "thelumigroup.com",
+      "cervicaltractions.com",
+      "elastogels.com",
+      "real-ease.com",
+      "jobstcompressionstocking.com",
+      "vemaxshop.co.rs",
+      "demo.ucphub.ai",
+      "giddy-store.com"
+    ],
+    "custom": [
+      "ticketfairy.com",
+      "devucp.netsgroup.com"
+    ]
+  },
+  "not_covered": "Shopware: ucpchecker's examples are agentdiet.dev subdomains, not Shopware stores; no Shopware store found. WooCommerce: about 14 UCP plugins on WordPress.org (max 70 active installs); live endpoints are only findable for the 4 measured. Covering the rest means installing plugins on a test WordPress, which executes their code: a different method."
+}
