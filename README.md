@@ -116,10 +116,10 @@ A published index of a fast-moving registry is a photograph, and the honest thin
 it was taken and how much has moved since. So the harness also runs a metadata-only watcher —
 no installs, no execution, a few seconds — that reports which pinned versions have been passed.
 
-**75 days after this cohort was pinned, 33 of its 50 servers had
+**76 days after this cohort was pinned, 33 of its 50 servers had
 already published a newer version.** The largest jump is `octocode-mcp`, 63
 versions past the pin (7.0.9 to 19.1.0). Current drift report, checked
-2026-10-25: **[index/version-drift-dev-tooling-v1.md](index/version-drift-dev-tooling-v1.md)**.
+2026-10-26: **[index/version-drift-dev-tooling-v1.md](index/version-drift-dev-tooling-v1.md)**.
 
 That number is the argument for the whole approach rather than against it. Anything that scrapes
 registry listings is describing a population that has already changed; pinning the versions is

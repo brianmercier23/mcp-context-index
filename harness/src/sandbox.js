@@ -89,6 +89,56 @@ export function dependencyResolution(cohort, requested = process.env.DEPS_AS_OF)
   return { policy: 'as-of', before: t.toISOString() };
 }
 
+// When a version was published, from the full registry document (the abbreviated one carries no
+// times). Null when the package or that version is not on npm: a 404 is an answer, not a document.
+export async function npmPublishedAt(pkg, version) {
+  const res = await fetch(`https://registry.npmjs.org/${pkg.replace('/', '%2F')}`, { headers: { accept: 'application/json' } });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`npm registry: HTTP ${res.status} for ${pkg}`);
+  const doc = await res.json();
+  return doc.versions?.[version] ? (doc.time?.[version] ?? null) : null;
+}
+
+// VERSION_OVERRIDE="pkg@ver[,pkg@ver...]": probe cohort servers at a version other than their pin,
+// which is the only way to measure what the drift watcher found. Without it a re-probe installs
+// the pin again on the pin's dependencies and reprints the old number.
+//
+// Each overridden server's dependencies resolve as of the moment its version was published: the
+// same reading as the pin, applied to the newer release, so the answer does not depend on the day
+// it is asked and two override runs can pair. An explicit DEPS_AS_OF replaces that, and is refused
+// if it predates the version, since npm --before would then refuse to find it.
+//
+// The overrides go into the config hash and the run header, and any run carrying one is a partial
+// sweep, so it can never be published as the index. Re-pinning the cohort is a separate act.
+export async function versionOverrides(cohort, raw = process.env.VERSION_OVERRIDE, requestedDeps = process.env.DEPS_AS_OF, publishedAt = npmPublishedAt) {
+  if (!raw || !raw.trim()) return [];
+  const byPkg = new Map(cohort.servers.map((s) => [s.npm_package, s]));
+  const out = [];
+  for (const item of raw.split(',').map((x) => x.trim()).filter(Boolean)) {
+    const at = item.lastIndexOf('@');
+    if (at <= 0 || !SPEC_OK.test(item)) throw new Error(`VERSION_OVERRIDE entries are package@version (got "${item}")`);
+    const pkg = item.slice(0, at), version = item.slice(at + 1);
+    const server = byPkg.get(pkg);
+    if (!server) throw new Error(`VERSION_OVERRIDE: ${pkg} is not in cohort ${cohort.cohort_id}`);
+    if (out.some((o) => o.npm_package === pkg)) throw new Error(`VERSION_OVERRIDE: ${pkg} is named twice`);
+    if (version === server.pinned_version) throw new Error(`VERSION_OVERRIDE: ${item} is the pin itself; a plain run measures it`);
+    const published = await publishedAt(pkg, version);
+    if (!published) throw new Error(`VERSION_OVERRIDE: ${item} is not on npm`);
+    const published_at = new Date(published).toISOString();
+    let dependencies;
+    if (requestedDeps) {
+      dependencies = dependencyResolution(cohort, requestedDeps);
+      if (dependencies.before && dependencies.before < published_at) {
+        throw new Error(`VERSION_OVERRIDE: ${item} was published ${published_at}, after DEPS_AS_OF ${dependencies.before}`);
+      }
+    } else {
+      dependencies = { policy: 'as-of', before: published_at, basis: 'version_published' };
+    }
+    out.push({ npm_package: pkg, pinned_version: server.pinned_version, version, published_at, dependencies });
+  }
+  return out.sort((a, b) => (a.npm_package < b.npm_package ? -1 : 1));
+}
+
 export async function install(server, { timeoutMs = 240000, before = null } = {}) {
   const dir = sandboxDir(server);
   if (!(await rmWithRetry(dir))) {

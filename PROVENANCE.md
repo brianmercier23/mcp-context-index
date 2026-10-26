@@ -155,6 +155,20 @@ the log does show is that every full sweep from 2026-08-11 03:07 to the publishe
 every server identically, so whatever moved inside that window moved nothing that was measured.
 Those records stay as written.
 
+### A re-probe command that re-measured the old version
+
+The version-drift report, and METHOD.md, said `ONLY="<movers>" npm run run` would re-probe the
+servers that had moved past their pin. It could not: `ONLY=` narrows a run to those servers but
+installs each one at the cohort's `pinned_version`, so it measured the release that had already
+been measured. Under harness 0.1.5, which also resolves dependencies as of the pin, it reproduced
+the published number exactly and measured nothing new. Nobody ran it, so no record in the log
+claims to describe a newer version.
+
+Fixed in harness 0.1.6: `VERSION_OVERRIDE="<package>@<version>,..."` probes servers at the version
+named, with dependencies resolved as of that version's publish time, records the overrides in the
+run header and config hash, and always flags the run `partial_sweep`. The drift report now prints
+that command. See [METHOD.md](METHOD.md#version-drift-and-why-the-sweep-is-not-on-a-schedule).
+
 ### A 30% failure rate that was really 26%
 
 The first sweep reported that 30% of the cohort would not start. Four of those failures traced to

@@ -81,7 +81,10 @@ must never become comparable to a run inside the reproducibility log.
 Two runs are comparable only if their config hash matches. It covers the harness version, the
 rubric, the tokenizer, the cohort selection hash, the sandbox model, the date dependencies are
 resolved as of, the Node major version, the platform, the versions of both MCP client libraries,
-and the probe timeouts.
+and the probe timeouts. When a run probes any server at a version other than its pin (see
+[Version drift](#version-drift-and-why-the-sweep-is-not-on-a-schedule)), the overridden versions
+and how their dependencies resolved are in the hash too; a run without overrides hashes exactly as
+it would have before overrides existed.
 
 Changing the rubric changes the hash even when nothing measured changes. That is deliberate: the
 hash covers the rubric wholesale rather than guessing which parts of it are inert, which is the
@@ -233,13 +236,35 @@ same append-only contract as everything else, and writes the drift report publis
 The watcher reads server versions only. Dependency releases under a pinned server are invisible
 to it, and since harness 0.1.5 they do not reach the index either.
 
-It deliberately does not re-probe. It prints the exact `ONLY=` command to re-measure just the movers,
-because spending twenty minutes of machine time is a decision rather than a side effect. It also does
-not re-select the cohort: a server entering or leaving the top 50 by downloads changes the selection
-hash, which makes a new cohort, not drift within this one.
+It deliberately does not re-probe, because spending machine time is a decision rather than a side
+effect. It prints the command that measures the movers at their new versions:
 
-A re-probe of movers is a partial sweep. It is flagged `partial_sweep` in the log and can never be
-published as an index — that guard exists so a three-server spot check cannot be mistaken for one.
+```bash
+VERSION_OVERRIDE="<package>@<new version>,..." npm run run
+```
+
+Each named server is installed at the version given rather than its pin, and the run covers only
+those servers. Its dependencies resolve as they stood when that version was published, which is
+the same reading as the pin applied to the newer release, so the answer does not depend on the day
+it is asked and two such runs can be paired. `DEPS_AS_OF` replaces that date for every server in
+the run, and is refused if it predates a named version, since npm could not then find it. The
+overrides (pin, version probed, its publish time, how its dependencies resolved) are recorded in
+the run header and in the config hash, every server record keeps its cohort `pinned_version` with
+a `version_override` beside it, and the run is always flagged `partial_sweep`.
+
+Before harness 0.1.6 the watcher printed an `ONLY=` command here and this section said it
+re-measured "just the movers". It did not: `ONLY=` installs the pinned version, so it re-measured
+the old release, and since 0.1.5 it does so on the pin's dependencies and reproduces the published
+number exactly. `ONLY=` remains what it always was, a way to re-run part of the cohort after a
+harness change.
+
+The watcher also does not re-select the cohort: a server entering or leaving the top 50 by
+downloads changes the selection hash, which makes a new cohort, not drift within this one.
+
+A run with overrides, like any run narrowed by `ONLY` or `LIMIT`, is a partial sweep and can never
+be published as an index — that guard exists so a three-server spot check cannot be mistaken for
+one. Measuring a moved version tells you what changed; it does not move the index. Moving the index
+to new versions means re-pinning the cohort, which is a separate, deliberate act.
 
 ## Cohort selection
 

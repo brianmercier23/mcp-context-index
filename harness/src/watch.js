@@ -7,8 +7,10 @@
 //
 //   npm run watch          # check, append to results/versions.jsonl, write docs/version-drift.md
 //
-// This deliberately does NOT re-probe. It prints the exact ONLY= command to re-probe the movers,
-// because deciding to spend 20 minutes of machine time is a decision, not a side effect. It also
+// This deliberately does NOT re-probe. It prints the exact VERSION_OVERRIDE= command that measures
+// the movers at their new versions, because deciding to spend machine time is a decision, not a
+// side effect. ONLY= would not do: it installs the pin, on dependencies resolved as of the pin, and
+// reprints the published number. It also
 // does not re-select the cohort: a server entering or leaving the top 50 by downloads changes the
 // selection hash and is a new cohort, not drift within this one.
 import path from 'node:path';
@@ -127,14 +129,18 @@ function renderMarkdown(header, rows) {
       L.push(`| \`${r.npm_package}\` | ${r.pinned_version} | **${r.latest_version}**${r.deprecated ? ' (deprecated)' : ''} | ${r.versions_ahead ?? '—'} |`);
     }
     L.push('');
-    L.push('Re-probe exactly these, and nothing else:');
+    L.push('Measure these at their new versions, and nothing else:');
     L.push('');
     L.push('```bash');
-    L.push(`ONLY="${movers.map((r) => r.npm_package).join(',')}" npm run run`);
+    L.push(`VERSION_OVERRIDE="${movers.map((r) => `${r.npm_package}@${r.latest_version}`).join(',')}" npm run run`);
     L.push('```');
     L.push('');
-    L.push('That is a partial sweep: it is flagged `partial_sweep` in the log and can never be');
-    L.push('published as an index. Re-pinning the cohort is a separate, deliberate act.');
+    L.push('Each server is installed at the version named, with its dependencies resolved as they stood');
+    L.push('when that version was published. The overrides are recorded in the run header and the config');
+    L.push('hash, and the run is flagged `partial_sweep`, so it can never be published as an index.');
+    L.push('A plain re-run (`ONLY=`) would not measure anything new: it installs the pinned version on');
+    L.push('the pin\'s dependencies and reproduces the published number. Re-pinning the cohort, which');
+    L.push('moves the index itself, is a separate, deliberate act.');
     L.push('');
   } else {
     L.push('## Moved past the pin');
@@ -206,7 +212,7 @@ async function main() {
   console.log(`  moved: ${movers.length}  unpublished: ${gone.length}  deprecated: ${header.counts.deprecated}  errors: ${header.counts.errors}`);
   if (movers.length) {
     for (const r of movers) console.log(`    ${r.npm_package}  ${r.pinned_version} -> ${r.latest_version}`);
-    console.log(`\n  re-probe the movers:  ONLY="${movers.map((r) => r.npm_package).join(',')}" npm run run`);
+    console.log(`\n  measure the movers at their new versions:  VERSION_OVERRIDE="${movers.map((r) => `${r.npm_package}@${r.latest_version}`).join(',')}" npm run run`);
   }
   console.log(`\nappended to results/versions.jsonl (${prior.length} checks logged)  ->  ${path.relative(ROOT, md)}`);
 }

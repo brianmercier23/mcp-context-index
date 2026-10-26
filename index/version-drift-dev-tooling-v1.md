@@ -1,6 +1,6 @@
 # Version drift — dev-tooling-v1
 
-Checked 2026-10-25T12:15:02.932Z against the pinned cohort. 50 packages, npm metadata only:
+Checked 2026-10-26T00:54:18.276Z against the pinned cohort. 50 packages, npm metadata only:
 nothing was installed, executed or measured.
 
 | | |
@@ -24,7 +24,7 @@ and a version that moved on npm has not been measured until a sweep measures it.
 | `mason-context` | 0.6.0 | **0.23.1** | 32 |
 | `@bashbop/otito` | 1.6.0 | **3.5.0** (deprecated) | 22 |
 | `infimium` | 0.3.1 | **0.5.10** | 17 |
-| `bomly-mcp` | 0.21.3 | **0.29.0** | 14 |
+| `bomly-mcp` | 0.21.3 | **0.30.0** | 15 |
 | `docfork` | 1.3.0 | **2.2.5** | 13 |
 | `@atlassian-dc-mcp/jira` | 0.29.0 | **0.38.0** | 11 |
 | `@atlassian-dc-mcp/bitbucket` | 0.29.0 | **0.38.0** | 11 |
@@ -51,14 +51,18 @@ and a version that moved on npm has not been measured until a sweep measures it.
 | `obra-cto` | 0.3.0 | **0.3.1** | 1 |
 | `@algiras/debugium` | 0.1.2 | **0.1.3** | 1 |
 
-Re-probe exactly these, and nothing else:
+Measure these at their new versions, and nothing else:
 
 ```bash
-ONLY="octocode-mcp,githits,vibe-hnindex,@aicommander/mcp,mason-context,@bashbop/otito,infimium,bomly-mcp,docfork,@atlassian-dc-mcp/jira,@atlassian-dc-mcp/bitbucket,contextforge-mcp,@smartbear/mcp,@postman/postman-mcp-server,@cstart/coldstart,parecode,@aaronsb/jira-cloud-mcp,@gitkraken/gk,ainative-zerodb-memory-mcp,reuse-before-generate,@vibemap.ai/mcp-server,@optimalai/optibot-mcp,@automatelab/content-distribution-mcp,mendapi,@aryam/fixmap,kenotex-mcp,@metaengine/mcp-server,@remogram/mcp,@alex-apps/ng-token-saver,sharedoc-mcp,@pinappai/mcp,obra-cto,@algiras/debugium" npm run run
+VERSION_OVERRIDE="octocode-mcp@19.1.0,githits@0.35.0,vibe-hnindex@0.16.1,@aicommander/mcp@1.6.4,mason-context@0.23.1,@bashbop/otito@3.5.0,infimium@0.5.10,bomly-mcp@0.30.0,docfork@2.2.5,@atlassian-dc-mcp/jira@0.38.0,@atlassian-dc-mcp/bitbucket@0.38.0,contextforge-mcp@0.13.2,@smartbear/mcp@0.42.0,@postman/postman-mcp-server@2.14.0,@cstart/coldstart@2.3.4,parecode@0.9.1,@aaronsb/jira-cloud-mcp@0.11.3,@gitkraken/gk@3.1.77,ainative-zerodb-memory-mcp@1.2.10,reuse-before-generate@2.1.0,@vibemap.ai/mcp-server@2.11.0,@optimalai/optibot-mcp@1.7.0,@automatelab/content-distribution-mcp@3.0.0,mendapi@0.5.8,@aryam/fixmap@0.9.0,kenotex-mcp@1.3.1,@metaengine/mcp-server@1.5.0,@remogram/mcp@0.3.0,@alex-apps/ng-token-saver@0.2.0,sharedoc-mcp@2.2.0,@pinappai/mcp@0.9.10,obra-cto@0.3.1,@algiras/debugium@0.1.3" npm run run
 ```
 
-That is a partial sweep: it is flagged `partial_sweep` in the log and can never be
-published as an index. Re-pinning the cohort is a separate, deliberate act.
+Each server is installed at the version named, with its dependencies resolved as they stood
+when that version was published. The overrides are recorded in the run header and the config
+hash, and the run is flagged `partial_sweep`, so it can never be published as an index.
+A plain re-run (`ONLY=`) would not measure anything new: it installs the pinned version on
+the pin's dependencies and reproduces the published number. Re-pinning the cohort, which
+moves the index itself, is a separate, deliberate act.
 
 ## No longer resolvable
 
