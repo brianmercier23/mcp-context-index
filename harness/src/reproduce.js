@@ -52,6 +52,15 @@ function rubricFileFor(header) {
 function main() {
   const all = readJSONL(RESULTS);
   const [A, B] = pickRuns(all, process.env.RUN_A, process.env.RUN_B);
+  // Checked here and not only in pickRuns: naming two runs with RUN_A/RUN_B used to skip the
+  // match that auto-pairing enforces, and the verdict would have carried A's hash for a pair B
+  // never shared. A floating run against an as-of run is a question for the tree log, not a verdict.
+  // Run ids are minute-resolution, so two short runs started in the same minute share one, and
+  // every record of both would be read as one run compared with itself: a GO that tested nothing.
+  if (A.run_id === B.run_id) throw new Error(`both sides of the pair are run ${A.run_id}; nothing to compare`);
+  if (A.config_hash !== B.config_hash) {
+    throw new Error(`runs have different config hashes (${A.config_hash.slice(0, 12)} vs ${B.config_hash.slice(0, 12)}); they are not comparable`);
+  }
   if (A.rubric !== B.rubric) throw new Error(`runs used different rubrics (${A.rubric} vs ${B.rubric}); they are not comparable`);
   const rubric = readJSON(path.join(ROOT, 'rubric', rubricFileFor(A)));
   const gate = rubric.measurement_contract.reproducibility_gate;

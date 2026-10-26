@@ -36,6 +36,21 @@ Fixed by reading the rubric from the run header, and by refusing outright to com
 whose recorded rubrics differ. `results/reproducibility.jsonl` holds two records for that pair —
 the mislabelled one and the corrected one, in that order. Both stay.
 
+### The comparator checked the config hash only when it chose the pair itself
+
+Auto-pairing has always required an identical config hash. Naming two runs with `RUN_A`/`RUN_B`
+skipped that check: the comparator compared any two runs whose rubrics matched and stamped the
+first run's hash on the verdict. That mattered more once harness 0.1.5 put the dependency
+resolution date in the hash, since a floating run and an as-of run of the same servers would have
+produced a verdict. It now refuses.
+
+Testing that fix found a second hole. Run ids have minute resolution, so two short runs started in
+the same minute share one id, and the comparator read every record of both as one run compared with
+itself, and said GO. It now refuses a pair whose two sides carry the same id.
+
+Neither defect produced a record. All nine verdicts in `results/reproducibility.jsonl` pair two
+distinct runs under one config hash, and no two run headers in either log share an id.
+
 ### The published metric definition understated what the instrument counts
 
 The rubric's `primary_metric_definition` described the tool-definition payload as

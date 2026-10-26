@@ -93,8 +93,9 @@ Two full sweeps of the identical pinned cohort, compared server by server on too
 tokens. The gate is 95% of measured servers stable or within 0.5%. Every pair so far has come
 back at 100% stable — byte-identical, with the tolerance band never used.
 
-The comparator refuses to compare two runs whose recorded rubrics differ, and reads its rubric
-from the run headers rather than from an environment default. It used to read a default, and
+The comparator refuses to compare two runs whose config hashes or recorded rubrics differ, whether
+it chose the pair or was handed one with `RUN_A`/`RUN_B`, and refuses a run paired with itself. It
+reads its rubric from the run headers rather than from an environment default. It used to read a default, and
 stamped the wrong rubric id onto one record; see [PROVENANCE.md](PROVENANCE.md).
 
 What the gate certifies is that the instrument agrees with itself. The two sweeps of every pair in
