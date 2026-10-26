@@ -229,8 +229,16 @@ would burn machine time to reprint the same index. What changes is the registry 
 guaranteed on the same day. See [Dependency resolution](#dependency-resolution).)
 
 `npm run watch` checks npm metadata for every pinned package — no install, no execution, a few
-seconds — and reports which versions have been passed, which pinned versions have been unpublished,
-and which latest versions carry a deprecation notice. It appends to `results/versions.jsonl` on the
+seconds — and reports which servers have released a newer version since the pin, which pinned
+versions have been unpublished, and which latest versions carry a deprecation notice.
+
+"Since the pin" is measured from the higher of the pin and npm's latest when the cohort was pinned,
+which the cohort file records, so no publish dates are needed. A server whose pin was already
+behind npm's latest (see [Cohort selection](#cohort-selection)) has newer versions that are not
+drift; the report lists those separately. Each check records, per server, `latest_at_pin`,
+`stale_at_pin`, `moved_since_pin` and `versions_since_pin`, beside `moved` and `versions_ahead`,
+which keep their original meaning (newer than the pin, whenever published). Checks before harness
+0.1.6 carry only the latter, and stay as written. It appends to `results/versions.jsonl` on the
 same append-only contract as everything else, and writes the drift report published beside the index.
 
 The watcher reads server versions only. Dependency releases under a pinned server are invisible
@@ -271,6 +279,14 @@ to new versions means re-pinning the cohort, which is a separate, deliberate act
 Servers are ranked by npm downloads within a vertical defined in `rubric/verticals-*.json`, from a
 dated registry snapshot, and pinned. Selection is versioned because selection is part of the
 method: change the criteria and you change the cohort, which changes every aggregate.
+
+**The pin is the version the server's registry entry declared, not npm's latest.** The cohort is
+drawn from the MCP registry, and each entry names the package version it describes; that is the
+version measured. The cohort file also records npm's latest at the moment of pinning
+(`latest_version`), and for 17 of `dev-tooling-v1`'s 50 servers it was already newer than the pin.
+Those 17 were measured at an older release than a fresh `npm install` would have given on the day
+the cohort was built. The version-drift report counts drift from npm's latest at the pin, so a
+release that already existed then is shown separately and never counted as drift.
 
 This makes the cohort a sample of **what a buyer plausibly has installed**, which is the
 population an audit is sold against. It does not make it representative of the registry, and it

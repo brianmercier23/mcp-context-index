@@ -13,6 +13,13 @@
 // reprints the published number. It also
 // does not re-select the cohort: a server entering or leaving the top 50 by downloads changes the
 // selection hash and is a new cohort, not drift within this one.
+//
+// "Newer than the pin" is not drift. Each pin is the version the server's registry entry declared,
+// and for 17 of dev-tooling-v1's 50 npm already had something newer when the cohort was pinned.
+// Drift is measured from npm's latest at the pin, which the cohort file records per server
+// (`latest_version`), so no publish times are fetched. The baseline is the higher of that and the
+// pin. A prerelease published before the pin above npm's latest tag would count as a release since
+// the pin; against publish times, this matched on every package still on npm when it was written.
 import path from 'node:path';
 import { ROOT, readJSON, appendJSONL, readJSONL, nowISO, HARNESS_VERSION } from './lib.js';
 
@@ -42,13 +49,24 @@ function cmp(a, b) {
 }
 
 async function checkOne(server) {
+  const atPin = server.latest_version ?? null;
+  const stale = atPin ? cmp(atPin, server.pinned_version) > 0 : null;
+  const baseline = stale ? atPin : server.pinned_version;
   const out = {
     registry_name: server.registry_name,
     npm_package: server.npm_package,
     pinned_version: server.pinned_version,
     latest_version: null,
+    // Newer than the pin, whenever it was published. Kept as it always was, so the log reads the
+    // same across the change; it is not a drift count.
     moved: false,
     versions_ahead: null,
+    // npm's latest when the cohort was pinned, and whether the pin was already behind it.
+    latest_at_pin: atPin,
+    stale_at_pin: stale,
+    // Released since the pin: newer than the higher of the pin and npm's latest at the pin.
+    moved_since_pin: false,
+    versions_since_pin: null,
     latest_published_at: null,
     deprecated: null,
     unpublished: false,
@@ -70,6 +88,8 @@ async function checkOne(server) {
       out.moved = cmp(latest, server.pinned_version) > 0;
       const all = Object.keys(doc.versions || {});
       out.versions_ahead = all.filter((v) => cmp(v, server.pinned_version) > 0).length;
+      out.moved_since_pin = cmp(latest, baseline) > 0;
+      out.versions_since_pin = all.filter((v) => cmp(v, baseline) > 0).length;
       out.deprecated = Boolean(doc.versions?.[latest]?.deprecated);
     }
     if (!doc.versions?.[server.pinned_version]) {
@@ -98,9 +118,13 @@ async function pool(items, worker, size) {
 
 function renderMarkdown(header, rows) {
   const movers = rows.filter((r) => r.moved);
+  const since = movers.filter((r) => r.moved_since_pin);
+  const staleOnly = movers.filter((r) => !r.moved_since_pin);
+  const staleAtPin = rows.filter((r) => r.stale_at_pin);
   const gone = rows.filter((r) => r.unpublished);
   const deprecated = rows.filter((r) => r.deprecated);
   const errors = rows.filter((r) => r.error);
+  const atPin = (r) => (r.stale_at_pin ? r.latest_at_pin : '=');
 
   const L = [];
   L.push(`# Version drift — ${header.cohort_id}`);
@@ -110,26 +134,48 @@ function renderMarkdown(header, rows) {
   L.push('');
   L.push('| | |');
   L.push('|---|---:|');
-  L.push(`| Still on the pinned version | **${rows.length - movers.length - gone.length - errors.length}** |`);
-  L.push(`| Published a newer version | **${movers.length}** |`);
+  L.push(`| Released a newer version since the pin | **${since.length}** |`);
+  L.push(`| … of which already behind npm's latest at the pin | ${since.filter((r) => r.stale_at_pin).length} |`);
+  L.push(`| Behind npm's latest at the pin, nothing released since | **${staleOnly.length}** |`);
+  L.push(`| Nothing on npm newer than the pin | **${rows.filter((r) => !r.moved && !r.unpublished && !r.error).length}** |`);
   L.push(`| Pinned version or package no longer on npm | **${gone.length}** |`);
   L.push(`| Latest version marked deprecated | **${deprecated.length}** |`);
   if (errors.length) L.push(`| Could not be checked | **${errors.length}** |`);
+  L.push('');
+  L.push('Each pin is the version the server\'s registry entry declared, which is not always npm\'s');
+  L.push(`latest: for ${staleAtPin.length} of these ${rows.length}, npm already had a newer release when the cohort was pinned.`);
+  L.push('A version that existed before the pin is not drift, so "since the pin" counts only releases');
+  L.push('past npm\'s latest at the pin (or past the pin itself, where that was newer).');
   L.push('');
   L.push('The published index does not move when this file does. The index reports pinned versions,');
   L.push('and a version that moved on npm has not been measured until a sweep measures it.');
   L.push('');
 
   if (movers.length) {
-    L.push('## Moved past the pin');
+    // "At pin" is npm's latest when the cohort was pinned; "=" means the pin was npm's latest.
+    const table = (list) => {
+      L.push('| Server | Pinned | npm latest at pin | Latest now | Released since the pin |');
+      L.push('|---|---|---|---|---:|');
+      for (const r of list) {
+        L.push(`| \`${r.npm_package}\` | ${r.pinned_version} | ${atPin(r)} | **${r.latest_version}**${r.deprecated ? ' (deprecated)' : ''} | ${r.versions_since_pin ?? '—'} |`);
+      }
+      L.push('');
+    };
+    L.push('## Released since the pin');
     L.push('');
-    L.push('| Server | Pinned | Latest | Versions ahead |');
-    L.push('|---|---|---|---:|');
-    for (const r of movers.sort((a, b) => (b.versions_ahead || 0) - (a.versions_ahead || 0))) {
-      L.push(`| \`${r.npm_package}\` | ${r.pinned_version} | **${r.latest_version}**${r.deprecated ? ' (deprecated)' : ''} | ${r.versions_ahead ?? '—'} |`);
+    if (since.length) table(since.sort((a, b) => (b.versions_since_pin || 0) - (a.versions_since_pin || 0)));
+    else { L.push('Nothing.'); L.push(''); }
+    if (staleOnly.length) {
+      L.push('## Behind npm\'s latest at the pin, nothing released since');
+      L.push('');
+      L.push('Not drift: the newer version already existed when the cohort was pinned. It has still never');
+      L.push('been measured.');
+      L.push('');
+      table(staleOnly.sort((a, b) => (b.versions_ahead || 0) - (a.versions_ahead || 0)));
     }
+    L.push('## Measuring the newer versions');
     L.push('');
-    L.push('Measure these at their new versions, and nothing else:');
+    L.push('Measure these at their latest versions, and nothing else:');
     L.push('');
     L.push('```bash');
     L.push(`VERSION_OVERRIDE="${movers.map((r) => `${r.npm_package}@${r.latest_version}`).join(',')}" npm run run`);
@@ -143,9 +189,9 @@ function renderMarkdown(header, rows) {
     L.push('moves the index itself, is a separate, deliberate act.');
     L.push('');
   } else {
-    L.push('## Moved past the pin');
+    L.push('## Released since the pin');
     L.push('');
-    L.push('Nothing. Every package in the cohort is still at the version it was measured at.');
+    L.push('Nothing. No package in the cohort has anything on npm newer than the version it was measured at.');
     L.push('');
   }
 
@@ -192,7 +238,10 @@ async function main() {
     cohort_selection_hash: cohort.selection_hash,
     counts: {
       checked: rows.length,
+      // Newer than the pin, whenever published. The drift count is moved_since_pin.
       moved: movers.length,
+      moved_since_pin: rows.filter((r) => r.moved_since_pin).length,
+      stale_at_pin: rows.filter((r) => r.stale_at_pin).length,
       unpublished: gone.length,
       deprecated: rows.filter((r) => r.deprecated).length,
       errors: rows.filter((r) => r.error).length,
@@ -209,9 +258,11 @@ async function main() {
   fsp.writeFileSync(md, renderMarkdown(header, rows));
 
   const prior = readJSONL(LOG).filter((r) => r.record_type === 'version_check');
-  console.log(`  moved: ${movers.length}  unpublished: ${gone.length}  deprecated: ${header.counts.deprecated}  errors: ${header.counts.errors}`);
+  // scripts/watch-daily.ps1 copies this line, which must keep starting with "moved:", into
+  // results/last-watch.txt.
+  console.log(`  moved: ${movers.length} newer than the pin, ${header.counts.moved_since_pin} released since it  stale at pin: ${header.counts.stale_at_pin}  unpublished: ${gone.length}  deprecated: ${header.counts.deprecated}  errors: ${header.counts.errors}`);
   if (movers.length) {
-    for (const r of movers) console.log(`    ${r.npm_package}  ${r.pinned_version} -> ${r.latest_version}`);
+    for (const r of movers) console.log(`    ${r.npm_package}  ${r.pinned_version} -> ${r.latest_version}${r.moved_since_pin ? '' : '  (already npm latest at the pin)'}`);
     console.log(`\n  measure the movers at their new versions:  VERSION_OVERRIDE="${movers.map((r) => `${r.npm_package}@${r.latest_version}`).join(',')}" npm run run`);
   }
   console.log(`\nappended to results/versions.jsonl (${prior.length} checks logged)  ->  ${path.relative(ROOT, md)}`);

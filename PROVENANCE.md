@@ -169,6 +169,45 @@ named, with dependencies resolved as of that version's publish time, records the
 run header and config hash, and always flags the run `partial_sweep`. The drift report now prints
 that command. See [METHOD.md](METHOD.md#version-drift-and-why-the-sweep-is-not-on-a-schedule).
 
+### Drift counted from the pin instead of from npm's latest at the pin
+
+The README has twice published a drift figure that counted versions released before the cohort was
+pinned:
+
+- 2026-08-13: "2 days after this cohort was pinned, 23 of its 50 servers had already published a
+  newer version", with `octocode-mcp` the largest jump at "62 versions past the pin (7.0.9 to
+  18.2.2)".
+- 2026-10-25: "75 days after this cohort was pinned, 33 of its 50 servers had already published a
+  newer version", with `octocode-mcp` at "63 versions past the pin (7.0.9 to 19.1.0)".
+
+The watcher compared npm's latest against the pinned version. But each pin is the version the
+server's registry entry declared, and for 17 of the 50 npm's latest was already newer when the
+cohort was pinned (the cohort file records it, as `latest_version`). Those newer versions existed
+on the day of pinning; they are not drift.
+
+Counted from npm's latest at the pin, the 2026-08-13 check had **7** servers with a release since
+the pin, not 23, and `octocode-mcp` had released nothing since: 18.2.2 was already npm's latest
+when the cohort was pinned, and all 62 versions predated it. The 2026-10-25 check had **25**, not
+33: 17 released since the pin from a pin that was npm's latest, 8 released since from a pin that
+was already behind, and 8 were behind at the pin and have released nothing since. `octocode-mcp`
+has released one version since the pin (18.2.2 to 19.1.0). The largest jump since the pin is
+`githits`, 45 versions (0.8.0 to 0.35.0). The classification was checked against npm publish dates
+on every package still on npm and agreed.
+
+The conclusion drawn from the figure stands at a smaller size: half the cohort has released past
+its pin inside three months. What was wrong was the size, and the implication that the 17 were
+moving, when for most of them the index measured an older release from the start. That second
+point is the more important one, and it is now stated where the cohort is described
+([METHOD.md](METHOD.md#cohort-selection)).
+
+`results/versions.jsonl` is append-only and its earlier records stay as written; their `moved` and
+`versions_ahead` fields are correct for what they record, newer than the pin. Fixed in harness
+0.1.6: each check also records `latest_at_pin`, `stale_at_pin`, `moved_since_pin` and
+`versions_since_pin`, the drift report separates the two cases, and the README's drift figure and
+largest jump are computed from the release-since-pin fields. The publication build refuses a check
+that lacks them. One check, at 2026-10-26T00:54:18Z, was made by a development build of 0.1.6
+before those fields existed: it carries the 0.1.6 label without them, and stays as written.
+
 ### A 30% failure rate that was really 26%
 
 The first sweep reported that 30% of the cohort would not start. Four of those failures traced to

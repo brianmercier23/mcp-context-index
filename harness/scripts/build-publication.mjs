@@ -69,7 +69,14 @@ const lastCheck = versionRows.filter((r) => r.record_type === 'version_check').p
 const lastDrift = lastCheck
   ? versionRows.filter((r) => r.record_type === 'version_drift' && r.checked_at === lastCheck.checked_at)
   : [];
-const topMover = lastDrift.filter((r) => r.moved).sort((a, b) => (b.versions_ahead || 0) - (a.versions_ahead || 0))[0] ?? null;
+// Drift is counted from npm's latest at the pin, not from the pin: pins are the registry entry's
+// declared version, which was already behind npm for 17 of dev-tooling-v1's 50. Checks before
+// harness 0.1.6 did not record that baseline, and the README used to count versions that predated
+// the pin as drift; publishing from one of those checks would repeat it.
+if (lastCheck && lastCheck.counts.moved_since_pin === undefined) {
+  throw new Error(`latest version check (${lastCheck.checked_at}) predates the pin baseline; run npm run watch first`);
+}
+const topMover = lastDrift.filter((r) => r.moved_since_pin).sort((a, b) => (b.versions_since_pin || 0) - (a.versions_since_pin || 0))[0] ?? null;
 const cohortMeta = JSON.parse(fs.readFileSync(path.join(HARNESS, 'data', `cohort-${cohortId}.json`), 'utf8'));
 const driftDays = lastCheck
   ? Math.max(1, Math.round((Date.parse(lastCheck.checked_at) - Date.parse(cohortMeta.built_at)) / 86400000))
@@ -104,15 +111,16 @@ const values = {
   LEGACY: String(era('legacy')),
   NEITHER: String(neitherCount),
   NOT_STARTED: String(notAskedCount),
-  MOVED: lastCheck ? String(lastCheck.counts.moved) : '0',
-  STILL_PINNED: lastCheck ? String(lastCheck.counts.checked - lastCheck.counts.moved) : '0',
+  MOVED_SINCE_PIN: lastCheck ? String(lastCheck.counts.moved_since_pin) : '0',
+  STALE_ONLY: lastCheck ? String(lastDrift.filter((r) => r.moved && !r.moved_since_pin).length) : '0',
+  STALE_AT_PIN: lastCheck ? String(lastCheck.counts.stale_at_pin) : '0',
   COHORT_SIZE: lastCheck ? String(lastCheck.counts.checked) : String(recs.length),
   DRIFT_DAYS: driftDays === null ? '0' : String(driftDays),
   DRIFT_DATE: lastCheck ? lastCheck.checked_at.slice(0, 10) : '',
   TOP_MOVER: topMover ? topMover.npm_package : 'none',
-  TOP_MOVER_FROM: topMover ? topMover.pinned_version : '',
+  TOP_MOVER_FROM: topMover ? (topMover.stale_at_pin ? topMover.latest_at_pin : topMover.pinned_version) : '',
   TOP_MOVER_TO: topMover ? topMover.latest_version : '',
-  TOP_MOVER_AHEAD: topMover ? String(topMover.versions_ahead) : '0',
+  TOP_MOVER_SINCE: topMover ? String(topMover.versions_since_pin) : '0',
   DRIFT_PATH: `index/version-drift-${cohortId}.md`,
 };
 
