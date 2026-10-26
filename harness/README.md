@@ -94,7 +94,7 @@ Environment overrides: `VERTICAL`, `COHORT_SIZE`, `COHORT`, `RUBRIC`, `LIMIT`, `
 `DEPS_AS_OF` (run: an ISO timestamp to resolve dependencies as of, or `float` for newest-today;
 default is the cohort's `built_at`, and either choice is inside the config hash),
 `VERSION_OVERRIDE` (run: `pkg@ver,...` probes those cohort servers at a version other than their
-pin, with dependencies resolved as of that version's publish time unless `DEPS_AS_OF` is set; the
+pin, with dependencies resolved as of one hour after that version's publish time unless `DEPS_AS_OF` is set; the
 run covers only those servers unless `ONLY` is given, is in the config hash, and is always a
 `partial_sweep`).
 

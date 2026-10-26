@@ -252,9 +252,12 @@ VERSION_OVERRIDE="<package>@<new version>,..." npm run run
 ```
 
 Each named server is installed at the version given rather than its pin, and the run covers only
-those servers. Its dependencies resolve as they stood when that version was published, which is
-the same reading as the pin applied to the newer release, so the answer does not depend on the day
-it is asked and two such runs can be paired. `DEPS_AS_OF` replaces that date for every server in
+those servers. Its dependencies resolve as they stood one hour after that version was published,
+which is the same reading as the pin applied to the newer release, so the answer does not depend
+on the day it is asked and two such runs can be paired. The hour is there because a release is
+often several packages published minutes apart: cut off at the server's own publish second, three
+of the 33 versions the drift report named could not be installed, because each requires a sibling
+package published just after it. `DEPS_AS_OF` replaces that date for every server in
 the run, and is refused if it predates a named version, since npm could not then find it. The
 overrides (pin, version probed, its publish time, how its dependencies resolved) are recorded in
 the run header and in the config hash, every server record keeps its cohort `pinned_version` with
@@ -284,9 +287,10 @@ method: change the criteria and you change the cohort, which changes every aggre
 drawn from the MCP registry, and each entry names the package version it describes; that is the
 version measured. The cohort file also records npm's latest at the moment of pinning
 (`latest_version`), and for 17 of `dev-tooling-v1`'s 50 servers it was already newer than the pin.
-Those 17 were measured at an older release than a fresh `npm install` would have given on the day
-the cohort was built. The version-drift report counts drift from npm's latest at the pin, so a
-release that already existed then is shown separately and never counted as drift.
+Those 17 were pinned at an older release than a fresh `npm install` would have given on the day
+the cohort was built, and the 12 of them that started were measured there. The version-drift
+report counts drift from npm's latest at the pin, so a release that already existed then is shown
+separately and never counted as drift.
 
 This makes the cohort a sample of **what a buyer plausibly has installed**, which is the
 population an audit is sold against. It does not make it representative of the registry, and it

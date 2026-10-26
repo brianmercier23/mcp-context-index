@@ -75,8 +75,9 @@ VERSION_OVERRIDE="@smartbear/mcp@0.42.0,@postman/postman-mcp-server@2.14.0,@gitk
 ```
 
 Each server is installed at the version named, with its dependencies resolved as they stood
-when that version was published. The overrides are recorded in the run header and the config
-hash, and the run is flagged `partial_sweep`, so it can never be published as an index.
+an hour after that version was published, so that a sibling package from the same release is
+included. The overrides are recorded in the run header and the config hash, and the run is
+flagged `partial_sweep`, so it can never be published as an index.
 A plain re-run (`ONLY=`) would not measure anything new: it installs the pinned version on
 the pin's dependencies and reproduces the published number. Re-pinning the cohort, which
 moves the index itself, is a separate, deliberate act.

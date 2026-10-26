@@ -41,13 +41,15 @@ await test('no override means no overrides, so a plain run is untouched', async 
   assert.deepEqual(await versionOverrides(cohort, '  ', undefined, registry), []);
 });
 
-await test('dependencies resolve as of the moment each version was published', async () => {
+await test('dependencies resolve as of an hour after each version was published', async () => {
+  // Not the publish second: a sibling package from the same release, published minutes later,
+  // would be excluded and npm would refuse the install.
   const o = await versionOverrides(cohort, 'sharedoc-mcp@2.2.0, @smartbear/mcp@0.40.1', undefined, registry);
   assert.deepEqual(o, [
     { npm_package: '@smartbear/mcp', pinned_version: '0.34.0', version: '0.40.1', published_at: '2026-10-01T12:00:00.000Z',
-      dependencies: { policy: 'as-of', before: '2026-10-01T12:00:00.000Z', basis: 'version_published' } },
+      dependencies: { policy: 'as-of', before: '2026-10-01T13:00:00.000Z', basis: 'version_published+1h' } },
     { npm_package: 'sharedoc-mcp', pinned_version: '2.1.4', version: '2.2.0', published_at: '2026-09-15T08:30:00.000Z',
-      dependencies: { policy: 'as-of', before: '2026-09-15T08:30:00.000Z', basis: 'version_published' } },
+      dependencies: { policy: 'as-of', before: '2026-09-15T09:30:00.000Z', basis: 'version_published+1h' } },
   ]);
 });
 

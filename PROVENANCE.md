@@ -165,9 +165,20 @@ the published number exactly and measured nothing new. Nobody ran it, so no reco
 claims to describe a newer version.
 
 Fixed in harness 0.1.6: `VERSION_OVERRIDE="<package>@<version>,..."` probes servers at the version
-named, with dependencies resolved as of that version's publish time, records the overrides in the
-run header and config hash, and always flags the run `partial_sweep`. The drift report now prints
-that command. See [METHOD.md](METHOD.md#version-drift-and-why-the-sweep-is-not-on-a-schedule).
+named, with dependencies resolved as of one hour after that version's publish time, records the
+overrides in the run header and config hash, and always flags the run `partial_sweep`. The drift
+report now prints that command. See
+[METHOD.md](METHOD.md#version-drift-and-why-the-sweep-is-not-on-a-schedule).
+
+The first version of that fix resolved dependencies as of the publish second itself. Dry-run
+against npm before anyone ran it, 3 of the 33 installs the drift report then printed could not
+resolve. A release is often several packages published one after another, and each of the three
+requires a sibling published moments later: `@atlassian-dc-mcp/jira@0.38.0` and
+`@atlassian-dc-mcp/bitbucket@0.38.0` need `@atlassian-dc-mcp/common@^0.38.0`, published three to
+four minutes after them, and `@remogram/mcp@0.3.0` needs `@remogram/cli@0.3.0`, published two
+seconds after it. Run as printed, those servers would have been logged as failing to install over
+a choice the harness made. With the hour, all 33 resolve. No override run was ever logged, so no
+record is affected.
 
 ### Drift counted from the pin instead of from npm's latest at the pin
 
@@ -195,10 +206,10 @@ has released one version since the pin (18.2.2 to 19.1.0). The largest jump sinc
 on every package still on npm and agreed.
 
 The conclusion drawn from the figure stands at a smaller size: half the cohort has released past
-its pin inside three months. What was wrong was the size, and the implication that the 17 were
-moving, when for most of them the index measured an older release from the start. That second
-point is the more important one, and it is now stated where the cohort is described
-([METHOD.md](METHOD.md#cohort-selection)).
+its pin inside three months. What was wrong was the size: 8 of the 33 had released nothing since
+the pin. Behind it was something more important. All 17 servers whose pin was behind npm's latest
+were pinned at an older release from the start, and the 12 of them that started were measured
+there. That is now stated where the cohort is described ([METHOD.md](METHOD.md#cohort-selection)).
 
 `results/versions.jsonl` is append-only and its earlier records stay as written; their `moved` and
 `versions_ahead` fields are correct for what they record, newer than the pin. Fixed in harness

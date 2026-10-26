@@ -103,10 +103,18 @@ export async function npmPublishedAt(pkg, version) {
 // which is the only way to measure what the drift watcher found. Without it a re-probe installs
 // the pin again on the pin's dependencies and reprints the old number.
 //
-// Each overridden server's dependencies resolve as of the moment its version was published: the
-// same reading as the pin, applied to the newer release, so the answer does not depend on the day
-// it is asked and two override runs can pair. An explicit DEPS_AS_OF replaces that, and is refused
-// if it predates the version, since npm --before would then refuse to find it.
+// Each overridden server's dependencies resolve as of one hour after its version was published:
+// the same reading as the pin, applied to the newer release, so the answer does not depend on the
+// day it is asked and two override runs can pair. An explicit DEPS_AS_OF replaces that, and is
+// refused if it predates the version, since npm --before would then refuse to find it.
+//
+// Why not the publish second itself: a release is often several packages published one after
+// another. @atlassian-dc-mcp/jira@0.38.0 went out at 18:58:51Z and the @atlassian-dc-mcp/common
+// @^0.38.0 it requires at 19:02:45Z; @remogram/mcp@0.3.0 two seconds before its @remogram/cli.
+// Cut off at the server's own second, npm cannot find the sibling, the install fails, and the log
+// records a harness choice as the server failing. An hour lets a release finish publishing while
+// still describing that release.
+const RELEASE_WINDOW_MS = 60 * 60 * 1000;
 //
 // The overrides go into the config hash and the run header, and any run carrying one is a partial
 // sweep, so it can never be published as the index. Re-pinning the cohort is a separate act.
@@ -132,7 +140,7 @@ export async function versionOverrides(cohort, raw = process.env.VERSION_OVERRID
         throw new Error(`VERSION_OVERRIDE: ${item} was published ${published_at}, after DEPS_AS_OF ${dependencies.before}`);
       }
     } else {
-      dependencies = { policy: 'as-of', before: published_at, basis: 'version_published' };
+      dependencies = { policy: 'as-of', before: new Date(Date.parse(published_at) + RELEASE_WINDOW_MS).toISOString(), basis: 'version_published+1h' };
     }
     out.push({ npm_package: pkg, pinned_version: server.pinned_version, version, published_at, dependencies });
   }

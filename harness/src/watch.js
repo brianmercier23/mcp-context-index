@@ -182,8 +182,9 @@ function renderMarkdown(header, rows) {
     L.push('```');
     L.push('');
     L.push('Each server is installed at the version named, with its dependencies resolved as they stood');
-    L.push('when that version was published. The overrides are recorded in the run header and the config');
-    L.push('hash, and the run is flagged `partial_sweep`, so it can never be published as an index.');
+    L.push('an hour after that version was published, so that a sibling package from the same release is');
+    L.push('included. The overrides are recorded in the run header and the config hash, and the run is');
+    L.push('flagged `partial_sweep`, so it can never be published as an index.');
     L.push('A plain re-run (`ONLY=`) would not measure anything new: it installs the pinned version on');
     L.push('the pin\'s dependencies and reproduces the published number. Re-pinning the cohort, which');
     L.push('moves the index itself, is a separate, deliberate act.');
