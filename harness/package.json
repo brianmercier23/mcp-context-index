@@ -11,7 +11,7 @@
     "reproduce": "node src/reproduce.js",
     "report": "node src/report.js",
     "rescore": "node src/rescore.js",
-    "test": "node test/era-probe.test.mjs && node test/dependency-tree.test.mjs",
+    "test": "node test/era-probe.test.mjs && node test/dependency-tree.test.mjs && node test/run-id.test.mjs",
     "watch": "node src/watch.js"
   },
   "dependencies": {

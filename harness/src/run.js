@@ -2,7 +2,7 @@
 // appended to results/runs.jsonl. Nothing is ever overwritten.
 import os from 'node:os';
 import path from 'node:path';
-import { ROOT, HARNESS_VERSION, readJSON, readJSONL, appendJSONL, nowISO, sha256, stableStringify, runId, mcpClientStack } from './lib.js';
+import { ROOT, HARNESS_VERSION, readJSON, readJSONL, appendJSONL, nowISO, sha256, stableStringify, runId, takenRunIds, mcpClientStack } from './lib.js';
 import { install, resolveEntry, buildLaunch, makeCanary, cleanup, sandboxDir, acquireRunLock, SANDBOX_MODEL,
          dependencyResolution, dependencyTree, directDependencies, npmVersion } from './sandbox.js';
 import { session, detectEra, MODERN_PROTOCOL } from './probe.js';
@@ -120,7 +120,7 @@ async function main() {
   const deps = dependencyResolution(cohort);
   const cfg = configHash(cohort, rubric, deps);
   const started = nowISO();
-  const rid = runId(started, cfg);
+  const rid = runId(started, cfg, takenRunIds(RESULTS));
   const canary = makeCanary(rid);
   const releaseLock = acquireRunLock(rid);
 

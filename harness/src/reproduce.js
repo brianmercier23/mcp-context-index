@@ -55,8 +55,9 @@ function main() {
   // Checked here and not only in pickRuns: naming two runs with RUN_A/RUN_B used to skip the
   // match that auto-pairing enforces, and the verdict would have carried A's hash for a pair B
   // never shared. A floating run against an as-of run is a question for the tree log, not a verdict.
-  // Run ids are minute-resolution, so two short runs started in the same minute share one, and
-  // every record of both would be read as one run compared with itself: a GO that tested nothing.
+  // A run compared with itself is a GO that tested nothing. runId() now suffixes a second run
+  // started in the same minute, but a log written by an older harness could still hold two runs
+  // under one id, and they would read here as one.
   if (A.run_id === B.run_id) throw new Error(`both sides of the pair are run ${A.run_id}; nothing to compare`);
   if (A.config_hash !== B.config_hash) {
     throw new Error(`runs have different config hashes (${A.config_hash.slice(0, 12)} vs ${B.config_hash.slice(0, 12)}); they are not comparable`);

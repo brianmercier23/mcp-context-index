@@ -44,12 +44,16 @@ first run's hash on the verdict. That mattered more once harness 0.1.5 put the d
 resolution date in the hash, since a floating run and an as-of run of the same servers would have
 produced a verdict. It now refuses.
 
-Testing that fix found a second hole. Run ids have minute resolution, so two short runs started in
-the same minute share one id, and the comparator read every record of both as one run compared with
-itself, and said GO. It now refuses a pair whose two sides carry the same id.
+Testing that fix found a second hole. Run ids have minute resolution, so two short runs of one
+config started in the same minute shared an id. Every reader groups records by run id, so the two
+runs merged, and the comparator read the result as one run compared with itself, and said GO. Run
+ids are now unique within a log: a run whose id is already taken, by a header or by the partial
+file of a sweep that died before writing one, gets the next free `-2`, `-3` suffix. The comparator
+also refuses a pair whose two sides carry the same id, for any log written before that.
 
 Neither defect produced a record. All nine verdicts in `results/reproducibility.jsonl` pair two
-distinct runs under one config hash, and no two run headers in either log share an id.
+distinct runs under one config hash, and no two run headers in either log share an id, so the
+suffix rule gives every existing run the id it already has. A test checks that against both logs.
 
 ### The published metric definition understated what the instrument counts
 
