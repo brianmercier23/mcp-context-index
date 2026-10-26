@@ -2,8 +2,8 @@
 // whether the instrument is reproducible enough to scale.
 //
 // Only runs with identical config_hash are comparable. A config change (rubric, cohort,
-// tokenizer, sandbox model, node major, platform) makes the comparison meaningless, and this
-// refuses rather than quietly producing a number.
+// tokenizer, sandbox model, dependency resolution date, node major, platform) makes the
+// comparison meaningless, and this refuses rather than quietly producing a number.
 import path from 'node:path';
 import { ROOT, readJSON, readJSONL, appendJSONL, nowISO } from './lib.js';
 
@@ -93,6 +93,11 @@ function main() {
       grade_b: rb?.score?.grade ?? null,
       intra_run_stable_a: ra?.signals?.intra_run_stable ?? null,
       intra_run_stable_b: rb?.signals?.intra_run_stable ?? null,
+      // Null on records before harness 0.1.5, which did not hash the tree. A same-version server
+      // whose number moved with its tree hash is a dependency-drift candidate; one whose number
+      // moved while its tree held ran the same code, so the cause is the network, host or harness.
+      dependency_tree_a: ra?.install?.dependency_tree?.hash ?? null,
+      dependency_tree_b: rb?.install?.dependency_tree?.hash ?? null,
     });
   }
 
@@ -105,6 +110,7 @@ function main() {
   const verdictLabel = measured.length === 0 ? 'INSUFFICIENT-DATA' : pass ? 'GO' : 'NO-GO';
 
   const gradeChanges = rows.filter((r) => r.grade_a && r.grade_b && r.grade_a !== r.grade_b);
+  const treeChanges = rows.filter((r) => r.dependency_tree_a && r.dependency_tree_b && r.dependency_tree_a !== r.dependency_tree_b);
 
   const verdict = {
     record_type: 'reproducibility',
@@ -124,6 +130,7 @@ function main() {
       status_changed: rows.filter((r) => r.status_changed).length,
       not_measured_in_either: rows.filter((r) => r.classification === 'not_measured').length,
       grade_changed: gradeChanges.length,
+      dependency_tree_changed: treeChanges.length,
     },
     stable_or_tolerable_share: Math.round(share * 10000) / 10000,
     verdict: verdictLabel,
@@ -143,6 +150,7 @@ function main() {
   console.log(`VERDICT: ${verdict.verdict}`);
   for (const u of verdict.unstable_servers) console.log(`  unstable: ${u.package}  ${u.a} -> ${u.b}  (${u.delta_pct}%)  tools ${u.tool_count_a}->${u.tool_count_b}`);
   for (const f of verdict.status_flips) console.log(`  flip: ${f.server}  ${f.from} -> ${f.to}`);
+  for (const t of treeChanges) console.log(`  tree changed: ${t.package}  ${t.dependency_tree_a.slice(0, 12)} -> ${t.dependency_tree_b.slice(0, 12)}`);
 }
 
 main();

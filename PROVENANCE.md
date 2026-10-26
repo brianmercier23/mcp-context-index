@@ -57,6 +57,66 @@ harness gained a second one for the 2026-07-28 protocol era: two runs could have
 library measured them and still hashed identically. Both client versions entered the hash in
 harness 0.1.4, before any run depended on the distinction.
 
+### A pinned version did not pin what was installed
+
+The harness installed every server at an exact version, with `--no-package-lock`. Everything
+beneath the server therefore resolved to the newest release inside its semver range on the day of
+the install. The README said "Re-running the pinned cohort reproduces the numbers." On the day of a
+run that was true. A month later it was not guaranteed, and for one server it had stopped being
+true.
+
+`@smartbear/mcp@0.34.0` was published at **125,005** tool-definition tokens, from
+`run-2026-08-13-0208-7936eadf`. A spot check on 2026-10-25, outside the log, measured 123,849, with
+43 of its 149 per-tool counts different. `@postman/postman-mcp-server@2.11.2`, checked the same way
+on the same machine, reproduced exactly at 33,553, so the host was not the explanation.
+
+The cause was then confirmed in the log: three partial sweeps of those two servers, back to back on
+one Linux host under harness 0.1.5, identical except for the date dependencies were resolved as of.
+
+- `run-2026-10-25-2354-a2e3f42d`, dependencies floating, as in every run before 0.1.5:
+  **123,849**, on zod 4.6.7 and `@modelcontextprotocol/sdk` 1.32.2.
+- `run-2026-10-25-2355-039f8070`, resolved as of the cohort pin (2026-08-11T02:17Z): **125,005**,
+  on zod 4.4.3 and SDK 1.30.0.
+- `run-2026-10-25-2356-5a42ad54`, resolved as of the published run's start (2026-08-13T02:08Z):
+  **125,005**, on the same zod and SDK.
+
+Postman measured 33,553 in all three. Resolved as of either August date, all 149 of smartbear's
+per-tool counts match the published run. Floating, the same 43 differ as in the spot check, by
+1,156 tokens in total. The server code is identical in all three runs, and 70 of the 210 packages
+beneath it moved. Swapping zod alone from 4.4.3 to 4.6.7 into the August tree reproduces the whole
+1,156-token difference, and swapping the SDK alone changes nothing; that swap was a scratch
+experiment and is not in the log. The package's tools declare their input schemas as zod objects,
+and those are serialised to JSON Schema when `tools/list` is answered, so a zod release that
+changes the serialisation changes the server's token count without a line of the server changing.
+The package asks for `zod: ^4.3.6`, which 4.6.7 satisfies.
+
+**No published number changes.** 125,005 is what the pinned artifact measures, and it still does.
+What was wrong was the promise that anyone re-running the cohort would get it, which depended on
+when they ran it. The same-day reproducibility gate could not have caught this: the two sweeps of
+every pair in the log started within twenty minutes of each other and installed the same tree
+twice. Six GO verdicts were real, and certified the instrument against itself on a given day, not
+the install against the calendar.
+
+Postman shows the other half. Seventeen packages beneath it moved between the pin and the floating
+run, and its number did not. A changed tree is a reason to look, not proof of drift.
+
+Fixed in harness 0.1.5:
+
+- Dependencies resolve as of the cohort's pin date through `npm install --before`, so a re-run on
+  any later day installs the tree the cohort was pinned with. The policy, and the case for the
+  other one, is in [METHOD.md](METHOD.md#dependency-resolution). `DEPS_AS_OF=float` keeps the old
+  behaviour, under its own config hash.
+- Every server record carries a hash of its installed tree and the versions its own declared
+  dependencies resolved to. The full lists are in `results/dependency-trees.jsonl`. The
+  comparator reports a tree change beside a number change.
+- The harness could not install anything on Linux: it looked for `npm-cli.js` only where Windows
+  puts it. The three runs above are the first in either log from a Linux host.
+
+Runs before 0.1.5 recorded no tree, and which tree each of them installed cannot be recovered. What
+the log does show is that every full sweep from 2026-08-11 03:07 to the published run measured
+every server identically, so whatever moved inside that window moved nothing that was measured.
+Those records stay as written.
+
 ### A 30% failure rate that was really 26%
 
 The first sweep reported that 30% of the cohort would not start. Four of those failures traced to
