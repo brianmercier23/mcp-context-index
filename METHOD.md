@@ -112,7 +112,8 @@ a re-run measured the pinned server on top of whatever its dependencies had sinc
 That was not hypothetical. `@smartbear/mcp@0.34.0` measured 125,005 tool-definition tokens in the
 published run and 123,849 when re-run on 2026-10-25, with no change to the server: zod, which its
 tool schemas are written in, had moved from 4.4.3 to 4.6.7 inside the `^4.3.6` range the package
-declares. [PROVENANCE.md](PROVENANCE.md) names the runs.
+declares. The same zod release moved `sharedoc-mcp@2.1.4` from 877 to 870.
+[PROVENANCE.md](PROVENANCE.md) names the runs.
 
 Two readings are defensible, and they answer different questions:
 
@@ -145,7 +146,9 @@ What it costs:
   is re-pinned. That is the definition working, and it is still a limit.
 - **`--before` cannot recover an unpublished version.** If a version that resolved at the pin is
   later removed from npm, npm resolves the newest remaining one, or fails the install if none is
-  left; the tree hash or the `install_failed` record shows which.
+  left; the tree hash or the `install_failed` record shows which. The same holds for the server
+  itself: `makers-page-mcp` was unpublished outright on 2026-08-26, and its published number can
+  no longer be reproduced by anyone, under either policy.
 - **npm's resolver is an input.** Each run header records the npm version. Trees also differ across
   platforms by design, through platform-specific optional packages (`@rollup/rollup-linux-x64-gnu`
   on Linux, for one); the platform is already in the config hash.

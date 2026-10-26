@@ -62,7 +62,7 @@ harness 0.1.4, before any run depended on the distinction.
 The harness installed every server at an exact version, with `--no-package-lock`. Everything
 beneath the server therefore resolved to the newest release inside its semver range on the day of
 the install. The README said "Re-running the pinned cohort reproduces the numbers." On the day of a
-run that was true. A month later it was not guaranteed, and for one server it had stopped being
+run that was true. A month later it was not guaranteed, and for two servers it had stopped being
 true.
 
 `@smartbear/mcp@0.34.0` was published at **125,005** tool-definition tokens, from
@@ -90,9 +90,28 @@ and those are serialised to JSON Schema when `tools/list` is answered, so a zod 
 changes the serialisation changes the server's token count without a line of the server changing.
 The package asks for `zod: ^4.3.6`, which 4.6.7 satisfies.
 
-**No published number changes.** 125,005 is what the pinned artifact measures, and it still does.
-What was wrong was the promise that anyone re-running the cohort would get it, which depended on
-when they ran it. The same-day reproducibility gate could not have caught this: the two sweeps of
+It was not the only one. To find the scope, both policies were run over the whole cohort on
+2026-10-26, on the same host, outside the log: a Linux full sweep must not become the published
+index by being the latest one in it. Of the 38 published numbers, the run resolved as of the pin
+reproduced 34 exactly. The floating run reproduced 32: it missed the same four, and two more,
+which are the only two numbers that moved between the policies. The second was then logged the
+same way as the first:
+
+- `sharedoc-mcp@2.1.4`, published at **877**: `run-2026-10-26-0013-a2e3f42d`, floating, measured
+  870; `run-2026-10-26-0013-039f8070`, resolved as of the pin, measured **877**. One tool moved,
+  `reset_shared_doc_password`, from 95 to 88. The cause is the same zod release, inside the
+  package's `^4.4.0`: swapping zod alone into the pinned tree reproduces the 7 tokens, and
+  swapping the SDK alone does not (a scratch experiment, like the smartbear one).
+
+The four published numbers neither full sweep reproduced are not dependency findings.
+`@gitkraken/gk`, `containerization-assist-mcp` and `ainative-zerodb-memory-mcp` would not start
+on the Linux host under either policy, which makes it a host difference. `makers-page-mcp` was
+unpublished from npm on 2026-08-26 and cannot be reinstalled by anyone; the drift report already
+says so. Those four are unchecked for drift, not cleared of it.
+
+**No published number changes.** 125,005 and 877 are what the pinned artifacts measure, and they
+still do. What was wrong was the promise that anyone re-running the cohort would get them, which
+depended on when they ran it. The same-day reproducibility gate could not have caught this: the two sweeps of
 every pair in the log started within twenty minutes of each other and installed the same tree
 twice. Six GO verdicts were real, and certified the instrument against itself on a given day, not
 the install against the calendar.
@@ -110,7 +129,7 @@ Fixed in harness 0.1.5:
   dependencies resolved to. The full lists are in `results/dependency-trees.jsonl`. The
   comparator reports a tree change beside a number change.
 - The harness could not install anything on Linux: it looked for `npm-cli.js` only where Windows
-  puts it. The three runs above are the first in either log from a Linux host.
+  puts it. The five runs above are the first in either log from a Linux host.
 
 Runs before 0.1.5 recorded no tree, and which tree each of them installed cannot be recovered. What
 the log does show is that every full sweep from 2026-08-11 03:07 to the published run measured
