@@ -88,7 +88,24 @@ export function nowISO() {
   return new Date().toISOString();
 }
 
-// Deterministic run id: no randomness, no clock beyond the caller-supplied stamp.
-export function runId(stamp, configHash) {
-  return `run-${stamp.replace(/[:.]/g, '').replace('T', '-').slice(0, 15)}-${configHash.slice(0, 8)}`;
+// Deterministic run id: no randomness, no clock beyond the caller-supplied stamp. The stamp has
+// minute resolution, so two short runs of one config started in the same minute used to share an
+// id, and every reader that groups by run_id merged them into one run. `taken` holds the ids
+// already in the log the run appends to; a collision takes the next free -2, -3 suffix. No id in
+// either log had collided when this was added, so none of them reads differently.
+export function runId(stamp, configHash, taken = new Set()) {
+  const base = `run-${stamp.replace(/[:.]/g, '').replace('T', '-').slice(0, 15)}-${configHash.slice(0, 8)}`;
+  if (!taken.has(base)) return base;
+  for (let n = 2; ; n++) if (!taken.has(`${base}-${n}`)) return `${base}-${n}`;
+}
+
+// Every run id already spoken for: the run headers in a log, plus results/partial/, where a sweep
+// that died before writing its header still left records under its id.
+export function takenRunIds(logPath) {
+  const ids = new Set(readJSONL(logPath).filter((r) => r.record_type === 'run').map((r) => r.run_id));
+  const partial = path.join(ROOT, 'results', 'partial');
+  if (fs.existsSync(partial)) {
+    for (const f of fs.readdirSync(partial)) if (f.endsWith('.jsonl')) ids.add(f.slice(0, -'.jsonl'.length));
+  }
+  return ids;
 }

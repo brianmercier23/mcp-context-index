@@ -2,7 +2,9 @@
 //
 // Honest naming: this is *isolation*, not a security sandbox. There is no container runtime
 // on this host. What it does guarantee, and what the measurement actually depends on:
-//   - a pinned exact version, so two runs install byte-identical code
+//   - a pinned exact version of the server package
+//   - transitive dependencies resolved as of a fixed date (npm --before), so two runs install
+//     the same tree whatever day they run on; the tree is hashed into every record either way
 //   - an empty install prefix per server, so no dependency bleeds between servers
 //   - --ignore-scripts, so no install-time code executes
 //   - a scrubbed environment, so the process cannot read the operator's real credentials
@@ -12,7 +14,7 @@ import { execFile } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { promisify } from 'node:util';
-import { ROOT } from './lib.js';
+import { ROOT, sha256 } from './lib.js';
 
 const execFileP = promisify(execFile);
 
@@ -33,7 +35,16 @@ function npmCli() {
   if (fs.existsSync(guess)) return guess;
   const alt = path.join(process.env.APPDATA || '', 'npm', 'node_modules', 'npm', 'bin', 'npm-cli.js');
   if (fs.existsSync(alt)) return alt;
+  // POSIX layout: <prefix>/bin/node beside <prefix>/lib/node_modules/npm.
+  const posix = path.join(path.dirname(process.execPath), '..', 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js');
+  if (fs.existsSync(posix)) return posix;
   throw new Error('cannot locate npm-cli.js');
+}
+
+// npm decides how the tree resolves, so its version is recorded beside every run.
+export function npmVersion() {
+  try { return JSON.parse(fs.readFileSync(path.join(path.dirname(npmCli()), '..', 'package.json'), 'utf8')).version; }
+  catch { return null; }
 }
 
 // Belt and braces: the package name and version come from a third-party registry.
@@ -61,7 +72,82 @@ async function rmWithRetry(dir, attempts = 5) {
   return false;
 }
 
-export async function install(server, { timeoutMs = 240000 } = {}) {
+// How transitive dependencies resolve. The server package is pinned exactly, but almost nothing
+// under it is: --no-package-lock means every semver range resolves to whatever is newest at install
+// time. @smartbear/mcp@0.34.0 measured 125,005 tokens on 2026-08-13 and 123,849 on 2026-10-25 with
+// no change to the server, because zod, which its tool schemas are written in, had moved from
+// 4.4.3 to 4.6.7. A pinned version is not a pinned artifact.
+//
+// So the default resolves the tree as of the moment the cohort was pinned (npm --before), which
+// makes a re-run on any later day install what the original run installed. 'float' keeps the old
+// behaviour, for measuring what someone installing the pinned version today would get.
+export function dependencyResolution(cohort, requested = process.env.DEPS_AS_OF) {
+  if (requested === 'float') return { policy: 'float', before: null };
+  const raw = requested || cohort.built_at;
+  const t = new Date(raw);
+  if (!raw || Number.isNaN(t.getTime())) throw new Error(`DEPS_AS_OF must be an ISO timestamp or 'float' (got "${raw}")`);
+  return { policy: 'as-of', before: t.toISOString() };
+}
+
+// When a version was published, from the full registry document (the abbreviated one carries no
+// times). Null when the package or that version is not on npm: a 404 is an answer, not a document.
+export async function npmPublishedAt(pkg, version) {
+  const res = await fetch(`https://registry.npmjs.org/${pkg.replace('/', '%2F')}`, { headers: { accept: 'application/json' } });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`npm registry: HTTP ${res.status} for ${pkg}`);
+  const doc = await res.json();
+  return doc.versions?.[version] ? (doc.time?.[version] ?? null) : null;
+}
+
+// VERSION_OVERRIDE="pkg@ver[,pkg@ver...]": probe cohort servers at a version other than their pin,
+// which is the only way to measure what the drift watcher found. Without it a re-probe installs
+// the pin again on the pin's dependencies and reprints the old number.
+//
+// Each overridden server's dependencies resolve as of one hour after its version was published:
+// the same reading as the pin, applied to the newer release, so the answer does not depend on the
+// day it is asked and two override runs can pair. An explicit DEPS_AS_OF replaces that, and is
+// refused if it predates the version, since npm --before would then refuse to find it.
+//
+// Why not the publish second itself: a release is often several packages published one after
+// another. @atlassian-dc-mcp/jira@0.38.0 went out at 18:58:51Z and the @atlassian-dc-mcp/common
+// @^0.38.0 it requires at 19:02:45Z; @remogram/mcp@0.3.0 two seconds before its @remogram/cli.
+// Cut off at the server's own second, npm cannot find the sibling, the install fails, and the log
+// records a harness choice as the server failing. An hour lets a release finish publishing while
+// still describing that release.
+const RELEASE_WINDOW_MS = 60 * 60 * 1000;
+//
+// The overrides go into the config hash and the run header, and any run carrying one is a partial
+// sweep, so it can never be published as the index. Re-pinning the cohort is a separate act.
+export async function versionOverrides(cohort, raw = process.env.VERSION_OVERRIDE, requestedDeps = process.env.DEPS_AS_OF, publishedAt = npmPublishedAt) {
+  if (!raw || !raw.trim()) return [];
+  const byPkg = new Map(cohort.servers.map((s) => [s.npm_package, s]));
+  const out = [];
+  for (const item of raw.split(',').map((x) => x.trim()).filter(Boolean)) {
+    const at = item.lastIndexOf('@');
+    if (at <= 0 || !SPEC_OK.test(item)) throw new Error(`VERSION_OVERRIDE entries are package@version (got "${item}")`);
+    const pkg = item.slice(0, at), version = item.slice(at + 1);
+    const server = byPkg.get(pkg);
+    if (!server) throw new Error(`VERSION_OVERRIDE: ${pkg} is not in cohort ${cohort.cohort_id}`);
+    if (out.some((o) => o.npm_package === pkg)) throw new Error(`VERSION_OVERRIDE: ${pkg} is named twice`);
+    if (version === server.pinned_version) throw new Error(`VERSION_OVERRIDE: ${item} is the pin itself; a plain run measures it`);
+    const published = await publishedAt(pkg, version);
+    if (!published) throw new Error(`VERSION_OVERRIDE: ${item} is not on npm`);
+    const published_at = new Date(published).toISOString();
+    let dependencies;
+    if (requestedDeps) {
+      dependencies = dependencyResolution(cohort, requestedDeps);
+      if (dependencies.before && dependencies.before < published_at) {
+        throw new Error(`VERSION_OVERRIDE: ${item} was published ${published_at}, after DEPS_AS_OF ${dependencies.before}`);
+      }
+    } else {
+      dependencies = { policy: 'as-of', before: new Date(Date.parse(published_at) + RELEASE_WINDOW_MS).toISOString(), basis: 'version_published+1h' };
+    }
+    out.push({ npm_package: pkg, pinned_version: server.pinned_version, version, published_at, dependencies });
+  }
+  return out.sort((a, b) => (a.npm_package < b.npm_package ? -1 : 1));
+}
+
+export async function install(server, { timeoutMs = 240000, before = null } = {}) {
   const dir = sandboxDir(server);
   if (!(await rmWithRetry(dir))) {
     return { ok: false, dir, spec: `${server.npm_package}@${server.pinned_version}`, ms: 0,
@@ -77,6 +163,7 @@ export async function install(server, { timeoutMs = 240000 } = {}) {
   }
   const args = [npmCli(), 'install', spec, '--prefix', dir, '--no-audit', '--no-fund', '--ignore-scripts',
                 '--no-package-lock', '--omit=dev', '--loglevel=error'];
+  if (before) args.push(`--before=${before}`);
   const started = Date.now();
   try {
     await execFileP(process.execPath, args, {
@@ -109,6 +196,61 @@ export function resolveEntry(server, dir) {
   const entry = path.join(pkgDir, rel);
   if (!fs.existsSync(entry)) return { ok: false, reason: 'entry_missing', entry };
   return { ok: true, entry, pkg_version: pkg.version, bin_declared: !!pkg.bin };
+}
+
+// The installed tree, read off disk rather than from `npm ls`: this is what node actually loads,
+// it does not depend on npm's output format or version, and it does not exit non-zero over a
+// missing peer. Every package directory under node_modules, nested ones included, as
+// name@version. npm versions are immutable, so the sorted set identifies the code that ran; the
+// layout npm chose for it is left out, so a different hoisting does not read as drift. A package
+// installed under an alias is recorded as alias=name@version.
+export function dependencyTree(dir) {
+  const found = new Set();
+  const visit = (nm) => {
+    if (!fs.existsSync(nm)) return;
+    for (const e of fs.readdirSync(nm, { withFileTypes: true })) {
+      if (e.name.startsWith('.') || !e.isDirectory()) continue;
+      if (e.name.startsWith('@')) {
+        for (const s of fs.readdirSync(path.join(nm, e.name), { withFileTypes: true })) {
+          if (s.isDirectory()) pkgAt(path.join(nm, e.name, s.name), `${e.name}/${s.name}`);
+        }
+      } else pkgAt(path.join(nm, e.name), e.name);
+    }
+  };
+  const pkgAt = (p, dirName) => {
+    try {
+      const pkg = JSON.parse(fs.readFileSync(path.join(p, 'package.json'), 'utf8'));
+      const id = `${pkg.name || dirName}@${pkg.version ?? '?'}`;
+      found.add(pkg.name && pkg.name !== dirName ? `${dirName}=${id}` : id);
+    } catch { found.add(`${dirName}@?`); }
+    visit(path.join(p, 'node_modules'));
+  };
+  visit(path.join(dir, 'node_modules'));
+  const packages = [...found].sort();
+  return { hash: sha256(packages.join('\n')), count: packages.length, packages };
+}
+
+// What the server's own declared dependencies resolved to, found the way node finds them: the
+// nearest node_modules walking up from the server package. The full tree says *whether* anything
+// moved; this says, for the usual suspects, *what*.
+export function directDependencies(server, dir) {
+  const pkgDir = path.join(dir, 'node_modules', ...server.npm_package.split('/'));
+  let pkg;
+  try { pkg = JSON.parse(fs.readFileSync(path.join(pkgDir, 'package.json'), 'utf8')); } catch { return null; }
+  const declared = { ...(pkg.optionalDependencies || {}), ...(pkg.dependencies || {}) };
+  const out = {};
+  for (const name of Object.keys(declared).sort()) {
+    let resolved = null;
+    for (let cur = pkgDir; cur.startsWith(dir); cur = path.dirname(cur)) {
+      try {
+        resolved = JSON.parse(fs.readFileSync(path.join(cur, 'node_modules', ...name.split('/'), 'package.json'), 'utf8')).version;
+        break;
+      } catch { /* not at this level */ }
+      if (cur === dir) break;
+    }
+    out[name] = { declared: declared[name], resolved };
+  }
+  return out;
 }
 
 const SECRET_HINT = /(token|key|secret|password|passwd|credential|apikey|api_key|auth|pat|dsn|conn|cookie|session)/i;

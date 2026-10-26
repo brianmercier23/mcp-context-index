@@ -1,6 +1,6 @@
 {
   "name": "mcp-probe",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "private": true,
   "type": "module",
   "description": "Reproducible measurement harness for MCP server quality and token cost.",
@@ -11,7 +11,7 @@
     "reproduce": "node src/reproduce.js",
     "report": "node src/report.js",
     "rescore": "node src/rescore.js",
-    "test": "node test/era-probe.test.mjs",
+    "test": "node test/era-probe.test.mjs && node test/dependency-tree.test.mjs && node test/run-id.test.mjs && node test/version-override.test.mjs",
     "watch": "node src/watch.js"
   },
   "dependencies": {

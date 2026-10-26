@@ -62,9 +62,9 @@ src/
   reproduce.js  the go/no-go: compare two runs under an identical config hash
   rescore.js    re-read history under a different rubric, without re-probing anything
   report.js     latest full sweep -> markdown index
-  watch.js      npm metadata only -> which pinned versions moved, and what to re-probe
+  watch.js      npm metadata only -> which pinned versions moved, and the command to measure them
 data/           registry snapshots and pinned cohorts
-results/        runs.jsonl, scores.jsonl and reproducibility.jsonl, all append-only
+results/        runs.jsonl, scores.jsonl, reproducibility.jsonl and dependency-trees.jsonl, all append-only
 docs/           generated index
 sandbox/        transient per-server installs (gitignored, deleted after each server)
 test/           fixture servers for both protocol eras, and the era-probe tests
@@ -90,7 +90,13 @@ npm run watch                         # metadata-only: which pinned versions mov
 
 Environment overrides: `VERTICAL`, `COHORT_SIZE`, `COHORT`, `RUBRIC`, `LIMIT`, `ONLY`, `RUN_NOTE`,
 `KEEP_SANDBOX=1`, `CONNECT_MS`, `CALL_MS`, `DISCOVER_MS`, `RUN_A`/`RUN_B` (reproduce),
-`RUN_ID` (report, rescore), `FORCE=1` (rescore, to repeat a scoring already in the log).
+`RUN_ID` (report, rescore), `FORCE=1` (rescore, to repeat a scoring already in the log),
+`DEPS_AS_OF` (run: an ISO timestamp to resolve dependencies as of, or `float` for newest-today;
+default is the cohort's `built_at`, and either choice is inside the config hash),
+`VERSION_OVERRIDE` (run: `pkg@ver,...` probes those cohort servers at a version other than their
+pin, with dependencies resolved as of one hour after that version's publish time unless `DEPS_AS_OF` is set; the
+run covers only those servers unless `ONLY` is given, is in the config hash, and is always a
+`partial_sweep`).
 
 ## Two protocol eras
 
@@ -171,7 +177,9 @@ part of the canonical log, and readers ignore it.
 
 There is no container runtime on the build host. This is **isolation, not a security sandbox**:
 
-- pinned exact versions, so two runs install identical code
+- pinned exact versions with dependencies resolved as of the cohort pin (`npm --before`), so two
+  runs install identical code whichever day they run, and a hash of the installed tree on every
+  record (full trees in `results/dependency-trees.jsonl`)
 - a fresh empty prefix per server, so nothing bleeds between servers
 - `--ignore-scripts`, so no install-time code executes
 - a scrubbed environment, so the server process cannot see the operator's real credentials

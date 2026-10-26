@@ -36,6 +36,25 @@ Fixed by reading the rubric from the run header, and by refusing outright to com
 whose recorded rubrics differ. `results/reproducibility.jsonl` holds two records for that pair —
 the mislabelled one and the corrected one, in that order. Both stay.
 
+### The comparator checked the config hash only when it chose the pair itself
+
+Auto-pairing has always required an identical config hash. Naming two runs with `RUN_A`/`RUN_B`
+skipped that check: the comparator compared any two runs whose rubrics matched and stamped the
+first run's hash on the verdict. That mattered more once harness 0.1.5 put the dependency
+resolution date in the hash, since a floating run and an as-of run of the same servers would have
+produced a verdict. It now refuses.
+
+Testing that fix found a second hole. Run ids have minute resolution, so two short runs of one
+config started in the same minute shared an id. Every reader groups records by run id, so the two
+runs merged, and the comparator read the result as one run compared with itself, and said GO. Run
+ids are now unique within a log: a run whose id is already taken, by a header or by the partial
+file of a sweep that died before writing one, gets the next free `-2`, `-3` suffix. The comparator
+also refuses a pair whose two sides carry the same id, for any log written before that.
+
+Neither defect produced a record. All nine verdicts in `results/reproducibility.jsonl` pair two
+distinct runs under one config hash, and no two run headers in either log share an id, so the
+suffix rule gives every existing run the id it already has. A test checks that against both logs.
+
 ### The published metric definition understated what the instrument counts
 
 The rubric's `primary_metric_definition` described the tool-definition payload as
@@ -56,6 +75,149 @@ harmless while there was exactly one client, and became an uncontrolled input th
 harness gained a second one for the 2026-07-28 protocol era: two runs could have differed in which
 library measured them and still hashed identically. Both client versions entered the hash in
 harness 0.1.4, before any run depended on the distinction.
+
+### A pinned version did not pin what was installed
+
+The harness installed every server at an exact version, with `--no-package-lock`. Everything
+beneath the server therefore resolved to the newest release inside its semver range on the day of
+the install. The README said "Re-running the pinned cohort reproduces the numbers." On the day of a
+run that was true. A month later it was not guaranteed, and for two servers it had stopped being
+true.
+
+`@smartbear/mcp@0.34.0` was published at **125,005** tool-definition tokens, from
+`run-2026-08-13-0208-7936eadf`. A spot check on 2026-10-25, outside the log, measured 123,849, with
+43 of its 149 per-tool counts different. `@postman/postman-mcp-server@2.11.2`, checked the same way
+on the same machine, reproduced exactly at 33,553, so the host was not the explanation.
+
+The cause was then confirmed in the log: three partial sweeps of those two servers, back to back on
+one Linux host under harness 0.1.5, identical except for the date dependencies were resolved as of.
+
+- `run-2026-10-25-2354-a2e3f42d`, dependencies floating, as in every run before 0.1.5:
+  **123,849**, on zod 4.6.7 and `@modelcontextprotocol/sdk` 1.32.2.
+- `run-2026-10-25-2355-039f8070`, resolved as of the cohort pin (2026-08-11T02:17Z): **125,005**,
+  on zod 4.4.3 and SDK 1.30.0.
+- `run-2026-10-25-2356-5a42ad54`, resolved as of the published run's start (2026-08-13T02:08Z):
+  **125,005**, on the same zod and SDK.
+
+Postman measured 33,553 in all three. Resolved as of either August date, all 149 of smartbear's
+per-tool counts match the published run. Floating, the same 43 differ as in the spot check, by
+1,156 tokens in total. The server code is identical in all three runs, and 70 of the 210 packages
+beneath it moved. Swapping zod alone from 4.4.3 to 4.6.7 into the August tree reproduces the whole
+1,156-token difference, and swapping the SDK alone changes nothing; that swap was a scratch
+experiment and is not in the log. The package's tools declare their input schemas as zod objects,
+and those are serialised to JSON Schema when `tools/list` is answered, so a zod release that
+changes the serialisation changes the server's token count without a line of the server changing.
+The package asks for `zod: ^4.3.6`, which 4.6.7 satisfies.
+
+It was not the only one. To find the scope, both policies were run over the whole cohort on
+2026-10-26, on the same host, outside the log: a Linux full sweep must not become the published
+index by being the latest one in it. Of the 38 published numbers, the run resolved as of the pin
+reproduced 34 exactly. The floating run reproduced 32: it missed the same four, and two more,
+which are the only two numbers that moved between the policies. The second was then logged the
+same way as the first:
+
+- `sharedoc-mcp@2.1.4`, published at **877**: `run-2026-10-26-0013-a2e3f42d`, floating, measured
+  870; `run-2026-10-26-0013-039f8070`, resolved as of the pin, measured **877**. One tool moved,
+  `reset_shared_doc_password`, from 95 to 88. The cause is the same zod release, inside the
+  package's `^4.4.0`: swapping zod alone into the pinned tree reproduces the 7 tokens, and
+  swapping the SDK alone does not (a scratch experiment, like the smartbear one).
+
+The four published numbers neither full sweep reproduced are not dependency findings.
+`@gitkraken/gk`, `containerization-assist-mcp` and `ainative-zerodb-memory-mcp` would not start
+on the Linux host under either policy, which makes it a host difference. `makers-page-mcp` was
+unpublished from npm on 2026-08-26 and cannot be reinstalled by anyone; the drift report already
+says so. Those four are unchecked for drift, not cleared of it.
+
+**No published number changes.** 125,005 and 877 are what the pinned artifacts measure, and they
+still do. What was wrong was the promise that anyone re-running the cohort would get them, which
+depended on when they ran it. The same-day reproducibility gate could not have caught this: the two sweeps of
+every pair in the log started within twenty minutes of each other and installed the same tree
+twice. Six GO verdicts were real, and certified the instrument against itself on a given day, not
+the install against the calendar.
+
+Postman shows the other half. Seventeen packages beneath it moved between the pin and the floating
+run, and its number did not. A changed tree is a reason to look, not proof of drift.
+
+Fixed in harness 0.1.5:
+
+- Dependencies resolve as of the cohort's pin date through `npm install --before`, so a re-run on
+  any later day installs the tree the cohort was pinned with. The policy, and the case for the
+  other one, is in [METHOD.md](METHOD.md#dependency-resolution). `DEPS_AS_OF=float` keeps the old
+  behaviour, under its own config hash.
+- Every server record carries a hash of its installed tree and the versions its own declared
+  dependencies resolved to. The full lists are in `results/dependency-trees.jsonl`. The
+  comparator reports a tree change beside a number change.
+- The harness could not install anything on Linux: it looked for `npm-cli.js` only where Windows
+  puts it. The five runs above are the first in either log from a Linux host.
+
+Runs before 0.1.5 recorded no tree, and which tree each of them installed cannot be recovered. What
+the log does show is that every full sweep from 2026-08-11 03:07 to the published run measured
+every server identically, so whatever moved inside that window moved nothing that was measured.
+Those records stay as written.
+
+### A re-probe command that re-measured the old version
+
+The version-drift report, and METHOD.md, said `ONLY="<movers>" npm run run` would re-probe the
+servers that had moved past their pin. It could not: `ONLY=` narrows a run to those servers but
+installs each one at the cohort's `pinned_version`, so it measured the release that had already
+been measured. Under harness 0.1.5, which also resolves dependencies as of the pin, it reproduced
+the published number exactly and measured nothing new. Nobody ran it, so no record in the log
+claims to describe a newer version.
+
+Fixed in harness 0.1.6: `VERSION_OVERRIDE="<package>@<version>,..."` probes servers at the version
+named, with dependencies resolved as of one hour after that version's publish time, records the
+overrides in the run header and config hash, and always flags the run `partial_sweep`. The drift
+report now prints that command. See
+[METHOD.md](METHOD.md#version-drift-and-why-the-sweep-is-not-on-a-schedule).
+
+The first version of that fix resolved dependencies as of the publish second itself. Dry-run
+against npm before anyone ran it, 3 of the 33 installs the drift report then printed could not
+resolve. A release is often several packages published one after another, and each of the three
+requires a sibling published moments later: `@atlassian-dc-mcp/jira@0.38.0` and
+`@atlassian-dc-mcp/bitbucket@0.38.0` need `@atlassian-dc-mcp/common@^0.38.0`, published three to
+four minutes after them, and `@remogram/mcp@0.3.0` needs `@remogram/cli@0.3.0`, published two
+seconds after it. Run as printed, those servers would have been logged as failing to install over
+a choice the harness made. With the hour, all 33 resolve. No override run was ever logged, so no
+record is affected.
+
+### Drift counted from the pin instead of from npm's latest at the pin
+
+The README has twice published a drift figure that counted versions released before the cohort was
+pinned:
+
+- 2026-08-13: "2 days after this cohort was pinned, 23 of its 50 servers had already published a
+  newer version", with `octocode-mcp` the largest jump at "62 versions past the pin (7.0.9 to
+  18.2.2)".
+- 2026-10-25: "75 days after this cohort was pinned, 33 of its 50 servers had already published a
+  newer version", with `octocode-mcp` at "63 versions past the pin (7.0.9 to 19.1.0)".
+
+The watcher compared npm's latest against the pinned version. But each pin is the version the
+server's registry entry declared, and for 17 of the 50 npm's latest was already newer when the
+cohort was pinned (the cohort file records it, as `latest_version`). Those newer versions existed
+on the day of pinning; they are not drift.
+
+Counted from npm's latest at the pin, the 2026-08-13 check had **7** servers with a release since
+the pin, not 23, and `octocode-mcp` had released nothing since: 18.2.2 was already npm's latest
+when the cohort was pinned, and all 62 versions predated it. The 2026-10-25 check had **25**, not
+33: 17 released since the pin from a pin that was npm's latest, 8 released since from a pin that
+was already behind, and 8 were behind at the pin and have released nothing since. `octocode-mcp`
+has released one version since the pin (18.2.2 to 19.1.0). The largest jump since the pin is
+`githits`, 45 versions (0.8.0 to 0.35.0). The classification was checked against npm publish dates
+on every package still on npm and agreed.
+
+The conclusion drawn from the figure stands at a smaller size: half the cohort has released past
+its pin inside three months. What was wrong was the size: 8 of the 33 had released nothing since
+the pin. Behind it was something more important. All 17 servers whose pin was behind npm's latest
+were pinned at an older release from the start, and the 12 of them that started were measured
+there. That is now stated where the cohort is described ([METHOD.md](METHOD.md#cohort-selection)).
+
+`results/versions.jsonl` is append-only and its earlier records stay as written; their `moved` and
+`versions_ahead` fields are correct for what they record, newer than the pin. Fixed in harness
+0.1.6: each check also records `latest_at_pin`, `stale_at_pin`, `moved_since_pin` and
+`versions_since_pin`, the drift report separates the two cases, and the README's drift figure and
+largest jump are computed from the release-since-pin fields. The publication build refuses a check
+that lacks them. One check, at 2026-10-26T00:54:18Z, was made by a development build of 0.1.6
+before those fields existed: it carries the 0.1.6 label without them, and stays as written.
 
 ### A 30% failure rate that was really 26%
 

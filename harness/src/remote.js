@@ -6,7 +6,7 @@
 // lineage in runs.jsonl and must never be compared against it.
 import os from 'node:os';
 import path from 'node:path';
-import { ROOT, HARNESS_VERSION, readJSON, appendJSONL, nowISO, sha256, stableStringify, runId, mcpClientStack, countTokens } from './lib.js';
+import { ROOT, HARNESS_VERSION, readJSON, appendJSONL, nowISO, sha256, stableStringify, runId, takenRunIds, mcpClientStack, countTokens } from './lib.js';
 import { session, detectEra, toolDefinitionPayload, MODERN_PROTOCOL } from './probe.js';
 import { analyze } from './analyze.js';
 import { scoreServer } from './score.js';
@@ -119,7 +119,7 @@ async function main() {
   const rubric = readJSON(path.join(ROOT, 'rubric', RUBRIC));
   const cfg = configHash(cohort, rubric);
   const started = nowISO();
-  const rid = runId(started, cfg);
+  const rid = runId(started, cfg, takenRunIds(RESULTS));
   const servers = ONLY ? cohort.servers.filter((s) => ONLY.has(s.id)) : cohort.servers;
   console.log(`remote run ${rid}  cohort=${cohort.cohort_id} n=${servers.length} rubric=${rubric.version} config=${cfg.slice(0, 12)}`);
 

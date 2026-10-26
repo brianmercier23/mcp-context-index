@@ -2,8 +2,9 @@
 // appended to results/runs.jsonl. Nothing is ever overwritten.
 import os from 'node:os';
 import path from 'node:path';
-import { ROOT, HARNESS_VERSION, readJSON, appendJSONL, nowISO, sha256, stableStringify, runId, mcpClientStack } from './lib.js';
-import { install, resolveEntry, buildLaunch, makeCanary, cleanup, sandboxDir, acquireRunLock, SANDBOX_MODEL } from './sandbox.js';
+import { ROOT, HARNESS_VERSION, readJSON, readJSONL, appendJSONL, nowISO, sha256, stableStringify, runId, takenRunIds, mcpClientStack } from './lib.js';
+import { install, resolveEntry, buildLaunch, makeCanary, cleanup, sandboxDir, acquireRunLock, SANDBOX_MODEL,
+         dependencyResolution, versionOverrides, dependencyTree, directDependencies, npmVersion } from './sandbox.js';
 import { session, detectEra, MODERN_PROTOCOL } from './probe.js';
 import { analyze } from './analyze.js';
 import { scoreServer, cohortCollisions } from './score.js';
@@ -20,18 +21,30 @@ const LIMIT = process.env.LIMIT ? Number(process.env.LIMIT) : null;
 // Comma-separated npm package names. For re-testing specific servers after a harness change
 // without re-sweeping the cohort. Does not affect the config hash; the run just covers fewer rows.
 const ONLY = process.env.ONLY ? new Set(process.env.ONLY.split(',').map((x) => x.trim())) : null;
+// VERSION_OVERRIDE="pkg@ver,..." probes those servers at a version other than their pin; see
+// versionOverrides() in sandbox.js. Unlike ONLY it changes what is measured, so it is in the
+// config hash. Without ONLY, the run covers just the overridden servers.
 const KEEP = process.env.KEEP_SANDBOX === '1';
 const NOTE = process.env.RUN_NOTE || null;
 const RESULTS = path.join(ROOT, 'results', 'runs.jsonl');
+// Full trees, one record per distinct tree hash. Server records carry only the hash, so a sweep
+// that installs the same trees as the last one adds nothing here.
+const TREES = path.join(ROOT, 'results', 'dependency-trees.jsonl');
 
 // Everything that could change a number. Two runs are only comparable if this matches.
-function configHash(cohort, rubric) {
+function configHash(cohort, rubric, deps, overrides) {
   return sha256(stableStringify({
+    // Only present when set, so a run without overrides hashes exactly as it did before they existed.
+    ...(overrides.length ? { version_overrides: overrides.map(({ npm_package, version, dependencies }) => ({ npm_package, version, dependencies })) } : {}),
     harness: HARNESS_VERSION,
     rubric: `${rubric.rubric_id}@${rubric.version}`,
     tokenizer: rubric.measurement_contract.tokenizer,
     cohort: cohort.selection_hash,
     sandbox: SANDBOX_MODEL,
+    // Before harness 0.1.5 this was not an input at all: every install floated, so two runs on
+    // different days could install different code under one hash and the same-day pair could
+    // never notice.
+    dependencies: deps,
     node_major: process.versions.node.split('.')[0],
     platform: `${process.platform}-${process.arch}`,
     // Which client stack connected is part of how a number was produced. Harmless to omit while
@@ -46,17 +59,26 @@ function configHash(cohort, rubric) {
   }));
 }
 
-async function probeOne(server, canary, rubric) {
-  const base = { server: { registry_name: server.registry_name, npm_package: server.npm_package, pinned_version: server.pinned_version, downloads_last_week: server.downloads_last_week ?? null } };
+async function probeOne(server, canary, rubric, deps, trees, override) {
+  // pinned_version stays the cohort's pin; an override is recorded beside it, never in its place.
+  const base = { server: { registry_name: server.registry_name, npm_package: server.npm_package, pinned_version: server.pinned_version, ...(override ? { version_override: override.version } : {}), downloads_last_week: server.downloads_last_week ?? null } };
 
-  const inst = await install(server);
+  const inst = override
+    ? await install({ ...server, pinned_version: override.version }, { before: override.dependencies.before })
+    : await install(server, { before: deps.before });
   if (!inst.ok) {
     return { ...base, status: 'install_failed', install: { ok: false, ms: inst.ms, error: inst.error }, signals: {}, score: null };
   }
 
+  // Read before launch, so the record describes what was installed rather than anything the
+  // server wrote into its own directory once it was running.
+  const tree = dependencyTree(inst.dir);
+  if (!trees.has(tree.hash)) trees.set(tree.hash, tree.packages);
+  const dependency_tree = { hash: tree.hash, packages: tree.count, direct: directDependencies(server, inst.dir) };
+
   const entry = resolveEntry(server, inst.dir);
   if (!entry.ok) {
-    return { ...base, status: 'entry_unresolved', install: { ok: true, ms: inst.ms }, detail: entry, signals: {}, score: null };
+    return { ...base, status: 'entry_unresolved', install: { ok: true, ms: inst.ms, dependency_tree }, detail: entry, signals: {}, score: null };
   }
 
   const launch = buildLaunch(server, entry.entry, canary);
@@ -85,7 +107,7 @@ async function probeOne(server, canary, rubric) {
     ...base,
     status: sess.ok ? 'probed' : 'connect_failed',
     handshake,
-    install: { ok: true, ms: inst.ms, installed_version: entry.pkg_version },
+    install: { ok: true, ms: inst.ms, installed_version: entry.pkg_version, dependency_tree },
     launch: { entry: path.relative(sandboxDir(server), entry.entry), argv_extra: launch.args.length - 1, declared_secrets: launch.declared_secrets },
     server_info: sess.server_info ?? null,
     protocol_version: sess.protocol_version ?? null,
@@ -103,25 +125,33 @@ async function probeOne(server, canary, rubric) {
 async function main() {
   const cohort = readJSON(path.join(ROOT, 'data', `cohort-${COHORT}.json`));
   const rubric = readJSON(path.join(ROOT, 'rubric', RUBRIC));
-  const cfg = configHash(cohort, rubric);
+  const deps = dependencyResolution(cohort);
+  const overrides = await versionOverrides(cohort);
+  const overrideOf = new Map(overrides.map((o) => [o.npm_package, o]));
+  const cfg = configHash(cohort, rubric, deps, overrides);
   const started = nowISO();
-  const rid = runId(started, cfg);
+  const rid = runId(started, cfg, takenRunIds(RESULTS));
   const canary = makeCanary(rid);
   const releaseLock = acquireRunLock(rid);
 
-  let servers = ONLY ? cohort.servers.filter((s) => ONLY.has(s.npm_package)) : cohort.servers;
+  let servers = ONLY ? cohort.servers.filter((s) => ONLY.has(s.npm_package))
+    : overrides.length ? cohort.servers.filter((s) => overrideOf.has(s.npm_package))
+    : cohort.servers;
   if (LIMIT) servers = servers.slice(0, LIMIT);
-  console.log(`run ${rid}  cohort=${cohort.cohort_id} n=${servers.length} rubric=${rubric.version} config=${cfg.slice(0, 12)}`);
+  console.log(`run ${rid}  cohort=${cohort.cohort_id} n=${servers.length} rubric=${rubric.version} config=${cfg.slice(0, 12)} deps=${deps.before ?? deps.policy}`);
+  for (const o of overrides) console.log(`  override ${o.npm_package} ${o.pinned_version} -> ${o.version}  deps=${o.dependencies.before ?? o.dependencies.policy}`);
 
   const records = [];
+  const trees = new Map();
   for (let i = 0; i < servers.length; i++) {
     const s = servers[i];
-    process.stdout.write(`[${String(i + 1).padStart(3)}/${servers.length}] ${s.npm_package}@${s.pinned_version} ... `);
+    const o = overrideOf.get(s.npm_package);
+    process.stdout.write(`[${String(i + 1).padStart(3)}/${servers.length}] ${s.npm_package}@${o ? `${o.version} (override; pin ${s.pinned_version})` : s.pinned_version} ... `);
     let rec;
     try {
-      rec = await probeOne(s, canary, rubric);
+      rec = await probeOne(s, canary, rubric, deps, trees, o);
     } catch (e) {
-      rec = { server: { registry_name: s.registry_name, npm_package: s.npm_package, pinned_version: s.pinned_version }, status: 'harness_error', error: String(e.message || e).slice(0, 500), signals: {}, score: null };
+      rec = { server: { registry_name: s.registry_name, npm_package: s.npm_package, pinned_version: s.pinned_version, ...(o ? { version_override: o.version } : {}) }, status: 'harness_error', error: String(e.message || e).slice(0, 500), signals: {}, score: null };
     }
     if (!KEEP) { try { await cleanup(s); } catch { /* best effort */ } }
     // Crash insurance. Collision risk and scoring need the whole cohort, so the canonical
@@ -153,12 +183,17 @@ async function main() {
     cohort_selection_hash: cohort.selection_hash,
     config_hash: cfg,
     sandbox_model: SANDBOX_MODEL,
+    dependency_resolution: deps,
+    // Per server: the pin, the version actually probed, when it was published, and how its
+    // dependencies resolved (which replaces dependency_resolution for that server).
+    version_overrides: overrides.length ? overrides : null,
     mcp_clients: mcpClientStack(),
-    // A sweep narrowed by ONLY or LIMIT is a spot check, not an index. Recorded so a reader of
-    // the log can tell the two apart without counting rows, and so the report never publishes one.
-    partial_sweep: Boolean(ONLY || LIMIT),
+    // A sweep narrowed by ONLY or LIMIT is a spot check, not an index, and so is any run that
+    // probed a version other than the pin. Recorded so a reader of the log can tell them apart
+    // without counting rows, and so the report never publishes one.
+    partial_sweep: Boolean(ONLY || LIMIT || overrides.length),
     tokenizer: rubric.measurement_contract.tokenizer,
-    env: { node: process.versions.node, platform: process.platform, arch: process.arch, cpus: os.cpus().length },
+    env: { node: process.versions.node, npm: npmVersion(), platform: process.platform, arch: process.arch, cpus: os.cpus().length },
     note: NOTE,
     counts: {
       attempted: records.length,
@@ -189,6 +224,10 @@ async function main() {
   };
 
   appendJSONL(RESULTS, [header, ...records.map((r) => ({ record_type: 'server', run_id: rid, config_hash: cfg, ...r }))]);
+  const known = new Set(readJSONL(TREES).map((t) => t.tree_hash));
+  const fresh = [...trees].filter(([h]) => !known.has(h))
+    .map(([tree_hash, packages]) => ({ record_type: 'dependency_tree', tree_hash, first_seen_run_id: rid, packages }));
+  if (fresh.length) appendJSONL(TREES, fresh);
   releaseLock();
   console.log(`\nappended ${records.length + 1} records to results/runs.jsonl`);
   console.log(`probed ${probed.length}/${records.length}; token spread ${JSON.stringify(header.token_spread)}`);

@@ -2,8 +2,8 @@
 // whether the instrument is reproducible enough to scale.
 //
 // Only runs with identical config_hash are comparable. A config change (rubric, cohort,
-// tokenizer, sandbox model, node major, platform) makes the comparison meaningless, and this
-// refuses rather than quietly producing a number.
+// tokenizer, sandbox model, dependency resolution date, node major, platform) makes the
+// comparison meaningless, and this refuses rather than quietly producing a number.
 import path from 'node:path';
 import { ROOT, readJSON, readJSONL, appendJSONL, nowISO } from './lib.js';
 
@@ -52,6 +52,16 @@ function rubricFileFor(header) {
 function main() {
   const all = readJSONL(RESULTS);
   const [A, B] = pickRuns(all, process.env.RUN_A, process.env.RUN_B);
+  // Checked here and not only in pickRuns: naming two runs with RUN_A/RUN_B used to skip the
+  // match that auto-pairing enforces, and the verdict would have carried A's hash for a pair B
+  // never shared. A floating run against an as-of run is a question for the tree log, not a verdict.
+  // A run compared with itself is a GO that tested nothing. runId() now suffixes a second run
+  // started in the same minute, but a log written by an older harness could still hold two runs
+  // under one id, and they would read here as one.
+  if (A.run_id === B.run_id) throw new Error(`both sides of the pair are run ${A.run_id}; nothing to compare`);
+  if (A.config_hash !== B.config_hash) {
+    throw new Error(`runs have different config hashes (${A.config_hash.slice(0, 12)} vs ${B.config_hash.slice(0, 12)}); they are not comparable`);
+  }
   if (A.rubric !== B.rubric) throw new Error(`runs used different rubrics (${A.rubric} vs ${B.rubric}); they are not comparable`);
   const rubric = readJSON(path.join(ROOT, 'rubric', rubricFileFor(A)));
   const gate = rubric.measurement_contract.reproducibility_gate;
@@ -93,6 +103,11 @@ function main() {
       grade_b: rb?.score?.grade ?? null,
       intra_run_stable_a: ra?.signals?.intra_run_stable ?? null,
       intra_run_stable_b: rb?.signals?.intra_run_stable ?? null,
+      // Null on records before harness 0.1.5, which did not hash the tree. A same-version server
+      // whose number moved with its tree hash is a dependency-drift candidate; one whose number
+      // moved while its tree held ran the same code, so the cause is the network, host or harness.
+      dependency_tree_a: ra?.install?.dependency_tree?.hash ?? null,
+      dependency_tree_b: rb?.install?.dependency_tree?.hash ?? null,
     });
   }
 
@@ -105,6 +120,7 @@ function main() {
   const verdictLabel = measured.length === 0 ? 'INSUFFICIENT-DATA' : pass ? 'GO' : 'NO-GO';
 
   const gradeChanges = rows.filter((r) => r.grade_a && r.grade_b && r.grade_a !== r.grade_b);
+  const treeChanges = rows.filter((r) => r.dependency_tree_a && r.dependency_tree_b && r.dependency_tree_a !== r.dependency_tree_b);
 
   const verdict = {
     record_type: 'reproducibility',
@@ -124,6 +140,7 @@ function main() {
       status_changed: rows.filter((r) => r.status_changed).length,
       not_measured_in_either: rows.filter((r) => r.classification === 'not_measured').length,
       grade_changed: gradeChanges.length,
+      dependency_tree_changed: treeChanges.length,
     },
     stable_or_tolerable_share: Math.round(share * 10000) / 10000,
     verdict: verdictLabel,
@@ -143,6 +160,7 @@ function main() {
   console.log(`VERDICT: ${verdict.verdict}`);
   for (const u of verdict.unstable_servers) console.log(`  unstable: ${u.package}  ${u.a} -> ${u.b}  (${u.delta_pct}%)  tools ${u.tool_count_a}->${u.tool_count_b}`);
   for (const f of verdict.status_flips) console.log(`  flip: ${f.server}  ${f.from} -> ${f.to}`);
+  for (const t of treeChanges) console.log(`  tree changed: ${t.package}  ${t.dependency_tree_a.slice(0, 12)} -> ${t.dependency_tree_b.slice(0, 12)}`);
 }
 
 main();
