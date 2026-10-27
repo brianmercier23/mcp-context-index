@@ -102,6 +102,10 @@ const values = {
   MAX_TOK: num(spread.max),
   RATIO: String(spread.ratio),
   TOTAL_TOK: num(spread.total_if_all_installed),
+  // The heaviest server's share of the cohort, stated rather than asserted as a majority: it was one
+  // in the first two sweeps and stopped being one in the third. See PROVENANCE.md.
+  TOP_SHARE_PCT: String(Math.round((spread.max / spread.total_if_all_installed) * 100)),
+  REST_TOK: num(spread.total_if_all_installed - spread.max),
   DEFECT_SERVERS: String(defective.length),
   DEFECT_PCT: String(Math.round((defective.length / probed.length) * 100)),
   GO_COUNT: String(goStreak),
@@ -131,7 +135,18 @@ const commerce = fs.existsSync(path.join(HARNESS, 'docs', `index-${COMMERCE_ID}.
 if (commerce) {
   const impls = byImplementation(commerce.recs);
   const measured = impls.filter((i) => i.probed > 0).sort((a, b) => b.max_tokens - a.max_tokens);
-  const wix = measured.find((i) => i.implementation === 'wix-ucp');
+  // Like for like: the tools Shopify and Wix both expose under the same names, summed from
+  // per_tool_tokens on each platform's widest surface. The whole surfaces are different jobs
+  // (Shopify adds cart, order and location tools), so their totals are not compared. See PROVENANCE.md.
+  const widestSurface = (impl) =>
+    commerce.recs
+      .filter((r) => r.status === 'probed' && r.server.implementation === impl && r.per_tool_tokens?.length)
+      .map((r) => new Map(r.per_tool_tokens.map((t) => [t.name, t.tokens])))
+      .sort((a, b) => b.size - a.size)[0];
+  const shopifyTools = widestSurface('shopify-ucp');
+  const wixTools = widestSurface('wix-ucp');
+  const shared = shopifyTools && wixTools ? [...wixTools.keys()].filter((n) => shopifyTools.has(n)) : [];
+  const sumOf = (tools) => shared.reduce((s, n) => s + tools.get(n), 0);
   const C = commerce.H;
   Object.assign(values, {
     C_INDEX_PATH: `index/${COMMERCE_ID}.md`,
@@ -144,9 +159,10 @@ if (commerce) {
     C_MAX_TOK: num(C.token_spread.max),
     C_RATIO: String(C.token_spread.ratio),
     C_TOP_IMPL: measured[0].implementation,
-    C_TOP_TOK: num(measured[0].max_tokens),
-    C_WIX_TOK: wix ? num(wix.max_tokens) : '',
-    C_TOP_VS_WIX: wix ? String(Math.round(measured[0].max_tokens / wix.max_tokens)) : '',
+    C_SHARED_TOOLS: String(shared.length),
+    C_SHOPIFY_SHARED_TOK: shared.length ? num(sumOf(shopifyTools)) : '',
+    C_WIX_SHARED_TOK: shared.length ? num(sumOf(wixTools)) : '',
+    C_SHOPIFY_VS_WIX: shared.length ? String(Math.round(sumOf(shopifyTools) / sumOf(wixTools))) : '',
     C_MODERN: String(C.handshakes.modern ?? 0),
     C_REPRO_STABLE: commerce.repro ? String(commerce.repro.byte_identical) : '0',
     C_REPRO_BOTH: commerce.repro ? String(commerce.repro.measured_in_both) : '0',

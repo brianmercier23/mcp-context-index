@@ -273,6 +273,36 @@ shops, and the label borrowed that. It is not published by the UCP project. The 
 log as recorded; read it as `ucpsandbox.com`. The measurement (an `invalid_tool_schema` failure:
 none of its 15 tools declares a type on its `outputSchema`) is unaffected.
 
+### "More than the other 37 put together" stopped being true on the first day
+
+The README said the most expensive dev-tooling server "costs more context than the other 37 put
+together". In the published run, `run-2026-08-13-0208-7936eadf`, it does not: `@smartbear/mcp`
+measures 125,005 tokens and the other 37 servers sum to 145,239. It is 46% of the cohort total,
+not a majority.
+
+The claim was true when it was written. In the first two broad sweeps on 2026-08-11
+(`run-2026-08-11-0229` and `-0248`), the same server measured 147,299 against 133,080 and 138,531
+for the rest. From `run-2026-08-11-0307` onward it measured 125,005 in every run, and the sentence
+was never re-checked against the number beneath it. The README now states the share. Two copies of
+the old wording also sit in versioned rubric text (the `rubric-v1.1.0.md` critique and the
+`tool_defs_25k_caps_at_d` rationale in `rubric-v1.1.0.json` and `rubric-v1.1.1.json`, "more than the
+other 36 measurable servers"). Those files are published rubric versions and are not edited; this
+paragraph is their correction. No measurement, score or cap changes: the cap is triggered by the
+25,000-token threshold, not by the comparison.
+
+### "Same UCP job, 36x" compared two different jobs
+
+The commerce headline in the README read "Same UCP job, heaviest vs Wix: 36x (45,030 vs 1,236)".
+The numbers are right; the label is not. Shopify's 45,030-token surface is 15 tools: catalog, cart,
+checkout, order and retail-location tools. Wix's is 8: catalog and checkout only. Comparing the
+whole surfaces compares two different jobs.
+
+Like for like, from `per_tool_tokens` in `run-2026-10-25-1517-cd900dba`: the 8 tools both platforms
+expose under the same names (`search_catalog`, `lookup_catalog`, `get_product` and the five
+checkout tools) sum to 28,335 tokens on Shopify and 1,241 on Wix, a ratio of 22.8x. The README now
+reports that. Per-tool sums differ from the published surface totals by a few tokens, because the
+total is tokenised as one serialised list; the index's own figures are unchanged.
+
 ## Corrections to the published sources this project was built on
 
 These were found by checking primary sources directly rather than search summaries, and each one

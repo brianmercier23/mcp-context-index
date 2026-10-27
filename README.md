@@ -17,8 +17,8 @@ run `run-2026-08-13-0208-7936eadf` · config `7936eadf`
 | All 38 connected at once | **270,244** tokens, before a single tool call |
 | Servers carrying at least one defect | **31 of 38** (82%) |
 
-The most expensive server in this cohort costs more context than the other 37
-put together, and it is the most-downloaded server in the set.
+The most expensive server in this cohort is 46% of that total on its own: 125,005 tokens, against
+145,239 for the other 37 combined. It is also the most-downloaded server in the set.
 
 ### Second index: commerce
 
@@ -35,7 +35,7 @@ It is read-only: it lists tools and never calls one.
 | Measured | **22** endpoints, 16 implementations |
 | Cheapest tool surface | **273** tokens |
 | Most expensive | **45,030** tokens (`shopify-ucp`) |
-| Same UCP job, heaviest vs Wix | **36x** (45,030 vs 1,236) |
+| The same 8 UCP tools, Shopify vs Wix | **23x** (28,335 vs 1,241, summed per tool) |
 | Answering the 2026-07-28 handshake | **4** endpoints |
 | Two full sweeps | **22 of 22** byte-identical |
 
@@ -116,9 +116,9 @@ A published index of a fast-moving registry is a photograph, and the honest thin
 it was taken and how much has moved since. So the harness also runs a metadata-only watcher —
 no installs, no execution, a few seconds — that reports which pinned versions have been passed.
 
-**76 days after this cohort was pinned, 25 of its 50
+**76 days after this cohort was pinned, 26 of its 50
 servers had published a newer version.** The largest jump since the pin is `githits`,
-45 versions (0.8.0 to 0.35.0). A further 8
+46 versions (0.8.0 to 0.36.0). A further 7
 have newer versions on npm that were already there when the cohort was pinned, and have released
 nothing since: each pin is the version the server's registry entry declared, and for
 17 of the 50 npm already had something newer
