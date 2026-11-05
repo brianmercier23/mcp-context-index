@@ -22,7 +22,7 @@ The most expensive server in this cohort is 46% of that total on its own: 125,00
 
 ### Second index: commerce
 
-**[Commerce MCP, 16 implementations](index/commerce-mcp-v1.md)** · measured 2026-10-25
+**[Commerce MCP, 17 implementations](index/commerce-mcp-v1.md)** · measured 2026-11-05
 
 Online stores now publish MCP endpoints for shopping agents, through the Universal Commerce
 Protocol (UCP) and the Personal Agent Protocol (PAP). This index reads each store's manifest,
@@ -32,12 +32,12 @@ It is read-only: it lists tools and never calls one.
 | | |
 |---|---|
 | Endpoints attempted | **38**, across 27 implementations (platforms, plugins and individual PAP services) |
-| Measured | **22** endpoints, 16 implementations |
+| Measured | **24** endpoints, 17 implementations |
 | Cheapest tool surface | **273** tokens |
-| Most expensive | **45,030** tokens (`shopify-ucp`) |
-| The same 8 UCP tools, Shopify vs Wix | **23x** (28,335 vs 1,241, summed per tool) |
+| Most expensive | **46,698** tokens (`shopify-ucp`) |
+| The same 8 UCP tools, Shopify vs Wix | **23x** (28,928 vs 1,241, summed per tool) |
 | Answering the 2026-07-28 handshake | **4** endpoints |
-| Two full sweeps | **22 of 22** byte-identical |
+| Two full sweeps | **24 of 24** byte-identical |
 
 Stores on one platform share one tool surface, so the unit graded is the platform or plugin, and
 every store on it inherits the grade. Its caveats differ from the dev-tooling index and are listed
@@ -116,14 +116,14 @@ A published index of a fast-moving registry is a photograph, and the honest thin
 it was taken and how much has moved since. So the harness also runs a metadata-only watcher —
 no installs, no execution, a few seconds — that reports which pinned versions have been passed.
 
-**76 days after this cohort was pinned, 26 of its 50
+**86 days after this cohort was pinned, 28 of its 50
 servers had published a newer version.** The largest jump since the pin is `githits`,
-46 versions (0.8.0 to 0.36.0). A further 7
+51 versions (0.8.0 to 0.39.0). A further 7
 have newer versions on npm that were already there when the cohort was pinned, and have released
 nothing since: each pin is the version the server's registry entry declared, and for
 17 of the 50 npm already had something newer
 ([METHOD.md](METHOD.md#cohort-selection)). Those are not counted as drift. Current drift report,
-checked 2026-10-26: **[index/version-drift-dev-tooling-v1.md](index/version-drift-dev-tooling-v1.md)**.
+checked 2026-11-05: **[index/version-drift-dev-tooling-v1.md](index/version-drift-dev-tooling-v1.md)**.
 
 That number is the argument for the whole approach rather than against it. Anything that scrapes
 registry listings is describing a population that has already changed; pinning the versions is

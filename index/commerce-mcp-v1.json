@@ -1,10 +1,10 @@
 {
   "index_id": "commerce-mcp-v1",
   "generated_from": {
-    "run_id": "run-2026-10-25-1517-cd900dba",
-    "config_hash": "cd900dba3ecf53d4f4605e4c8e32f5ec4916e85355f1efbb51e11a85d5a488cf",
-    "measured_at": "2026-10-25T15:21:03.769Z",
-    "harness_version": "0.1.4",
+    "run_id": "run-2026-11-05-1247-55d935f7",
+    "config_hash": "55d935f78589597ebaa14a2f2f3f657288c455005947f4b09f5517abe53ff832",
+    "measured_at": "2026-11-05T12:49:47.433Z",
+    "harness_version": "0.1.6",
     "rubric": "mcp-server-quality@1.1.1",
     "tokenizer": {
       "library": "gpt-tokenizer",
@@ -27,34 +27,32 @@
   ],
   "reproducibility": {
     "compared": [
-      "run-2026-10-25-1514-cd900dba",
-      "run-2026-10-25-1517-cd900dba"
+      "run-2026-11-05-1244-55d935f7",
+      "run-2026-11-05-1247-55d935f7"
     ],
-    "measured_in_both": 22,
-    "byte_identical": 22,
+    "measured_in_both": 24,
+    "byte_identical": 24,
     "grade_changes": 0,
     "status_changes": 0
   },
   "totals": {
     "attempted": 38,
-    "measured": 22,
+    "measured": 24,
     "token_spread": {
       "min": 273,
-      "max": 45030,
-      "ratio": 164.9
+      "max": 46698,
+      "ratio": 171.1
     },
     "handshakes": {
-      "legacy": 18,
-      "none": 16,
+      "legacy": 20,
+      "none": 14,
       "modern": 4
     },
     "failures": {
       "auth_required": 9,
-      "rate_limited": 1,
       "no_handshake_response": 1,
       "not_an_mcp_endpoint": 2,
-      "invalid_protocol_version": 2,
-      "invalid_tool_schema": 1
+      "invalid_protocol_version": 2
     }
   },
   "implementations": [
@@ -84,10 +82,10 @@
       "distinct_surfaces": 2,
       "handshake": "legacy",
       "protocol_version": "2025-11-25",
-      "tools": "13–15",
-      "tokens": "41,361–45,030",
-      "tokens_input_only": "12,854–15,010",
-      "max_tokens": 45030,
+      "tools": "14–16",
+      "tokens": "43,029–46,698",
+      "tokens_input_only": "13,676–15,832",
+      "max_tokens": 46698,
       "heaviest_tool": "complete_checkout",
       "grade": "D",
       "uncapped_grade": "C",
@@ -184,24 +182,23 @@
       "implementation": "magento-agent-mcp",
       "protocol": "ucp",
       "endpoints": 2,
-      "probed": 1,
-      "distinct_surfaces": 1,
-      "handshake": "modern",
-      "protocol_version": "2026-07-28",
-      "tools": "14",
-      "tokens": "2,953",
-      "tokens_input_only": "2,953",
+      "probed": 2,
+      "distinct_surfaces": 2,
+      "handshake": "legacy/modern",
+      "protocol_version": "2025-03-26/2026-07-28",
+      "tools": "6–14",
+      "tokens": "1,813–2,953",
+      "tokens_input_only": "1,813–2,953",
       "max_tokens": 2953,
       "heaviest_tool": "create_cart",
       "grade": "B",
       "uncapped_grade": "B",
       "defect_ids": [
         "params_missing_description",
-        "untyped_params"
+        "untyped_params",
+        "weak_namespacing"
       ],
-      "failures": [
-        "rate_limited"
-      ]
+      "failures": []
     },
     {
       "implementation": "woo-plugin:/ucp/mcp",
@@ -329,24 +326,21 @@
       "implementation": "pap:ample",
       "protocol": "pap",
       "endpoints": 1,
-      "probed": 1,
-      "distinct_surfaces": 1,
-      "handshake": "modern",
-      "protocol_version": "2026-07-28",
-      "tools": "104",
-      "tokens": "16,066",
-      "tokens_input_only": "16,066",
-      "max_tokens": 16066,
-      "heaviest_tool": "ample_deploy",
-      "grade": "C",
-      "uncapped_grade": "B",
-      "defect_ids": [
-        "tool_defs_over_10k",
-        "context_injection_over_12k",
-        "tool_count_over_40",
-        "params_missing_description"
-      ],
-      "failures": []
+      "probed": 0,
+      "distinct_surfaces": 0,
+      "handshake": null,
+      "protocol_version": null,
+      "tools": "—",
+      "tokens": "—",
+      "tokens_input_only": "—",
+      "max_tokens": null,
+      "heaviest_tool": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defect_ids": [],
+      "failures": [
+        "auth_required"
+      ]
     },
     {
       "implementation": "pap:stacktree",
@@ -372,21 +366,22 @@
       "implementation": "pap:saferate",
       "protocol": "pap",
       "endpoints": 1,
-      "probed": 0,
-      "distinct_surfaces": 0,
-      "handshake": null,
-      "protocol_version": null,
-      "tools": "—",
-      "tokens": "—",
-      "tokens_input_only": "—",
-      "max_tokens": null,
-      "heaviest_tool": null,
-      "grade": null,
-      "uncapped_grade": null,
-      "defect_ids": [],
-      "failures": [
-        "auth_required"
-      ]
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "modern",
+      "protocol_version": "2026-07-28",
+      "tools": "22",
+      "tokens": "5,905",
+      "tokens_input_only": "5,905",
+      "max_tokens": 5905,
+      "heaviest_tool": "update_my_application",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defect_ids": [
+        "params_missing_description",
+        "generic_tool_names"
+      ],
+      "failures": []
     },
     {
       "implementation": "pap:autoura",
@@ -573,21 +568,19 @@
       "implementation": "ucp-sandbox (reference)",
       "protocol": "ucp",
       "endpoints": 1,
-      "probed": 0,
-      "distinct_surfaces": 0,
-      "handshake": null,
-      "protocol_version": null,
-      "tools": "—",
-      "tokens": "—",
-      "tokens_input_only": "—",
-      "max_tokens": null,
-      "heaviest_tool": null,
-      "grade": null,
-      "uncapped_grade": null,
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "legacy",
+      "protocol_version": "2025-11-25",
+      "tools": "15",
+      "tokens": "7,058",
+      "tokens_input_only": "6,510",
+      "max_tokens": 7058,
+      "heaviest_tool": "search_locations",
+      "grade": "B",
+      "uncapped_grade": "B",
       "defect_ids": [],
-      "failures": [
-        "invalid_tool_schema"
-      ]
+      "failures": []
     },
     {
       "implementation": "custom:agentdiet (ucpchecker lists under Shopware)",
@@ -637,10 +630,10 @@
       "handshake": "legacy",
       "protocol_version": "2025-11-25",
       "failure": null,
-      "tools": 15,
-      "tool_definition_tokens": 45030,
-      "tool_definition_tokens_input_only": 15010,
-      "tool_surface_hash": "3efcae389f500580",
+      "tools": 16,
+      "tool_definition_tokens": 46698,
+      "tool_definition_tokens_input_only": 15832,
+      "tool_surface_hash": "7be5cdb9b2774df7",
       "grade": "D",
       "uncapped_grade": "C",
       "defects": [
@@ -659,10 +652,10 @@
       "handshake": "legacy",
       "protocol_version": "2025-11-25",
       "failure": null,
-      "tools": 13,
-      "tool_definition_tokens": 41361,
-      "tool_definition_tokens_input_only": 12854,
-      "tool_surface_hash": "bebff263806f3a71",
+      "tools": 14,
+      "tool_definition_tokens": 43029,
+      "tool_definition_tokens_input_only": 13676,
+      "tool_surface_hash": "0d9f4573b596eaf8",
       "grade": "D",
       "uncapped_grade": "C",
       "defects": [
@@ -680,10 +673,10 @@
       "handshake": "legacy",
       "protocol_version": "2025-11-25",
       "failure": null,
-      "tools": 13,
-      "tool_definition_tokens": 41361,
-      "tool_definition_tokens_input_only": 12854,
-      "tool_surface_hash": "bebff263806f3a71",
+      "tools": 14,
+      "tool_definition_tokens": 43029,
+      "tool_definition_tokens_input_only": 13676,
+      "tool_surface_hash": "0d9f4573b596eaf8",
       "grade": "D",
       "uncapped_grade": "C",
       "defects": [
@@ -872,20 +865,19 @@
       "implementation": "magento-agent-mcp",
       "protocol": "ucp",
       "url": "https://seatosummit.es/agent/mcp",
-      "status": "connect_failed",
-      "handshake": "none",
-      "protocol_version": null,
-      "failure": {
-        "status": 429,
-        "class": "rate_limited"
-      },
-      "tools": null,
-      "tool_definition_tokens": null,
-      "tool_definition_tokens_input_only": null,
-      "tool_surface_hash": null,
-      "grade": null,
-      "uncapped_grade": null,
-      "defects": null
+      "status": "probed",
+      "handshake": "legacy",
+      "protocol_version": "2025-03-26",
+      "failure": null,
+      "tools": 6,
+      "tool_definition_tokens": 1813,
+      "tool_definition_tokens_input_only": 1813,
+      "tool_surface_hash": "41af71f88e47ff46",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "weak_namespacing"
+      ]
     },
     {
       "id": "magento-ucp@serverkast.com",
@@ -1031,22 +1023,20 @@
       "implementation": "pap:ample",
       "protocol": "pap",
       "url": "https://api.ample.computer/mcp",
-      "status": "probed",
-      "handshake": "modern",
-      "protocol_version": "2026-07-28",
-      "failure": null,
-      "tools": 104,
-      "tool_definition_tokens": 16066,
-      "tool_definition_tokens_input_only": 16066,
-      "tool_surface_hash": "106f18a124b5b644",
-      "grade": "C",
-      "uncapped_grade": "B",
-      "defects": [
-        "tool_defs_over_10k",
-        "context_injection_over_12k",
-        "tool_count_over_40",
-        "params_missing_description"
-      ]
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 401,
+        "class": "auth_required"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
     },
     {
       "id": "pap@stacktr.ee",
@@ -1073,20 +1063,20 @@
       "implementation": "pap:saferate",
       "protocol": "pap",
       "url": "https://mcp.saferate.com/mcp/account",
-      "status": "connect_failed",
-      "handshake": "none",
-      "protocol_version": null,
-      "failure": {
-        "status": 401,
-        "class": "auth_required"
-      },
-      "tools": null,
-      "tool_definition_tokens": null,
-      "tool_definition_tokens_input_only": null,
-      "tool_surface_hash": null,
-      "grade": null,
-      "uncapped_grade": null,
-      "defects": null
+      "status": "probed",
+      "handshake": "modern",
+      "protocol_version": "2026-07-28",
+      "failure": null,
+      "tools": 22,
+      "tool_definition_tokens": 5905,
+      "tool_definition_tokens_input_only": 5905,
+      "tool_surface_hash": "4031b2bd53e1bcb1",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": [
+        "params_missing_description",
+        "generic_tool_names"
+      ]
     },
     {
       "id": "pap@planmyvisit.to",
@@ -1329,20 +1319,17 @@
       "implementation": "ucp-sandbox (reference)",
       "protocol": "ucp",
       "url": "https://flowers.ucpsandbox.com/mcp",
-      "status": "connect_failed",
-      "handshake": "none",
+      "status": "probed",
+      "handshake": "legacy",
       "protocol_version": "2025-11-25",
-      "failure": {
-        "status": null,
-        "class": "invalid_tool_schema"
-      },
-      "tools": null,
-      "tool_definition_tokens": null,
-      "tool_definition_tokens_input_only": null,
-      "tool_surface_hash": null,
-      "grade": null,
-      "uncapped_grade": null,
-      "defects": null
+      "failure": null,
+      "tools": 15,
+      "tool_definition_tokens": 7058,
+      "tool_definition_tokens_input_only": 6510,
+      "tool_surface_hash": "872347d3a6b64165",
+      "grade": "B",
+      "uncapped_grade": "B",
+      "defects": []
     },
     {
       "id": "custom-agentdiet@agentdiet.dev",

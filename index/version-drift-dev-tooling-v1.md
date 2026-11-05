@@ -1,14 +1,14 @@
 # Version drift — dev-tooling-v1
 
-Checked 2026-10-26T12:15:02.695Z against the pinned cohort. 50 packages, npm metadata only:
+Checked 2026-11-05T12:15:03.095Z against the pinned cohort. 50 packages, npm metadata only:
 nothing was installed, executed or measured.
 
 | | |
 |---|---:|
-| Released a newer version since the pin | **26** |
+| Released a newer version since the pin | **28** |
 | … of which already behind npm's latest at the pin | 9 |
 | Behind npm's latest at the pin, nothing released since | **7** |
-| Nothing on npm newer than the pin | **16** |
+| Nothing on npm newer than the pin | **14** |
 | Pinned version or package no longer on npm | **1** |
 | Latest version marked deprecated | **1** |
 
@@ -24,23 +24,24 @@ and a version that moved on npm has not been measured until a sweep measures it.
 
 | Server | Pinned | npm latest at pin | Latest now | Released since the pin |
 |---|---|---|---|---:|
-| `githits` | 0.8.0 | = | **0.36.0** | 46 |
-| `mason-context` | 0.6.0 | = | **0.23.1** | 32 |
-| `@aicommander/mcp` | 1.0.17 | 1.0.44 | **1.6.4** | 27 |
+| `githits` | 0.8.0 | = | **0.39.0** | 51 |
+| `mason-context` | 0.6.0 | = | **0.24.0** | 33 |
+| `@aicommander/mcp` | 1.0.17 | 1.0.44 | **1.6.5** | 28 |
 | `@bashbop/otito` | 1.6.0 | = | **3.5.0** (deprecated) | 22 |
-| `bomly-mcp` | 0.21.3 | = | **0.30.0** | 15 |
-| `@atlassian-dc-mcp/jira` | 0.29.0 | = | **0.38.0** | 11 |
-| `@atlassian-dc-mcp/bitbucket` | 0.29.0 | = | **0.38.0** | 11 |
-| `contextforge-mcp` | 0.5.0 | = | **0.13.2** | 11 |
-| `@smartbear/mcp` | 0.34.0 | = | **0.42.0** | 9 |
+| `@atlassian-dc-mcp/jira` | 0.29.0 | = | **0.43.2** | 18 |
+| `@atlassian-dc-mcp/bitbucket` | 0.29.0 | = | **0.43.2** | 18 |
+| `bomly-mcp` | 0.21.3 | = | **0.30.1** | 16 |
+| `contextforge-mcp` | 0.5.0 | = | **0.13.3** | 12 |
+| `@smartbear/mcp` | 0.34.0 | = | **0.43.0** | 10 |
 | `vibe-hnindex` | 0.1.2 | 0.12.1 | **0.16.1** | 8 |
-| `@postman/postman-mcp-server` | 2.11.2 | = | **2.14.0** | 6 |
+| `@postman/postman-mcp-server` | 2.11.2 | = | **2.15.0** | 7 |
 | `@cstart/coldstart` | 2.2.17 | = | **2.3.4** | 6 |
+| `ainative-zerodb-memory-mcp` | 1.2.7 | = | **1.2.12** | 5 |
 | `@gitkraken/gk` | 3.1.70 | = | **3.1.77** | 3 |
-| `ainative-zerodb-memory-mcp` | 1.2.7 | = | **1.2.10** | 3 |
+| `kenotex-mcp` | 1.2.3 | = | **1.4.0** | 3 |
+| `grasp-mcp-server` | 3.21.0 | = | **3.21.3** | 3 |
 | `@optimalai/optibot-mcp` | 1.4.1 | = | **1.7.0** | 3 |
 | `@aryam/fixmap` | 0.8.8 | = | **0.9.0** | 2 |
-| `kenotex-mcp` | 1.2.3 | = | **1.3.1** | 2 |
 | `@aaronsb/jira-cloud-mcp` | 0.10.0 | 0.11.1 | **0.11.3** | 2 |
 | `@metaengine/mcp-server` | 1.4.1 | = | **1.5.0** | 2 |
 | `reuse-before-generate` | 0.2.3 | 0.10.0 | **2.1.0** | 2 |
@@ -49,6 +50,7 @@ and a version that moved on npm has not been measured until a sweep measures it.
 | `@alex-apps/ng-token-saver` | 0.1.7 | = | **0.2.0** | 1 |
 | `infimium` | 0.3.1 | 0.5.9 | **0.5.10** | 1 |
 | `@automatelab/content-distribution-mcp` | 2.2.1 | 3.0.0 | **3.0.1** | 1 |
+| `k8scortex-mcp` | 1.0.2 | = | **1.1.3** | 1 |
 | `octocode-mcp` | 7.0.9 | 18.2.2 | **19.1.0** | 1 |
 
 ## Behind npm's latest at the pin, nothing released since
@@ -71,7 +73,7 @@ been measured.
 Measure these at their latest versions, and nothing else:
 
 ```bash
-VERSION_OVERRIDE="@smartbear/mcp@0.42.0,@postman/postman-mcp-server@2.14.0,@gitkraken/gk@3.1.77,@atlassian-dc-mcp/jira@0.38.0,mendapi@0.5.8,@atlassian-dc-mcp/bitbucket@0.38.0,githits@0.36.0,@cstart/coldstart@2.3.4,ainative-zerodb-memory-mcp@1.2.10,@alex-apps/ng-token-saver@0.2.0,@aicommander/mcp@1.6.4,@aryam/fixmap@0.9.0,kenotex-mcp@1.3.1,sharedoc-mcp@2.2.0,docfork@2.2.5,@bashbop/otito@3.5.0,@pinappai/mcp@0.9.10,contextforge-mcp@0.13.2,infimium@0.5.10,mason-context@0.23.1,parecode@0.9.1,@aaronsb/jira-cloud-mcp@0.11.3,obra-cto@0.3.1,@metaengine/mcp-server@1.5.0,vibe-hnindex@0.16.1,reuse-before-generate@2.1.0,@vibemap.ai/mcp-server@2.11.0,@remogram/mcp@0.3.0,@optimalai/optibot-mcp@1.7.0,@automatelab/content-distribution-mcp@3.0.1,@algiras/debugium@0.1.3,octocode-mcp@19.1.0,bomly-mcp@0.30.0" npm run run
+VERSION_OVERRIDE="@smartbear/mcp@0.43.0,@postman/postman-mcp-server@2.15.0,@gitkraken/gk@3.1.77,@atlassian-dc-mcp/jira@0.43.2,mendapi@0.5.8,@atlassian-dc-mcp/bitbucket@0.43.2,githits@0.39.0,@cstart/coldstart@2.3.4,ainative-zerodb-memory-mcp@1.2.12,@alex-apps/ng-token-saver@0.2.0,@aicommander/mcp@1.6.5,@aryam/fixmap@0.9.0,kenotex-mcp@1.4.0,sharedoc-mcp@2.2.0,docfork@2.2.5,@bashbop/otito@3.5.0,@pinappai/mcp@0.9.10,contextforge-mcp@0.13.3,infimium@0.5.10,mason-context@0.24.0,grasp-mcp-server@3.21.3,parecode@0.9.1,@aaronsb/jira-cloud-mcp@0.11.3,obra-cto@0.3.1,@metaengine/mcp-server@1.5.0,vibe-hnindex@0.16.1,reuse-before-generate@2.1.0,@vibemap.ai/mcp-server@2.11.0,@remogram/mcp@0.3.0,@optimalai/optibot-mcp@1.7.0,@automatelab/content-distribution-mcp@3.0.1,@algiras/debugium@0.1.3,k8scortex-mcp@1.1.3,octocode-mcp@19.1.0,bomly-mcp@0.30.1" npm run run
 ```
 
 Each server is installed at the version named, with its dependencies resolved as they stood
