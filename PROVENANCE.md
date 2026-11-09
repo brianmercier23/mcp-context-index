@@ -273,6 +273,17 @@ shops, and the label borrowed that. It is not published by the UCP project. The 
 log as recorded; read it as `ucpsandbox.com`. The measurement (an `invalid_tool_schema` failure:
 none of its 15 tools declares a type on its `outputSchema`) is unaffected.
 
+Two later facts qualify that measurement. First, the failure belonged to the client as much as the
+server: revision 2025-11-25 of the specification restricted `outputSchema` to `type: "object"` at
+the root, revision 2026-07-28 allows any JSON Schema, and the harness's 2025-handshake client
+(`@modelcontextprotocol/sdk` 1.30.0) applies the older rule. SDK 2.0.0 and a current Claude Code
+release accepted the same list on 2026-10-30. Second, the 2026-11-05 sweeps measured the sandbox
+normally (15 tools, 7,058 tokens) through the same 1.30.0 client, so its tool list changed on the
+server side between the two dates. The October records stay as written. The published markdown
+index now shows the name as `ucpsandbox.com (independent sandbox)`; the log and the JSON keep the
+recorded label, and the commerce index states that compatibility findings are specific to the
+client named in each run.
+
 ### "More than the other 37 put together" stopped being true on the first day
 
 The README said the most expensive dev-tooling server "costs more context than the other 37 put
@@ -302,6 +313,33 @@ expose under the same names (`search_catalog`, `lookup_catalog`, `get_product` a
 checkout tools) sum to 28,335 tokens on Shopify and 1,241 on Wix, a ratio of 22.8x. The README now
 reports that. Per-tool sums differ from the published surface totals by a few tokens, because the
 total is tokenised as one serialised list; the index's own figures are unchanged.
+
+### The index described advertised definitions as context every conversation pays
+
+From its first publication the README opened with "Every MCP server you connect injects its tool
+definitions into the context window of every conversation, whether or not a single tool is ever
+called", headlined the dev-tooling total as tokens "before a single tool call", and the generated
+index called that total "the fixed tax a team pays on every conversation". The commerce index said
+it measured "what the agent is handed before it does anything". Outreach built on the same framing.
+
+The counts are right. The claim about what they mean was never measured, and on current defaults
+it is wrong. A separate test on 2026-10-30 served one small synthetic tool to Claude Code 2.1.263
+and Codex 0.166 and captured the request each client built. Claude Code's default sent only the
+tool's name until tool search found it; Codex with `gpt-5.5` and `gpt-6-astra` sent nothing up
+front. Full schemas were sent up front only with Claude Code's tool search off and with Codex on
+`gpt-5.4`-family models. Output schemas, which the index counts, were dropped on every path except
+Codex code mode, which is off by default. A capture rerun on Claude Code 2.1.314 matched. The
+fixture is private; the method and limits are summarised in the README.
+
+The README, METHOD.md and both index generators now describe the counts as advertised
+definitions, and the README has a section on what they do and do not mean. Shared tool names are
+no longer described as the same job (see the 36x entry above). No measurement, score or grade
+changes. The grades still rest on the full advertised surface, output schemas included, so they
+grade definition size rather than load cost; whether a future rubric should weight the input-only
+figure instead is open, and would be a new rubric version re-scored from the log. The rationale
+text in the published rubric versions (`rubric-v1.0.0.md` "It is the bill", and "context tax" in
+`rubric-v1.1.0.md` and `rubric-v1.1.1.md`) carries the same overstatement. Those files are
+published versions and are not edited; this paragraph is their correction.
 
 ## Corrections to the published sources this project was built on
 

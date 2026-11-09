@@ -25,8 +25,11 @@ The harness then runs one MCP session against it:
 
 The primary metric is the token count of the tool-definition array returned by `tools/list`:
 each entry `{name, description, inputSchema}`, plus `outputSchema` where a tool declares one,
-key-sorted so that two structurally identical lists always tokenise identically. That is the fixed
-context tax a conversation pays for having the server connected.
+key-sorted so that two structurally identical lists always tokenise identically. It measures what
+the server advertises. It is not a measurement of what a client sends to a model or what a
+provider bills: those depend on the client, the model and its settings, and several current
+clients defer definitions until tool search finds them (see
+[README: What the token counts mean](README.md#what-the-token-counts-mean)).
 
 Tokenizer: `gpt-tokenizer`, `o200k_base`. Token counts are tokenizer-dependent; a different
 tokenizer produces different absolute numbers and very similar ratios.
@@ -208,6 +211,11 @@ landed in a user's project directory. A probe that is not isolated measures its 
 
 ## Explicitly not measured
 
+- **What a client loads, or a provider bills.** The index counts advertised definitions. How much
+  of that a host sends to a model, and when, varies by client, model, settings and mode, and is
+  not measured here.
+- **Equivalence between implementations.** Shared tool names are not evidence of shared
+  contracts or behaviour, and no tool is called on a commerce endpoint.
 - **Per-call response token cost against live data.** Requires real credentials, which the harness
   never holds.
 - **Runtime latency.** Not reproducible on a shared desktop under variable load.

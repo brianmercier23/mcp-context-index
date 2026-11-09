@@ -9,13 +9,14 @@ output of a real MCP session against a pinned install, tokenised with `gpt-token
 
 | | |
 |---|---|
-| Cheapest server | **335** tokens of tool definitions |
+| Cheapest server | **335** tokens of advertised tool definitions |
 | Most expensive | **125,005** tokens |
 | Spread | **373.1x** |
-| All 38 installed at once | **270,244** tokens of context, before a single call |
+| All 38 summed | **270,244** tokens of advertised definitions |
 
-That last figure is the one that sells an audit: it is the fixed tax a team pays on
-every conversation, in every session, whether or not any tool is used.
+These are the definitions the servers advertise. How much of them a client sends to a model,
+and when, depends on the client, the model and its settings; several current defaults defer
+them until tool search finds them. See the README section "What the token counts mean".
 
 ## Cost of admission, by server
 

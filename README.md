@@ -1,20 +1,27 @@
 # MCP Context Index
 
-**What does an MCP server cost you before it does anything?**
+**What do MCP servers advertise, and which clients can use it?**
 
-Every MCP server you connect injects its tool definitions into the context window of every
-conversation, whether or not a single tool is ever called. Nobody publishes that number. This
-project measures it, by installing each server and running a real MCP session against it.
+MCP Context Index measures the tool definitions each server returns from `tools/list`, by
+installing the server (or connecting to its endpoint) and running a real MCP session against it,
+and records connection and schema checks under a stated method. Its token counts describe those
+serialised definitions with a named tokenizer.
+
+What a model is actually sent, and what a provider bills, is a different measurement. It depends
+on the client, the model, its settings and its loading strategy, and on several current default
+paths nothing is loaded at connection time at all. See
+[What the token counts mean](#what-the-token-counts-mean). To estimate the cost of your own agent
+workflow, measure that workflow.
 
 Current index: **[dev tooling, 38 servers](index/dev-tooling-v1.md)** · measured 2026-08-13 ·
 run `run-2026-08-13-0208-7936eadf` · config `7936eadf`
 
 | | |
 |---|---|
-| Cheapest server measured | **335** tokens of tool definitions |
+| Cheapest server measured | **335** tokens of advertised tool definitions |
 | Most expensive | **125,005** tokens |
 | Spread inside one vertical | **373.1x** |
-| All 38 connected at once | **270,244** tokens, before a single tool call |
+| All 38 summed | **270,244** tokens of advertised definitions |
 | Servers carrying at least one defect | **31 of 38** (82%) |
 
 The most expensive server in this cohort is 46% of that total on its own: 125,005 tokens, against
@@ -26,8 +33,9 @@ The most expensive server in this cohort is 46% of that total on its own: 125,00
 
 Online stores now publish MCP endpoints for shopping agents, through the Universal Commerce
 Protocol (UCP) and the Personal Agent Protocol (PAP). This index reads each store's manifest,
-connects to the endpoint it names, and measures what an agent is handed before it does anything.
-It is read-only: it lists tools and never calls one.
+connects to the endpoint it names, and measures the tool surface that endpoint advertises.
+It is read-only: it lists tools and never calls one, so it says nothing about whether two
+implementations do the same job.
 
 | | |
 |---|---|
@@ -35,17 +43,18 @@ It is read-only: it lists tools and never calls one.
 | Measured | **24** endpoints, 17 implementations |
 | Cheapest tool surface | **273** tokens |
 | Most expensive | **46,698** tokens (`shopify-ucp`) |
-| The same 8 UCP tools, Shopify vs Wix | **23x** (28,928 vs 1,241, summed per tool) |
+| The 8 tool names Shopify and Wix share, definition size | **23x** (28,928 vs 1,241, summed per tool) |
 | Answering the 2026-07-28 handshake | **4** endpoints |
 | Two full sweeps | **24 of 24** byte-identical |
 
 Stores on one platform share one tool surface, so the unit graded is the platform or plugin, and
-every store on it inherits the grade. Its caveats differ from the dev-tooling index and are listed
-at the top of the index itself.
+every store on it inherits the grade. Matching tool names do not establish matching contracts,
+functionality or task outcomes, so the 23x figure compares definition size and nothing else. Its
+caveats differ from the dev-tooling index and are listed at the top of the index itself.
 
 ## Read the caveats first
 
-These four are load-bearing. They are repeated in the index itself and in
+These five are load-bearing. They are repeated in the index itself and in
 [METHOD.md](METHOD.md), because an index that hides them is worth less than no index.
 
 1. **This is not a random sample of the registry, and must never be described as one.** The
@@ -66,6 +75,39 @@ These four are load-bearing. They are repeated in the index itself and in
 4. **Grades are an editorial reading; the measurements are not.** A grade changes whenever the
    rubric does. A signal never changes. They live in separate files for that reason, and every
    report names which rubric measured it and which rubric scored it.
+5. **A token count here is what a server advertises, not what a model is sent.** Earlier versions
+   of this README called it the context every conversation pays for. On the client paths tested
+   that is sometimes true, sometimes an overstatement, and sometimes zero at connection time.
+   [What the token counts mean](#what-the-token-counts-mean) has the detail.
+
+## What the token counts mean
+
+The index counts the definitions a server returns. Whether a client sends them to a model, and
+when, is the client's decision. A separate test on 2026-10-30 served one small synthetic tool to
+Claude Code 2.1.263 and Codex 0.166 and recorded the requests each client built:
+
+- **Claude Code, default settings:** the first request carried only the tool's name, in a deferred
+  list; the schema arrived after tool search found it. With tool search turned off, the full input
+  schema was sent up front.
+- **Codex:** with `gpt-5.4`-family models the full schema was sent up front. With `gpt-5.5` and
+  `gpt-6-astra` nothing was sent at the start, and the tool was reached through search.
+- **Output schemas** were dropped on every path tested except Codex code mode (off by default),
+  which sent them as generated TypeScript return types.
+
+Deferral moves cost rather than removing it: on the one tool-use session measured, the deferred
+path took an extra turn. So a definition count is close to the up-front load on some paths, an
+overstatement on paths that drop output schemas, and not an up-front load at all on deferred
+paths. The commerce index shows an input-only figure beside every total for the paths that drop
+output schemas.
+
+The definitions still matter on deferred paths, for a different reason: names and descriptions
+become what tool search runs over, so undescribed parameters and colliding names make a server
+harder to find. That is why the index keeps measuring them.
+
+These findings hold for the versions named, on that date, with one small tool per server. Client
+behaviour changes quickly; one finding changed between two Claude Code releases 51 patches apart.
+The fixture and raw captures are not published. [PROVENANCE.md](PROVENANCE.md) records the
+correction.
 
 ## Why you can check this rather than trust it
 
@@ -138,8 +180,8 @@ changed" — which is the question an append-only log can answer and a dashboard
 
 Per server, from a real MCP session against a pinned sandboxed install:
 
-- **Token cost** — tool-definition tokens (the primary metric), median and max per tool, and total
-  context injection including server instructions, prompts and resources
+- **Advertised size** — tool-definition tokens (the primary metric), median and max per tool, and
+  the total advertised surface including server instructions, prompts and resources
 - **Schema clarity** — description coverage on tools and parameters, schema validity, untyped
   parameter rate
 - **Error legibility** — deliberately malformed calls against up to three read-only tools: is the

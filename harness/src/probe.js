@@ -24,8 +24,9 @@ function withTimeout(promise, ms, label) {
   ]);
 }
 
-// The exact payload a client injects into context for this server: name, description,
-// input schema. Key-sorted so two structurally identical lists always tokenise identically.
+// The tool-definition payload this server advertises: name, description, input schema (plus
+// outputSchema where declared). What a client actually sends to a model varies by client.
+// Key-sorted so two structurally identical lists always tokenise identically.
 export function toolDefinitionPayload(tools) {
   return [...tools]
     .sort((a, b) => String(a.name).localeCompare(String(b.name)))

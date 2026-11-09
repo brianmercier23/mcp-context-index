@@ -2,7 +2,7 @@
 
 Measured 2026-11-05 · run `run-2026-11-05-1247-55d935f7` · config `55d935f7` · rubric 1.1.1 · tokenizer gpt-tokenizer o200k_base
 
-The MCP servers that online stores expose to shopping agents, through the Universal Commerce Protocol (UCP) and the Personal Agent Protocol (PAP). Each store publishes a manifest naming its MCP endpoint; this index connects to that endpoint as an agent would and measures what the agent is handed before it does anything.
+The MCP servers that online stores expose to shopping agents, through the Universal Commerce Protocol (UCP) and the Personal Agent Protocol (PAP). Each store publishes a manifest naming its MCP endpoint; this index connects to that endpoint as an agent would and measures the tool surface it advertises. What a client then sends to a model depends on the client, model and settings; see the README section "What the token counts mean".
 
 | | |
 |---|---|
@@ -19,15 +19,17 @@ The MCP servers that online stores expose to shopping agents, through the Univer
 1. **Not a random sample.** Stores were picked from public adopter directories (ucpchecker.com, papchecker.com), one to three per platform. The unit being graded is the implementation, not the store.
 2. **Stores on one platform share one tool surface.** Of the 5 implementations probed on more than one store, 3 returned a byte-identical surface on every store; `shopify-ucp`, `magento-agent-mcp` differs between stores only by optional store-level tools, and its range is shown. A grade here describes the platform or plugin, and every store on it inherits it.
 3. **Read-only, and so narrower than the dev-tooling index.** The probe performs the handshake and lists tools, prompts and resources. It never calls a tool, so no cart, checkout or account action is attempted. Error legibility is therefore unmeasured, and the scoring drops that dimension from the weighting rather than scoring it zero. Name collisions are not scored: shared tool names are the point of a shared protocol.
-4. **Output schemas are counted.** The protocol ships them, so the rubric counts them. Some agent hosts inject only names, descriptions and input schemas; that lower bound is shown beside every figure.
+4. **Output schemas are counted.** The protocol ships them, so the rubric counts them. Most client paths tested on 2026-10-30 did not send them to the model, so the input-only figure beside every total is the closer proxy on those paths. Neither figure is a measured load or bill.
 5. **Credentialed endpoints are reported, not graded.** Endpoints that require a session token or API key before listing tools were not measured. Both protocols allow that.
+6. **Shared tool names are not shared jobs.** Two implementations exposing the same names may take different arguments and do different work. No tool is called, so size comparisons between implementations compare definitions, not capability or cost.
+7. **Compatibility is client-specific.** Connection and schema checks use the harness clients named in the run record (`@modelcontextprotocol/sdk` 1.30.0 for the 2025 handshake). A newer or more lenient client may accept what these reject, and the reverse.
 
 ## Measured
 
 | Implementation | Protocol | Endpoints | Handshake | Tools | Tool-definition tokens | Input-only | Grade | Defects |
 |---|---|---:|---|---:|---:|---:|---|---|
 | shopify-ucp | UCP | 3 (2 surfaces) | legacy 2025-11-25 | 14–16 | 43,029–46,698 | 13,676–15,832 | **D** (C uncapped) | tool_defs_over_10k, context_injection_over_12k, median_tool_over_500, description_length_out_of_band |
-| ucp-sandbox (reference) | UCP | 1 | legacy 2025-11-25 | 15 | 7,058 | 6,510 | **B** | — |
+| ucpsandbox.com (independent sandbox) | UCP | 1 | legacy 2025-11-25 | 15 | 7,058 | 6,510 | **B** | — |
 | pap:saferate | PAP | 1 | modern 2026-07-28 | 22 | 5,905 | 5,905 | **B** | params_missing_description, generic_tool_names |
 | vtex-adapter:vtex-ucp-adapter | UCP | 1 | legacy 2025-11-25 | 9 | 3,136 | 3,136 | **B** | params_missing_description |
 | salla-ucp | UCP | 2 | legacy 2025-06-18 | 12 | 3,002 | 3,002 | **B** | untyped_params |
@@ -44,7 +46,7 @@ The MCP servers that online stores expose to shopping agents, through the Univer
 | woo-plugin:/ucp/mcp | UCP | 1 | legacy 2025-11-25 | 3 | 376 | 376 | **B** | params_missing_description, untyped_params |
 | shopify-storefront-mcp | Shopify native | 1 | legacy 2025-11-25 | 1 | 273 | 273 | **A** | — |
 
-The heaviest surface, **shopify-ucp**, costs 46,698 tokens, 24x the median implementation (pap:tilopay, 1,981). Its heaviest single tool is `complete_checkout`. Where an implementation shows more than one surface, the difference is store-level features (for example, retail-location tools on one store), not a different implementation.
+The heaviest surface, **shopify-ucp**, advertises 46,698 tokens, 24x the median implementation (pap:tilopay, 1,981). Its heaviest single tool is `complete_checkout`. Where an implementation shows more than one surface, the difference is store-level features (for example, retail-location tools on one store), not a different implementation.
 
 Implementations already answering the 2026-07-28 handshake: `pap:saferate`, `magento-agent-mcp`, `jumpseller-ucp`.
 

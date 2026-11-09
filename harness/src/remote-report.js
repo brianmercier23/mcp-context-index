@@ -10,6 +10,11 @@ const PROTOCOL_LABEL = { ucp: 'UCP', pap: 'PAP', shopify: 'Shopify native' };
 
 // Who a failure belongs to. auth_required is not a defect: PAP permits gating tools/list behind a
 // session token, and a merchant may keep an API-key endpoint private. It is reported, not scored.
+// Display names for the published markdown only. The log and the JSON keep the label as recorded
+// (see PROVENANCE: the commerce index called an independent sandbox a reference implementation).
+const DISPLAY_NAME = { 'ucp-sandbox (reference)': 'ucpsandbox.com (independent sandbox)' };
+const LABEL = (name) => DISPLAY_NAME[name] ?? name;
+
 const FAILURE_READING = {
   auth_required: ['by design', 'Requires credentials before tools/list. Permitted by the protocols; the tool surface is not visible to an anonymous agent.'],
   rate_limited: ['environment', 'HTTP 429 on both passes, several seconds apart.'],
@@ -89,14 +94,14 @@ function main() {
   const unmeasured = impls.filter((i) => i.probed === 0);
   const probed = recs.filter((r) => r.status === 'probed');
   const multi = measured.filter((i) => i.probed > 1);
-  const modernImpls = measured.filter((i) => i.handshake.includes('modern')).map((i) => i.implementation);
+  const modernImpls = measured.filter((i) => i.handshake.includes('modern')).map((i) => LABEL(i.implementation));
 
   const L = [];
   L.push(`# Commerce MCP index: ${cohort.cohort_id}`);
   L.push('');
   L.push(`Measured ${H.finished_at.slice(0, 10)} · run \`${H.run_id}\` · config \`${H.config_hash.slice(0, 8)}\` · rubric ${H.rubric.split('@')[1]} · tokenizer ${H.tokenizer.library} ${H.tokenizer.encoding}`);
   L.push('');
-  L.push('The MCP servers that online stores expose to shopping agents, through the Universal Commerce Protocol (UCP) and the Personal Agent Protocol (PAP). Each store publishes a manifest naming its MCP endpoint; this index connects to that endpoint as an agent would and measures what the agent is handed before it does anything.');
+  L.push('The MCP servers that online stores expose to shopping agents, through the Universal Commerce Protocol (UCP) and the Personal Agent Protocol (PAP). Each store publishes a manifest naming its MCP endpoint; this index connects to that endpoint as an agent would and measures the tool surface it advertises. What a client then sends to a model depends on the client, model and settings; see the README section "What the token counts mean".');
   L.push('');
   L.push('| | |');
   L.push('|---|---|');
@@ -111,11 +116,13 @@ function main() {
   L.push('## Read the caveats first');
   L.push('');
   L.push('1. **Not a random sample.** Stores were picked from public adopter directories (ucpchecker.com, papchecker.com), one to three per platform. The unit being graded is the implementation, not the store.');
-  const split = multi.filter((i) => i.distinct_surfaces > 1).map((i) => `\`${i.implementation}\``);
+  const split = multi.filter((i) => i.distinct_surfaces > 1).map((i) => `\`${LABEL(i.implementation)}\``);
   L.push(`2. **Stores on one platform share one tool surface.** Of the ${multi.length} implementations probed on more than one store, ${multi.length - split.length} returned a byte-identical surface on every store${split.length ? `; ${split.join(', ')} differs between stores only by optional store-level tools, and its range is shown` : ''}. A grade here describes the platform or plugin, and every store on it inherits it.`);
   L.push('3. **Read-only, and so narrower than the dev-tooling index.** The probe performs the handshake and lists tools, prompts and resources. It never calls a tool, so no cart, checkout or account action is attempted. Error legibility is therefore unmeasured, and the scoring drops that dimension from the weighting rather than scoring it zero. Name collisions are not scored: shared tool names are the point of a shared protocol.');
-  L.push('4. **Output schemas are counted.** The protocol ships them, so the rubric counts them. Some agent hosts inject only names, descriptions and input schemas; that lower bound is shown beside every figure.');
+  L.push('4. **Output schemas are counted.** The protocol ships them, so the rubric counts them. Most client paths tested on 2026-10-30 did not send them to the model, so the input-only figure beside every total is the closer proxy on those paths. Neither figure is a measured load or bill.');
   L.push('5. **Credentialed endpoints are reported, not graded.** Endpoints that require a session token or API key before listing tools were not measured. Both protocols allow that.');
+  L.push('6. **Shared tool names are not shared jobs.** Two implementations exposing the same names may take different arguments and do different work. No tool is called, so size comparisons between implementations compare definitions, not capability or cost.');
+  L.push('7. **Compatibility is client-specific.** Connection and schema checks use the harness clients named in the run record (`@modelcontextprotocol/sdk` 1.30.0 for the 2025 handshake). A newer or more lenient client may accept what these reject, and the reverse.');
   L.push('');
   L.push('## Measured');
   L.push('');
@@ -124,13 +131,13 @@ function main() {
   for (const i of measured) {
     const grade = i.uncapped_grade && i.uncapped_grade !== i.grade ? `**${i.grade}** (${i.uncapped_grade} uncapped)` : `**${i.grade}**`;
     const surfaces = i.probed > 1 && i.distinct_surfaces > 1 ? ` (${i.distinct_surfaces} surfaces)` : '';
-    L.push(`| ${i.implementation} | ${PROTOCOL_LABEL[i.protocol] ?? i.protocol} | ${i.probed}${surfaces} | ${i.handshake} ${i.protocol_version} | ${i.tools} | ${i.tokens} | ${i.tokens_input_only} | ${grade} | ${i.defect_ids.join(', ') || '—'} |`);
+    L.push(`| ${LABEL(i.implementation)} | ${PROTOCOL_LABEL[i.protocol] ?? i.protocol} | ${i.probed}${surfaces} | ${i.handshake} ${i.protocol_version} | ${i.tools} | ${i.tokens} | ${i.tokens_input_only} | ${grade} | ${i.defect_ids.join(', ') || '—'} |`);
   }
   L.push('');
   const outlier = measured[0];
   const typical = measured.slice(Math.floor(measured.length / 2))[0];
   if (outlier && typical) {
-    L.push(`The heaviest surface, **${outlier.implementation}**, costs ${num(outlier.max_tokens)} tokens, ${Math.round(outlier.max_tokens / typical.max_tokens)}x the median implementation (${typical.implementation}, ${num(typical.max_tokens)}). Its heaviest single tool is \`${outlier.heaviest_tool}\`. Where an implementation shows more than one surface, the difference is store-level features (for example, retail-location tools on one store), not a different implementation.`);
+    L.push(`The heaviest surface, **${LABEL(outlier.implementation)}**, advertises ${num(outlier.max_tokens)} tokens, ${Math.round(outlier.max_tokens / typical.max_tokens)}x the median implementation (${LABEL(typical.implementation)}, ${num(typical.max_tokens)}). Its heaviest single tool is \`${outlier.heaviest_tool}\`. Where an implementation shows more than one surface, the difference is store-level features (for example, retail-location tools on one store), not a different implementation.`);
     L.push('');
   }
   if (modernImpls.length) {
@@ -144,7 +151,7 @@ function main() {
   for (const i of unmeasured) {
     for (const f of i.failures) {
       const [attr, detail] = FAILURE_READING[f] || ['unknown', ''];
-      L.push(`| ${i.implementation} | ${PROTOCOL_LABEL[i.protocol] ?? i.protocol} | ${i.endpoints} | \`${f}\` | ${attr} | ${detail} |`);
+      L.push(`| ${LABEL(i.implementation)} | ${PROTOCOL_LABEL[i.protocol] ?? i.protocol} | ${i.endpoints} | \`${f}\` | ${attr} | ${detail} |`);
     }
   }
   L.push('');

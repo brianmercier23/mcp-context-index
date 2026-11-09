@@ -68,13 +68,14 @@ function main() {
     L.push('');
     L.push(`| | |`);
     L.push(`|---|---|`);
-    L.push(`| Cheapest server | **${fmt(H.token_spread.min)}** tokens of tool definitions |`);
+    L.push(`| Cheapest server | **${fmt(H.token_spread.min)}** tokens of advertised tool definitions |`);
     L.push(`| Most expensive | **${fmt(H.token_spread.max)}** tokens |`);
     L.push(`| Spread | **${H.token_spread.ratio}x** |`);
-    L.push(`| All ${H.counts.probed} installed at once | **${fmt(H.token_spread.total_if_all_installed)}** tokens of context, before a single call |`);
+    L.push(`| All ${H.counts.probed} summed | **${fmt(H.token_spread.total_if_all_installed)}** tokens of advertised definitions |`);
     L.push('');
-    L.push('That last figure is the one that sells an audit: it is the fixed tax a team pays on');
-    L.push('every conversation, in every session, whether or not any tool is used.');
+    L.push('These are the definitions the servers advertise. How much of them a client sends to a model,');
+    L.push('and when, depends on the client, the model and its settings; several current defaults defer');
+    L.push('them until tool search finds them. See the README section "What the token counts mean".');
     L.push('');
   }
 
