@@ -6,6 +6,11 @@ import { ROOT, readJSON, readJSONL } from './lib.js';
 
 const COHORT = process.env.COHORT || 'commerce-mcp-v1';
 const num = (n) => (typeof n === 'number' ? n.toLocaleString('en-US') : '—');
+const atLeast = (v, min) => {
+  const a = v.split('.').map(Number), b = min.split('.').map(Number);
+  for (let i = 0; i < 3; i++) if ((a[i] || 0) !== (b[i] || 0)) return (a[i] || 0) > (b[i] || 0);
+  return true;
+};
 const PROTOCOL_LABEL = { ucp: 'UCP', pap: 'PAP', shopify: 'Shopify native' };
 
 // Who a failure belongs to. auth_required is not a defect: PAP permits gating tools/list behind a
@@ -119,14 +124,17 @@ function main() {
   const split = multi.filter((i) => i.distinct_surfaces > 1).map((i) => `\`${LABEL(i.implementation)}\``);
   L.push(`2. **Stores on one platform share one tool surface.** Of the ${multi.length} implementations probed on more than one store, ${multi.length - split.length} returned a byte-identical surface on every store${split.length ? `; ${split.join(', ')} differs between stores only by optional store-level tools, and its range is shown` : ''}. A grade here describes the platform or plugin, and every store on it inherits it.`);
   L.push('3. **Read-only, and so narrower than the dev-tooling index.** The probe performs the handshake and lists tools, prompts and resources. It never calls a tool, so no cart, checkout or account action is attempted. Error legibility is therefore unmeasured, and the scoring drops that dimension from the weighting rather than scoring it zero. Name collisions are not scored: shared tool names are the point of a shared protocol.');
-  L.push('4. **Output schemas are counted.** The protocol ships them, so the rubric counts them. Most client paths tested on 2026-10-30 did not send them to the model, so the input-only figure beside every total is the closer proxy on those paths. Neither figure is a measured load or bill.');
+  const graded = atLeast(H.rubric.split('@')[1], '1.2.0');
+  L.push(graded
+    ? '4. **Graded without output schemas.** The advertised total counts output schemas, because the protocol ships them, and it stays the headline figure. The grade rests on the input-only figure beside it (rubric 1.2.0): on the client paths tested on 2026-10-30, output schemas reached the model only in Codex code mode, which is off by default. Neither figure is a measured load or bill, and output schemas are what code-execution clients need, so a larger advertised total is not by itself a defect.'
+    : '4. **Output schemas are counted.** The protocol ships them, so the rubric counts them. Most client paths tested on 2026-10-30 did not send them to the model, so the input-only figure beside every total is the closer proxy on those paths. Neither figure is a measured load or bill.');
   L.push('5. **Credentialed endpoints are reported, not graded.** Endpoints that require a session token or API key before listing tools were not measured. Both protocols allow that.');
   L.push('6. **Shared tool names are not shared jobs.** Two implementations exposing the same names may take different arguments and do different work. No tool is called, so size comparisons between implementations compare definitions, not capability or cost.');
   L.push('7. **Compatibility is client-specific.** Connection and schema checks use the harness clients named in the run record (`@modelcontextprotocol/sdk` 1.30.0 for the 2025 handshake). A newer or more lenient client may accept what these reject, and the reverse.');
   L.push('');
   L.push('## Measured');
   L.push('');
-  L.push('| Implementation | Protocol | Endpoints | Handshake | Tools | Tool-definition tokens | Input-only | Grade | Defects |');
+  L.push(`| Implementation | Protocol | Endpoints | Handshake | Tools | Advertised tokens | Input-only${graded ? ' (graded)' : ''} | Grade | Defects |`);
   L.push('|---|---|---:|---|---:|---:|---:|---|---|');
   for (const i of measured) {
     const grade = i.uncapped_grade && i.uncapped_grade !== i.grade ? `**${i.grade}** (${i.uncapped_grade} uncapped)` : `**${i.grade}**`;
@@ -137,7 +145,7 @@ function main() {
   const outlier = measured[0];
   const typical = measured.slice(Math.floor(measured.length / 2))[0];
   if (outlier && typical) {
-    L.push(`The heaviest surface, **${LABEL(outlier.implementation)}**, advertises ${num(outlier.max_tokens)} tokens, ${Math.round(outlier.max_tokens / typical.max_tokens)}x the median implementation (${LABEL(typical.implementation)}, ${num(typical.max_tokens)}). Its heaviest single tool is \`${outlier.heaviest_tool}\`. Where an implementation shows more than one surface, the difference is store-level features (for example, retail-location tools on one store), not a different implementation.`);
+    L.push(`The heaviest surface, **${LABEL(outlier.implementation)}**, advertises ${num(outlier.max_tokens)} tokens, ${Math.round(outlier.max_tokens / typical.max_tokens)}x the median implementation (${LABEL(typical.implementation)}, ${num(typical.max_tokens)}); without output schemas it is ${outlier.tokens_input_only}. Its heaviest single tool is \`${outlier.heaviest_tool}\`. Where an implementation shows more than one surface, the difference is store-level features (for example, retail-location tools on one store), not a different implementation.`);
     L.push('');
   }
   if (modernImpls.length) {

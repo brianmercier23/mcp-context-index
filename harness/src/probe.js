@@ -38,14 +38,26 @@ export function toolDefinitionPayload(tools) {
     }));
 }
 
+// The same payload without outputSchema. On every client path tested on 2026-10-30 except Codex
+// code mode, this is the part of a definition that reaches the model, so rubric 1.2.0 grades on it.
+// The advertised figure above stays the published headline; this one sits beside it, never instead.
+export function inputOnlyPayload(tools) {
+  return toolDefinitionPayload(tools).map(({ outputSchema, ...rest }) => rest);
+}
+
 export function tokenizeTools(tools) {
   const payload = toolDefinitionPayload(tools);
-  const per = payload.map((t) => ({ name: t.name, tokens: countTokens(stableStringify(t)) }));
+  const inputOnly = inputOnlyPayload(tools);
+  const per = payload.map((t, i) => ({ name: t.name, tokens: countTokens(stableStringify(t)), input_tokens: countTokens(stableStringify(inputOnly[i])) }));
   return {
     tool_definition_tokens: countTokens(stableStringify(payload)),
+    tool_definition_tokens_input_only: countTokens(stableStringify(inputOnly)),
+    output_schema_tool_count: payload.filter((t) => t.outputSchema).length,
     per_tool: per,
     tokens_per_tool_median: median(per.map((p) => p.tokens)),
+    tokens_per_tool_median_input_only: median(per.map((p) => p.input_tokens)),
     tokens_per_tool_max: per.length ? Math.max(...per.map((p) => p.tokens)) : 0,
+    tokens_per_tool_max_input_only: per.length ? Math.max(...per.map((p) => p.input_tokens)) : 0,
     heaviest_tool: per.length ? per.reduce((a, b) => (b.tokens > a.tokens ? b : a)).name : null,
   };
 }
@@ -195,6 +207,10 @@ export async function session(launch, { collectErrors = false, canary = null, er
 
     out.context_injection_tokens_total =
       out.tool_definition_tokens + out.instructions_tokens + out.prompts_tokens + out.resources_tokens;
+    // Same sum with input-only tool definitions. Named for what it is, an advertised surface, not
+    // for what a client does with it.
+    out.advertised_surface_tokens_input_only =
+      out.tool_definition_tokens_input_only + out.instructions_tokens + out.prompts_tokens + out.resources_tokens;
 
     if (collectErrors) out.error_probes = await runErrorProbes(client, tools);
 

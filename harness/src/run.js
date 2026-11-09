@@ -16,7 +16,7 @@ const COHORT = process.env.COHORT || 'dev-tooling-v1';
 // dimensions, bands and signals are identical and only the reading of them differs — but the
 // hash covers the rubric wholesale rather than trying to decide which parts of it are inert,
 // which is the safer error. Re-establishing the lineage is one unattended pair.
-const RUBRIC = process.env.RUBRIC || 'rubric-v1.1.1.json';
+const RUBRIC = process.env.RUBRIC || 'rubric-v1.2.0.json';
 const LIMIT = process.env.LIMIT ? Number(process.env.LIMIT) : null;
 // Comma-separated npm package names. For re-testing specific servers after a harness change
 // without re-sweeping the cohort. Does not affect the config hash; the run just covers fewer rows.

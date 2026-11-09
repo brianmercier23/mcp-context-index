@@ -29,7 +29,7 @@ The most expensive server in this cohort is 46% of that total on its own: 125,00
 
 ### Second index: commerce
 
-**[Commerce MCP, 17 implementations](index/commerce-mcp-v1.md)** · measured 2026-11-05
+**[Commerce MCP, 17 implementations](index/commerce-mcp-v1.md)** · measured 2026-11-09
 
 Online stores now publish MCP endpoints for shopping agents, through the Universal Commerce
 Protocol (UCP) and the Personal Agent Protocol (PAP). This index reads each store's manifest,
@@ -40,16 +40,18 @@ implementations do the same job.
 | | |
 |---|---|
 | Endpoints attempted | **38**, across 27 implementations (platforms, plugins and individual PAP services) |
-| Measured | **24** endpoints, 17 implementations |
+| Measured | **23** endpoints, 17 implementations |
 | Cheapest tool surface | **273** tokens |
-| Most expensive | **46,698** tokens (`shopify-ucp`) |
-| The 8 tool names Shopify and Wix share, definition size | **23x** (28,928 vs 1,241, summed per tool) |
+| Most expensive | **47,963** tokens (`shopify-ucp`) |
+| The 8 tool names Shopify and Wix share, definition size | **7.4x** without output schemas (9,495 vs 1,279); 23.2x advertised (29,733 vs 1,279), summed per tool |
 | Answering the 2026-07-28 handshake | **4** endpoints |
-| Two full sweeps | **24 of 24** byte-identical |
+| Two full sweeps | **23 of 23** byte-identical |
 
 Stores on one platform share one tool surface, so the unit graded is the platform or plugin, and
 every store on it inherits the grade. Matching tool names do not establish matching contracts,
-functionality or task outcomes, so the 23x figure compares definition size and nothing else. Its
+functionality or task outcomes, so those ratios compare definition size and nothing else: Shopify's
+shared tools define nested input structures and full output schemas, where Wix's use generic objects
+in several places and declare no output schemas. Its
 caveats differ from the dev-tooling index and are listed at the top of the index itself.
 
 ## Read the caveats first
@@ -74,7 +76,10 @@ These five are load-bearing. They are repeated in the index itself and in
    named here rather than left for a reader to find.
 4. **Grades are an editorial reading; the measurements are not.** A grade changes whenever the
    rubric does. A signal never changes. They live in separate files for that reason, and every
-   report names which rubric measured it and which rubric scored it.
+   report names which rubric measured it and which rubric scored it. The commerce index is graded
+   under rubric 1.2.0, on definitions without output schemas. The dev-tooling index keeps its
+   rubric 1.1.1 grades, which count output schemas, until it is re-probed;
+   [PROVENANCE.md](PROVENANCE.md) explains why it could not simply be re-scored.
 5. **A token count here is what a server advertises, not what a model is sent.** Earlier versions
    of this README called it the context every conversation pays for. On the client paths tested
    that is sometimes true, sometimes an overstatement, and sometimes zero at connection time.
@@ -97,8 +102,9 @@ Claude Code 2.1.263 and Codex 0.166 and recorded the requests each client built:
 Deferral moves cost rather than removing it: on the one tool-use session measured, the deferred
 path took an extra turn. So a definition count is close to the up-front load on some paths, an
 overstatement on paths that drop output schemas, and not an up-front load at all on deferred
-paths. The commerce index shows an input-only figure beside every total for the paths that drop
-output schemas.
+paths. The commerce index shows an input-only figure beside every total and, from rubric 1.2.0,
+grades on it. Output schemas are what code-execution clients need, so their size is reported but no
+longer counted against a grade.
 
 The definitions still matter on deferred paths, for a different reason: names and descriptions
 become what tool search runs over, so undescribed parameters and colliding names make a server

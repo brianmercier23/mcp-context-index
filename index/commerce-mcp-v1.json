@@ -1,11 +1,11 @@
 {
   "index_id": "commerce-mcp-v1",
   "generated_from": {
-    "run_id": "run-2026-11-05-1247-55d935f7",
-    "config_hash": "55d935f78589597ebaa14a2f2f3f657288c455005947f4b09f5517abe53ff832",
-    "measured_at": "2026-11-05T12:49:47.433Z",
-    "harness_version": "0.1.6",
-    "rubric": "mcp-server-quality@1.1.1",
+    "run_id": "run-2026-11-09-1752-421f42c3",
+    "config_hash": "421f42c3823f034bd6fb7235d67e336eb1742ccd2b66aef244c46f76ec40099b",
+    "measured_at": "2026-11-09T17:55:21.637Z",
+    "harness_version": "0.1.7",
+    "rubric": "mcp-server-quality@1.2.0",
     "tokenizer": {
       "library": "gpt-tokenizer",
       "encoding": "o200k_base",
@@ -27,29 +27,29 @@
   ],
   "reproducibility": {
     "compared": [
-      "run-2026-11-05-1244-55d935f7",
-      "run-2026-11-05-1247-55d935f7"
+      "run-2026-11-09-1749-421f42c3",
+      "run-2026-11-09-1752-421f42c3"
     ],
-    "measured_in_both": 24,
-    "byte_identical": 24,
+    "measured_in_both": 23,
+    "byte_identical": 23,
     "grade_changes": 0,
     "status_changes": 0
   },
   "totals": {
     "attempted": 38,
-    "measured": 24,
+    "measured": 23,
     "token_spread": {
       "min": 273,
-      "max": 46698,
-      "ratio": 171.1
+      "max": 47963,
+      "ratio": 175.7
     },
     "handshakes": {
-      "legacy": 20,
-      "none": 14,
+      "legacy": 19,
+      "none": 15,
       "modern": 4
     },
     "failures": {
-      "auth_required": 9,
+      "auth_required": 10,
       "no_handshake_response": 1,
       "not_an_mcp_endpoint": 2,
       "invalid_protocol_version": 2
@@ -83,15 +83,15 @@
       "handshake": "legacy",
       "protocol_version": "2025-11-25",
       "tools": "14–16",
-      "tokens": "43,029–46,698",
+      "tokens": "44,294–47,963",
       "tokens_input_only": "13,676–15,832",
-      "max_tokens": 46698,
+      "max_tokens": 47963,
       "heaviest_tool": "complete_checkout",
-      "grade": "D",
-      "uncapped_grade": "C",
+      "grade": "C",
+      "uncapped_grade": "B",
       "defect_ids": [
         "tool_defs_over_10k",
-        "context_injection_over_12k",
+        "advertised_surface_over_12k",
         "median_tool_over_500",
         "description_length_out_of_band"
       ],
@@ -106,9 +106,9 @@
       "handshake": "legacy",
       "protocol_version": "2025-03-26",
       "tools": "8",
-      "tokens": "1,236",
-      "tokens_input_only": "1,236",
-      "max_tokens": 1236,
+      "tokens": "1,274",
+      "tokens_input_only": "1,274",
+      "max_tokens": 1274,
       "heaviest_tool": "create_checkout",
       "grade": "B",
       "uncapped_grade": "B",
@@ -182,23 +182,24 @@
       "implementation": "magento-agent-mcp",
       "protocol": "ucp",
       "endpoints": 2,
-      "probed": 2,
-      "distinct_surfaces": 2,
-      "handshake": "legacy/modern",
-      "protocol_version": "2025-03-26/2026-07-28",
-      "tools": "6–14",
-      "tokens": "1,813–2,953",
-      "tokens_input_only": "1,813–2,953",
+      "probed": 1,
+      "distinct_surfaces": 1,
+      "handshake": "modern",
+      "protocol_version": "2026-07-28",
+      "tools": "14",
+      "tokens": "2,953",
+      "tokens_input_only": "2,953",
       "max_tokens": 2953,
       "heaviest_tool": "create_cart",
       "grade": "B",
       "uncapped_grade": "B",
       "defect_ids": [
         "params_missing_description",
-        "untyped_params",
-        "weak_namespacing"
+        "untyped_params"
       ],
-      "failures": []
+      "failures": [
+        "auth_required"
+      ]
     },
     {
       "implementation": "woo-plugin:/ucp/mcp",
@@ -371,9 +372,9 @@
       "handshake": "modern",
       "protocol_version": "2026-07-28",
       "tools": "22",
-      "tokens": "5,905",
-      "tokens_input_only": "5,905",
-      "max_tokens": 5905,
+      "tokens": "5,886",
+      "tokens_input_only": "5,886",
+      "max_tokens": 5886,
       "heaviest_tool": "update_my_application",
       "grade": "B",
       "uncapped_grade": "B",
@@ -631,14 +632,14 @@
       "protocol_version": "2025-11-25",
       "failure": null,
       "tools": 16,
-      "tool_definition_tokens": 46698,
+      "tool_definition_tokens": 47963,
       "tool_definition_tokens_input_only": 15832,
-      "tool_surface_hash": "7be5cdb9b2774df7",
-      "grade": "D",
-      "uncapped_grade": "C",
+      "tool_surface_hash": "2758bb342cb8cfae",
+      "grade": "C",
+      "uncapped_grade": "B",
       "defects": [
         "tool_defs_over_10k",
-        "context_injection_over_12k",
+        "advertised_surface_over_12k",
         "median_tool_over_500",
         "description_length_out_of_band"
       ]
@@ -653,14 +654,14 @@
       "protocol_version": "2025-11-25",
       "failure": null,
       "tools": 14,
-      "tool_definition_tokens": 43029,
+      "tool_definition_tokens": 44294,
       "tool_definition_tokens_input_only": 13676,
-      "tool_surface_hash": "0d9f4573b596eaf8",
-      "grade": "D",
-      "uncapped_grade": "C",
+      "tool_surface_hash": "fd800adccf48570c",
+      "grade": "C",
+      "uncapped_grade": "B",
       "defects": [
         "tool_defs_over_10k",
-        "context_injection_over_12k",
+        "advertised_surface_over_12k",
         "median_tool_over_500"
       ]
     },
@@ -674,14 +675,14 @@
       "protocol_version": "2025-11-25",
       "failure": null,
       "tools": 14,
-      "tool_definition_tokens": 43029,
+      "tool_definition_tokens": 44294,
       "tool_definition_tokens_input_only": 13676,
-      "tool_surface_hash": "0d9f4573b596eaf8",
-      "grade": "D",
-      "uncapped_grade": "C",
+      "tool_surface_hash": "fd800adccf48570c",
+      "grade": "C",
+      "uncapped_grade": "B",
       "defects": [
         "tool_defs_over_10k",
-        "context_injection_over_12k",
+        "advertised_surface_over_12k",
         "median_tool_over_500"
       ]
     },
@@ -695,9 +696,9 @@
       "protocol_version": "2025-03-26",
       "failure": null,
       "tools": 8,
-      "tool_definition_tokens": 1236,
-      "tool_definition_tokens_input_only": 1236,
-      "tool_surface_hash": "bb81938d7269c462",
+      "tool_definition_tokens": 1274,
+      "tool_definition_tokens_input_only": 1274,
+      "tool_surface_hash": "ebe48f59ccf39000",
       "grade": "B",
       "uncapped_grade": "B",
       "defects": [
@@ -714,9 +715,9 @@
       "protocol_version": "2025-03-26",
       "failure": null,
       "tools": 8,
-      "tool_definition_tokens": 1236,
-      "tool_definition_tokens_input_only": 1236,
-      "tool_surface_hash": "bb81938d7269c462",
+      "tool_definition_tokens": 1274,
+      "tool_definition_tokens_input_only": 1274,
+      "tool_surface_hash": "ebe48f59ccf39000",
       "grade": "B",
       "uncapped_grade": "B",
       "defects": [
@@ -733,9 +734,9 @@
       "protocol_version": "2025-03-26",
       "failure": null,
       "tools": 8,
-      "tool_definition_tokens": 1236,
-      "tool_definition_tokens_input_only": 1236,
-      "tool_surface_hash": "bb81938d7269c462",
+      "tool_definition_tokens": 1274,
+      "tool_definition_tokens_input_only": 1274,
+      "tool_surface_hash": "ebe48f59ccf39000",
       "grade": "B",
       "uncapped_grade": "B",
       "defects": [
@@ -865,19 +866,20 @@
       "implementation": "magento-agent-mcp",
       "protocol": "ucp",
       "url": "https://seatosummit.es/agent/mcp",
-      "status": "probed",
-      "handshake": "legacy",
-      "protocol_version": "2025-03-26",
-      "failure": null,
-      "tools": 6,
-      "tool_definition_tokens": 1813,
-      "tool_definition_tokens_input_only": 1813,
-      "tool_surface_hash": "41af71f88e47ff46",
-      "grade": "B",
-      "uncapped_grade": "B",
-      "defects": [
-        "weak_namespacing"
-      ]
+      "status": "connect_failed",
+      "handshake": "none",
+      "protocol_version": null,
+      "failure": {
+        "status": 403,
+        "class": "auth_required"
+      },
+      "tools": null,
+      "tool_definition_tokens": null,
+      "tool_definition_tokens_input_only": null,
+      "tool_surface_hash": null,
+      "grade": null,
+      "uncapped_grade": null,
+      "defects": null
     },
     {
       "id": "magento-ucp@serverkast.com",
@@ -1068,9 +1070,9 @@
       "protocol_version": "2026-07-28",
       "failure": null,
       "tools": 22,
-      "tool_definition_tokens": 5905,
-      "tool_definition_tokens_input_only": 5905,
-      "tool_surface_hash": "4031b2bd53e1bcb1",
+      "tool_definition_tokens": 5886,
+      "tool_definition_tokens_input_only": 5886,
+      "tool_surface_hash": "f4d297544e6647da",
       "grade": "B",
       "uncapped_grade": "B",
       "defects": [

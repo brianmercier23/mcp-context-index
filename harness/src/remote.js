@@ -6,13 +6,13 @@
 // lineage in runs.jsonl and must never be compared against it.
 import os from 'node:os';
 import path from 'node:path';
-import { ROOT, HARNESS_VERSION, readJSON, appendJSONL, nowISO, sha256, stableStringify, runId, takenRunIds, mcpClientStack, countTokens } from './lib.js';
-import { session, detectEra, toolDefinitionPayload, MODERN_PROTOCOL } from './probe.js';
+import { ROOT, HARNESS_VERSION, readJSON, appendJSONL, nowISO, sha256, stableStringify, runId, takenRunIds, mcpClientStack } from './lib.js';
+import { session, detectEra, MODERN_PROTOCOL } from './probe.js';
 import { analyze } from './analyze.js';
 import { scoreServer } from './score.js';
 
 const COHORT = process.env.COHORT || 'commerce-mcp-v0';
-const RUBRIC = process.env.RUBRIC || 'rubric-v1.1.1.json';
+const RUBRIC = process.env.RUBRIC || 'rubric-v1.2.0.json';
 const ONLY = process.env.ONLY ? new Set(process.env.ONLY.split(',').map((x) => x.trim())) : null;
 const PAUSE_MS = Number(process.env.PAUSE_MS || 1500);
 const NOTE = process.env.RUN_NOTE || null;
@@ -92,11 +92,7 @@ async function probeOne(server, rubric) {
   // Shared tool names are the point of a protocol like UCP, so cross-implementation collisions
   // are not a defect here. Left unmeasured, which the defect report lists as not evaluable.
   signals.cohort_collision_count = null;
-  // The rubric counts outputSchema because the protocol ships it. Some hosts inject only name,
-  // description and inputSchema, so the lower bound is recorded beside it, never instead of it.
-  if (sess.ok) {
-    signals.tool_definition_tokens_input_only = countTokens(stableStringify(toolDefinitionPayload(sess.tools).map(({ outputSchema, ...rest }) => rest)));
-  }
+  // Input-only token signals come from analyze() since harness 0.1.7 (probe.js tokenizeTools).
 
   return {
     server: { id: server.id, implementation: server.implementation, protocol: server.protocol, store: server.store, url: server.url },

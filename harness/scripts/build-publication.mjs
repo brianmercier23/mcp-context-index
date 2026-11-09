@@ -138,15 +138,21 @@ if (commerce) {
   // Like for like: the tools Shopify and Wix both expose under the same names, summed from
   // per_tool_tokens on each platform's widest surface. The whole surfaces are different jobs
   // (Shopify adds cart, order and location tools), so their totals are not compared. See PROVENANCE.md.
-  const widestSurface = (impl) =>
+  // Both figures, advertised and input-only (harness 0.1.7 records input_tokens per tool): the grade
+  // rests on the second, and most tested clients send only that part.
+  const widestSurface = (impl, field = 'tokens') =>
     commerce.recs
       .filter((r) => r.status === 'probed' && r.server.implementation === impl && r.per_tool_tokens?.length)
-      .map((r) => new Map(r.per_tool_tokens.map((t) => [t.name, t.tokens])))
+      .map((r) => new Map(r.per_tool_tokens.map((t) => [t.name, t[field]])))
       .sort((a, b) => b.size - a.size)[0];
   const shopifyTools = widestSurface('shopify-ucp');
   const wixTools = widestSurface('wix-ucp');
+  const shopifyIn = widestSurface('shopify-ucp', 'input_tokens');
+  const wixIn = widestSurface('wix-ucp', 'input_tokens');
   const shared = shopifyTools && wixTools ? [...wixTools.keys()].filter((n) => shopifyTools.has(n)) : [];
   const sumOf = (tools) => shared.reduce((s, n) => s + tools.get(n), 0);
+  const haveIn = shared.length && shared.every((n) => typeof shopifyIn?.get(n) === 'number' && typeof wixIn?.get(n) === 'number');
+  const ratio = (a, b) => (Math.round((a / b) * 10) / 10).toFixed(1);
   const C = commerce.H;
   Object.assign(values, {
     C_INDEX_PATH: `index/${COMMERCE_ID}.md`,
@@ -162,7 +168,10 @@ if (commerce) {
     C_SHARED_TOOLS: String(shared.length),
     C_SHOPIFY_SHARED_TOK: shared.length ? num(sumOf(shopifyTools)) : '',
     C_WIX_SHARED_TOK: shared.length ? num(sumOf(wixTools)) : '',
-    C_SHOPIFY_VS_WIX: shared.length ? String(Math.round(sumOf(shopifyTools) / sumOf(wixTools))) : '',
+    C_SHOPIFY_VS_WIX: shared.length ? ratio(sumOf(shopifyTools), sumOf(wixTools)) : '',
+    C_SHOPIFY_SHARED_TOK_IN: haveIn ? num(sumOf(shopifyIn)) : '',
+    C_WIX_SHARED_TOK_IN: haveIn ? num(sumOf(wixIn)) : '',
+    C_SHOPIFY_VS_WIX_IN: haveIn ? ratio(sumOf(shopifyIn), sumOf(wixIn)) : '',
     C_MODERN: String(C.handshakes.modern ?? 0),
     C_REPRO_STABLE: commerce.repro ? String(commerce.repro.byte_identical) : '0',
     C_REPRO_BOTH: commerce.repro ? String(commerce.repro.measured_in_both) : '0',

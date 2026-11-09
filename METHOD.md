@@ -31,6 +31,12 @@ provider bills: those depend on the client, the model and its settings, and seve
 clients defer definitions until tool search finds them (see
 [README: What the token counts mean](README.md#what-the-token-counts-mean)).
 
+The grade does not rest on that figure. From rubric 1.2.0 every token signal behind a band, a
+grade cap or a defect rule is the input-only counterpart: the same payload with `outputSchema`
+removed, recorded beside the advertised figure from harness 0.1.7. On the client paths tested on
+2026-10-30, output schemas reached the model only in Codex code mode, which is off by default.
+Their size is reported, not graded.
+
 Tokenizer: `gpt-tokenizer`, `o200k_base`. Token counts are tokenizer-dependent; a different
 tokenizer produces different absolute numbers and very similar ratios.
 
@@ -75,7 +81,10 @@ rubric does.
   hash. Append-only, including the verdicts that were later found to be wrong.
 
 `npm run rescore` re-applies any rubric to stored signals without re-probing anything. Rubric
-1.1.0 was authored this way and applied to the entire history in seconds. Re-scoring never writes
+1.1.0 was authored this way and applied to the entire history in seconds. The exception is a
+rubric that needs a signal the old records never carried: rubric 1.2.0 grades on input-only
+signals first recorded by harness 0.1.7, so it refuses earlier records and those runs must be
+re-probed instead (see [PROVENANCE.md](PROVENANCE.md)). Re-scoring never writes
 back into `runs.jsonl`: a re-score produces no new measurement and shares no config hash, so it
 must never become comparable to a run inside the reproducibility log.
 

@@ -77,7 +77,18 @@ function evalDefects(signals, rubric) {
   };
 }
 
+// A rubric can name signals it cannot score without. A record that predates them (key absent, as
+// opposed to measured-and-null) is refused outright: scoring it would silently drop a dimension
+// and hand out a grade the rubric never meant. Re-probe instead.
+export function missingRequiredSignals(signals, rubric) {
+  return (rubric.scoring.requires_signals || []).filter((id) => !(id in signals));
+}
+
 export function scoreServer(signals, rubric) {
+  const missing = missingRequiredSignals(signals, rubric);
+  if (missing.length) {
+    throw new Error(`${rubric.rubric_id}@${rubric.version} requires signals this record does not carry (${missing.join(', ')}); it predates them, re-probe rather than re-score`);
+  }
   const dimensions = {};
   const signalScores = {};
 

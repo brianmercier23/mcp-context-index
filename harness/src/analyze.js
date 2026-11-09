@@ -142,6 +142,13 @@ export function analyze({ server, install, launch, sess, sess2, canary, rubric }
     tokens_per_tool_median: sess.tokens_per_tool_median ?? null,
     tokens_per_tool_max: sess.tokens_per_tool_max ?? null,
     context_injection_tokens_total: sess.context_injection_tokens_total ?? null,
+    // Input-only counterparts (harness 0.1.7). Absent, not null, in older records, so a rubric that
+    // requires them can tell "not recorded" apart from "not measured".
+    tool_definition_tokens_input_only: sess.tool_definition_tokens_input_only ?? null,
+    tokens_per_tool_median_input_only: sess.tokens_per_tool_median_input_only ?? null,
+    tokens_per_tool_max_input_only: sess.tokens_per_tool_max_input_only ?? null,
+    advertised_surface_tokens_input_only: sess.advertised_surface_tokens_input_only ?? null,
+    output_schema_tool_count: sess.output_schema_tool_count ?? null,
     tool_count: sess.tool_count ?? null,
     instructions_tokens: sess.instructions_tokens ?? 0,
     heaviest_tool: sess.heaviest_tool ?? null,

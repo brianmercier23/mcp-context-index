@@ -341,6 +341,38 @@ text in the published rubric versions (`rubric-v1.0.0.md` "It is the bill", and 
 `rubric-v1.1.0.md` and `rubric-v1.1.1.md`) carries the same overstatement. Those files are
 published versions and are not edited; this paragraph is their correction.
 
+### The commerce grade penalised output schemas that most tested clients drop
+
+Under rubrics 1.1.0 and 1.1.1 every token cap, band and defect rule read the advertised figure,
+output schemas included. On the commerce index that decided a grade. On 2026-11-05 `shopify-ucp`
+advertised 43,029 to 46,698 tokens, past the 25,000-token cap at D; the same definitions without
+output schemas came to 13,676 to 15,832, which caps at C. The grade rested on the field the
+2026-10-30 client tests found reaching a model only in Codex code mode. A Shopify engineer made the
+same point by email on 2026-10-29: output schemas exist for code-execution clients, and harnesses
+that do not run that mode omit them. The entry above left the question open.
+
+Rubric 1.2.0 (2026-11-09) closes it. Every token signal behind a band, cap or defect rule is now
+the input-only counterpart; thresholds, weights and every other dimension are unchanged. The
+advertised total, output schemas included, stays the headline figure and the reproducibility
+metric, and output-schema size is still reported beside the grade, because counting it is right
+for code-execution clients. The defect `context_injection_over_12k` is renamed
+`advertised_surface_over_12k`, since the old name described a client behaviour the index does not
+measure.
+
+The entry above said such a change could be re-scored from the log. It could not: the log carried
+an input-only total for commerce endpoints but no per-tool input-only figures, and nothing
+input-only for the dev-tooling runs. Harness 0.1.7 records them, and rubric 1.2.0 refuses a record
+without them rather than scoring it with the token dimension silently missing. The commerce index
+was therefore re-measured on 2026-11-09, not re-scored: three read-only sweeps, the last two
+compared (the first lost one endpoint to a timeout). Under 1.2.0 `shopify-ucp` grades C (B before
+its caps). No other commerce grade changed. Between 2026-11-05 and 2026-11-09 Shopify's advertised
+surface grew by 1,265 tokens, all of it output schemas; Wix's grew by 38; one Magento store began
+requiring credentials. Those are vendor changes, not instrument changes.
+
+The dev-tooling index keeps its rubric 1.1.1 grades until it is re-probed with harness 0.1.7. Its
+runs install third-party packages and are waiting on a containerised sandbox. Until then, its
+grades count output schemas for any server that declares them.
+
 ## Corrections to the published sources this project was built on
 
 These were found by checking primary sources directly rather than search summaries, and each one
